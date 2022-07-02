@@ -1,0 +1,4 @@
+CREATE TABLE cozinha (
+	id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(60) NOT NULL
+) ENGINE=InnoDB default charset=utf8;
