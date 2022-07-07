@@ -19,12 +19,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.algafood.algafoodapi.api.assembler.RestauranteInputDisassembler;
 import com.algafood.algafoodapi.api.assembler.RestauranteModelAssembler;
 import com.algafood.algafoodapi.api.model.RestauranteDTO;
 import com.algafood.algafoodapi.api.model.input.RestauranteInputDTO;
 import com.algafood.algafoodapi.domain.exceptions.EntityNotfoundException;
 import com.algafood.algafoodapi.domain.exceptions.NegocioException;
-import com.algafood.algafoodapi.domain.models.Cozinha;
 import com.algafood.algafoodapi.domain.models.Restaurante;
 import com.algafood.algafoodapi.domain.repository.RestauranteRepository;
 import com.algafood.algafoodapi.domain.service.CadastroRestauranteService;
@@ -45,6 +45,9 @@ public class RestauranteController {
     @Autowired
     private RestauranteModelAssembler restauranteModelAssembler;
 
+    @Autowired
+    private RestauranteInputDisassembler restauranteInputDisassembler;
+
     @GetMapping
     public List<RestauranteDTO> listar() {
         return restauranteModelAssembler.toCollectionDTO(restauranteRepository.findAll());
@@ -64,9 +67,10 @@ public class RestauranteController {
     @PostMapping
     public ResponseEntity<?> add(@RequestBody @Valid RestauranteInputDTO restauranteInputDTO) {
         try {          
-            Restaurante restaurante = toDomainObject(restauranteInputDTO);
-            restauranteModelAssembler.toDTO(cadastroRestaurante.salvar(restaurante));
-            return ResponseEntity.status(HttpStatus.CREATED).body(restaurante);
+            Restaurante restaurante = restauranteInputDisassembler.toDomainObject(restauranteInputDTO);
+
+            RestauranteDTO restauranteDTO = restauranteModelAssembler.toDTO(cadastroRestaurante.salvar(restaurante));
+            return ResponseEntity.status(HttpStatus.CREATED).body(restauranteDTO);
         } catch (EntityNotfoundException e) {
             throw new NegocioException(e.getMessage());
         }
@@ -77,7 +81,7 @@ public class RestauranteController {
     public ResponseEntity<?> atualizar(@PathVariable Long restauranteId, @RequestBody @Valid RestauranteInputDTO restauranteInputDTO) {
         
         try {
-            Restaurante restaurante = toDomainObject(restauranteInputDTO);
+            Restaurante restaurante = restauranteInputDisassembler.toDomainObject(restauranteInputDTO);
 
             Restaurante restauranteCurrent = cadastroRestaurante.findOrFail(restauranteId);
             
@@ -144,19 +148,6 @@ public class RestauranteController {
     @GetMapping("/por-nome-taxa")
     public List<Restaurante> restaurantesPorNomeFrete(String nome, BigDecimal freteInicial, BigDecimal freteFinal) {
         return restauranteRepository.findByNomeAndFrete(nome, freteInicial, freteFinal);
-    }
-
-    private Restaurante toDomainObject(RestauranteInputDTO restauranteInputDTO) {
-        Restaurante restaurante = new Restaurante();
-        restaurante.setNome(restauranteInputDTO.getNome());
-        restaurante.setTaxaFrete(restauranteInputDTO.getFrete());
-
-        Cozinha cozinha = new Cozinha();
-        cozinha.setId(restauranteInputDTO.getCozinha().getId());
-
-        restaurante.setCozinha(cozinha);
-
-        return restaurante;
     }
 
 }
