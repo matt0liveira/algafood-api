@@ -1,6 +1,6 @@
 package com.algafood.algafoodapi.domain.models;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,11 +61,11 @@ public class Pedido {
     private StatusPedido statusPedido;
 
     @CreationTimestamp
-    private LocalDateTime dataCriacao;
+    private OffsetDateTime dataCriacao;
 
-    private LocalDateTime dataConfirmacao;
-    private LocalDateTime dataEntrega;
-    private LocalDateTime dataCancelamento;
+    private OffsetDateTime dataConfirmacao;
+    private OffsetDateTime dataEntrega;
+    private OffsetDateTime dataCancelamento;
 
 
 }

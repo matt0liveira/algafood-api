@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CadastroCidadeService {
@@ -22,6 +23,7 @@ public class CadastroCidadeService {
 
     private static final String ENTITY_IN_USE_MSG = "Cidade de código %d não pode ser removida, pois está em uso";
 
+    @Transactional
     public void salvar(Cidade cidade) {
 
         Estado estado = cadastroEstado.findOrFail(cidade.getEstado().getId());
@@ -30,6 +32,7 @@ public class CadastroCidadeService {
 
     }
 
+    @Transactional
     public void remover(Long cidadeId) {
         try {
             cidadeRepository.deleteById(cidadeId);

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CadastroRestauranteService {
@@ -22,12 +23,14 @@ public class CadastroRestauranteService {
 
     private static final String ENTITY_IN_USE_MSG = "Restaurante de código %d não pode ser removido, pois está em uso!";
 
-    public void salvar(Restaurante restaurante) {
+    @Transactional
+    public Restaurante salvar(Restaurante restaurante) {
         Cozinha cozinha = cadastroCozinha.findOrFail(restaurante.getCozinha().getId());
         restaurante.setCozinha(cozinha);
-        restauranteRepository.save(restaurante);
+        return restauranteRepository.save(restaurante);
     }
 
+    @Transactional
     public void excluir(Long restauranteId) {
         try {
             restauranteRepository.deleteById(restauranteId);
