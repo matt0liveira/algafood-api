@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.algafood.algafoodapi.api.assembler.RestauranteInputDisassembler;
-import com.algafood.algafoodapi.api.assembler.RestauranteModelAssembler;
+import com.algafood.algafoodapi.api.assembler.RestauranteAssembler.RestauranteInputDisassembler;
+import com.algafood.algafoodapi.api.assembler.RestauranteAssembler.RestauranteModelAssembler;
 import com.algafood.algafoodapi.api.model.RestauranteDTO;
 import com.algafood.algafoodapi.api.model.input.RestauranteInputDTO;
 import com.algafood.algafoodapi.domain.exceptions.EntityNotfoundException;
@@ -81,11 +80,12 @@ public class RestauranteController {
     public ResponseEntity<?> atualizar(@PathVariable Long restauranteId, @RequestBody @Valid RestauranteInputDTO restauranteInputDTO) {
         
         try {
-            Restaurante restaurante = restauranteInputDisassembler.toDomainObject(restauranteInputDTO);
+            // Restaurante restaurante = restauranteInputDisassembler.toDomainObject(restauranteInputDTO);
 
             Restaurante restauranteCurrent = cadastroRestaurante.findOrFail(restauranteId);
             
-            BeanUtils.copyProperties(restaurante, restauranteCurrent, "id", "formasPagamento", "endereco", "dataCadastro", "produtos");
+            // BeanUtils.copyProperties(restaurante, restauranteCurrent, "id", "formasPagamento", "endereco", "dataCadastro", "produtos");
+            restauranteInputDisassembler.copyToDomainObject(restauranteInputDTO, restauranteCurrent);
             RestauranteDTO restauranteDTO = restauranteModelAssembler.toDTO(cadastroRestaurante.salvar(restauranteCurrent));
             return ResponseEntity.ok(restauranteDTO);
         } catch (EntityNotfoundException e) {

@@ -2,10 +2,6 @@ package com.algafood.algafoodapi.api.controllers;
 
 import java.util.List;
 
-import com.algafood.algafoodapi.domain.models.Cozinha;
-import com.algafood.algafoodapi.domain.repository.CozinhaRepository;
-import com.algafood.algafoodapi.domain.service.CadastroCozinhaService;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +19,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.algafood.algafoodapi.api.assembler.CozinhaAssembler.CozinhaModelAssembler;
+import com.algafood.algafoodapi.api.model.CozinhaDTO;
+import com.algafood.algafoodapi.domain.models.Cozinha;
+import com.algafood.algafoodapi.domain.repository.CozinhaRepository;
+import com.algafood.algafoodapi.domain.service.CadastroCozinhaService;
+
 @RestController
 @RequestMapping("cozinhas")
 public class CozinhaController {
@@ -33,14 +35,17 @@ public class CozinhaController {
     @Autowired
     private CadastroCozinhaService cadastroCozinha;
 
+    @Autowired
+    private CozinhaModelAssembler cozinhaModelAssembler;
+
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Cozinha> listar() {
-        return cozinhaRepository.findAll();
+    public List<CozinhaDTO> listar() {
+        return cozinhaModelAssembler.toCollectionDTO(cozinhaRepository.findAll());
     }
 
     @GetMapping("/{cozinhaId}")
-    public Cozinha buscar(@PathVariable Long cozinhaId) {
-        return cadastroCozinha.findOrFail(cozinhaId);
+    public CozinhaDTO buscar(@PathVariable Long cozinhaId) {
+        return cozinhaModelAssembler.toDTO(cadastroCozinha.findOrFail(cozinhaId));
     }
 
     @PostMapping
