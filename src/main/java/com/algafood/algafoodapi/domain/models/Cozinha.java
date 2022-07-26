@@ -10,7 +10,6 @@ import javax.persistence.GenerationType;
 // import javax.persistence.Table;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import com.algafood.algafoodapi.core.validation.Groups;
@@ -30,7 +29,6 @@ public class Cozinha {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
     @Column(nullable = false)
     private String nome;
 

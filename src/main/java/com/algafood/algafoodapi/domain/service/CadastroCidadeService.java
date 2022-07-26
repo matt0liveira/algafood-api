@@ -24,12 +24,11 @@ public class CadastroCidadeService {
     private static final String ENTITY_IN_USE_MSG = "Cidade de código %d não pode ser removida, pois está em uso";
 
     @Transactional
-    public void salvar(Cidade cidade) {
-
+    public Cidade salvar(Cidade cidade) {
         Estado estado = cadastroEstado.findOrFail(cidade.getEstado().getId());
-        cidade.setEstado(estado);
-        cidadeRepository.save(cidade);
 
+        cidade.setEstado(estado);
+        return cidadeRepository.save(cidade);
     }
 
     @Transactional

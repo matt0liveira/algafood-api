@@ -18,8 +18,8 @@ public class CadastroEstadoService {
 
     private static final String ENTITY_IN_USE_MSG = "Estado de código %d não pode ser removido, pois está em uso.";
 
-    public void salvar(Estado estado) {
-        estadoRepository.save(estado);
+    public Estado salvar(Estado estado) {
+        return estadoRepository.save(estado);
     }
 
     public void remover(Long estadoId) {
