@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,7 +41,7 @@ public class CozinhaController {
     @Autowired
     private CozinhaInputDisassembler cozinhaInputDisassembler;
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping
     public List<CozinhaDTO> listar() {
         return cozinhaModelAssembler.toCollectionDTO(cozinhaRepository.findAll());
     }
@@ -63,9 +62,8 @@ public class CozinhaController {
     public ResponseEntity<CozinhaDTO> alterar(@PathVariable Long cozinhaId, @RequestBody CozinhaInputDTO cozinhaInputDTO) {
         Cozinha cozinhaCurrent = cadastroCozinha.findOrFail(cozinhaId);
 
-
-        cadastroCozinha.salvar(cozinhaCurrent);
         cozinhaInputDisassembler.copyToDomainOject(cozinhaInputDTO, cozinhaCurrent);
+        cozinhaCurrent = cadastroCozinha.salvar(cozinhaCurrent);
         return ResponseEntity.ok(cozinhaModelAssembler.toDTO(cozinhaCurrent));
     }
 

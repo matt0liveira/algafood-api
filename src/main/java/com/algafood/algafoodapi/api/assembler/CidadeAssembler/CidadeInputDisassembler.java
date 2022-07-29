@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import com.algafood.algafoodapi.api.model.input.CidadeInputDTO;
 import com.algafood.algafoodapi.domain.models.Cidade;
+import com.algafood.algafoodapi.domain.models.Estado;
 
 @Component
 public class CidadeInputDisassembler {
@@ -18,6 +19,9 @@ public class CidadeInputDisassembler {
     }
 
     public void copyToDomainOject(CidadeInputDTO cidadeInputDTO, Cidade cidade) {
+        // Para evitar org.hibernate.HibernateException: identifier of an instance of 
+		// com.algaworks.algafood.domain.model.Estado was altered from 1 to 2
+        cidade.setEstado(new Estado());
         modelMapper.map(cidadeInputDTO, cidade);
     }
 

@@ -10,9 +10,9 @@ import javax.persistence.GenerationType;
 // import javax.persistence.Table;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.validation.constraints.NotNull;
+// import javax.validation.constraints.NotNull;
 
-import com.algafood.algafoodapi.core.validation.Groups;
+// import com.algafood.algafoodapi.core.validation.Groups;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,7 +23,7 @@ import lombok.EqualsAndHashCode;
 // @Table(name = "cozinha")
 public class Cozinha {
 
-    @NotNull(groups = Groups.CozinhaId.class)
+    // @NotNull(groups = Groups.CozinhaId.class)
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

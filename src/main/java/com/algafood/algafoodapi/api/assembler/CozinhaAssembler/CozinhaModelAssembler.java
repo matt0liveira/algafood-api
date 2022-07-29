@@ -17,7 +17,7 @@ public class CozinhaModelAssembler {
     private ModelMapper modelMapper;
 
     public CozinhaDTO toDTO(Cozinha cozinha) {
-        return  modelMapper.map(Cozinha.class, CozinhaDTO.class);
+        return  modelMapper.map(cozinha, CozinhaDTO.class);
     }
 
     public List<CozinhaDTO> toCollectionDTO(List<Cozinha> cozinhas) {
