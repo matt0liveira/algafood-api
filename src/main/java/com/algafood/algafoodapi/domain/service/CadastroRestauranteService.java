@@ -2,6 +2,7 @@ package com.algafood.algafoodapi.domain.service;
 
 import com.algafood.algafoodapi.domain.exceptions.EntityInUseException;
 import com.algafood.algafoodapi.domain.exceptions.RestauranteNotfoundException;
+import com.algafood.algafoodapi.domain.models.Cidade;
 import com.algafood.algafoodapi.domain.models.Cozinha;
 import com.algafood.algafoodapi.domain.models.Restaurante;
 import com.algafood.algafoodapi.domain.repository.RestauranteRepository;
@@ -21,12 +22,19 @@ public class CadastroRestauranteService {
     @Autowired
     private CadastroCozinhaService cadastroCozinha;
 
+    @Autowired
+    private CadastroCidadeService cadastroCidade;
+
     private static final String ENTITY_IN_USE_MSG = "Restaurante de código %d não pode ser removido, pois está em uso!";
 
     @Transactional
     public Restaurante salvar(Restaurante restaurante) {
         Cozinha cozinha = cadastroCozinha.findOrFail(restaurante.getCozinha().getId());
         restaurante.setCozinha(cozinha);
+
+        Long cidadeId = restaurante.getEndereco().getCidade().getId();
+        Cidade cidade = cadastroCidade.findOrFail(cidadeId);
+        restaurante.getEndereco().setCidade(cidade);
         return restauranteRepository.save(restaurante);
     }
 
@@ -40,6 +48,20 @@ public class CadastroRestauranteService {
         } catch (DataIntegrityViolationException e) {
             throw new EntityInUseException(String.format(ENTITY_IN_USE_MSG, restauranteId));
         }
+    }
+
+    @Transactional
+    public void ativar(Long restauranteId) {
+        Restaurante restaurante = findOrFail(restauranteId);
+
+        restaurante.ativar();
+    }
+
+    @Transactional
+    public void inativar(Long restauranteId) {
+        Restaurante restaurante = findOrFail(restauranteId);
+
+        restaurante.inativar();
     }
 
     public Restaurante findOrFail(Long restauranteId) {
