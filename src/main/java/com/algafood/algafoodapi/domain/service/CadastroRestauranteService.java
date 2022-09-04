@@ -4,6 +4,7 @@ import com.algafood.algafoodapi.domain.exceptions.EntityInUseException;
 import com.algafood.algafoodapi.domain.exceptions.RestauranteNotfoundException;
 import com.algafood.algafoodapi.domain.models.Cidade;
 import com.algafood.algafoodapi.domain.models.Cozinha;
+import com.algafood.algafoodapi.domain.models.FormaPagamento;
 import com.algafood.algafoodapi.domain.models.Restaurante;
 import com.algafood.algafoodapi.domain.repository.RestauranteRepository;
 
@@ -24,6 +25,9 @@ public class CadastroRestauranteService {
 
     @Autowired
     private CadastroCidadeService cadastroCidade;
+
+    @Autowired
+    private CadastroFormaPagamentoService cadastroFormaPagamento;
 
     private static final String ENTITY_IN_USE_MSG = "Restaurante de código %d não pode ser removido, pois está em uso!";
 
@@ -62,6 +66,23 @@ public class CadastroRestauranteService {
         Restaurante restaurante = findOrFail(restauranteId);
 
         restaurante.inativar();
+    }
+
+    @Transactional
+    public void desassociarFormaPagamento(Long restauranteId, Long formaPagamentoId) {
+        Restaurante restaurante = findOrFail(restauranteId);
+        FormaPagamento formaPagamento = cadastroFormaPagamento.findOrFail(formaPagamentoId);
+
+        restaurante.desassociarFormaPagamento(formaPagamento);
+    }
+
+    @Transactional
+    public void associarFormaPagamento(Long restauranteId, Long formaPagamentoId) {
+        Restaurante restaurante = findOrFail(restauranteId);
+        FormaPagamento formaPagamento = cadastroFormaPagamento.findOrFail(formaPagamentoId);
+
+        restaurante.associarFormaPagamento(formaPagamento);
+
     }
 
     public Restaurante findOrFail(Long restauranteId) {
