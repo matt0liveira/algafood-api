@@ -76,5 +76,4 @@ public class GrupoController {
     public void remover(@PathVariable Long grupoId) {
         cadastroGrupo.remover(grupoId);
     }
-
 }

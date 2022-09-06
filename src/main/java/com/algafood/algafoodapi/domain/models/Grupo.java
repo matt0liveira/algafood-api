@@ -36,4 +36,12 @@ public class Grupo {
     )
     private List<Permissao> permissoes = new ArrayList<>();
 
+    public boolean associarPermissao(Permissao permissao) {
+        return getPermissoes().add(permissao);
+    }
+
+    public boolean desassociarPermissao(Permissao permissao) {
+        return getPermissoes().remove(permissao);
+    }
+
 }

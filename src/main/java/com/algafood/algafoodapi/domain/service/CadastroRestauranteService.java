@@ -69,6 +69,20 @@ public class CadastroRestauranteService {
     }
 
     @Transactional
+    public void abrir(Long restauranteId) {
+        Restaurante restaurante = findOrFail(restauranteId);
+
+        restaurante.abrir();
+    }
+
+    @Transactional 
+    public void fechar(Long restauranteId) {
+        Restaurante restaurante = findOrFail(restauranteId);
+
+        restaurante.fechar();
+    }
+
+    @Transactional
     public void desassociarFormaPagamento(Long restauranteId, Long formaPagamentoId) {
         Restaurante restaurante = findOrFail(restauranteId);
         FormaPagamento formaPagamento = cadastroFormaPagamento.findOrFail(formaPagamentoId);
