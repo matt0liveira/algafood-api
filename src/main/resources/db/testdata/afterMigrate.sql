@@ -13,6 +13,8 @@ TRUNCATE restaurante_forma_pagamento;
 TRUNCATE usuario;
 TRUNCATE usuario_grupo;
 TRUNCATE restaurante_usuario_responsavel;
+TRUNCATE pedido;
+TRUNCATE item_pedido;
 
 SET foreign_key_checks = 1;
 
