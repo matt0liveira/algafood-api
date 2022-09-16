@@ -174,4 +174,16 @@ public class RestauranteController {
         cadastroRestaurante.fechar(restauranteId);
     }
 
+    @PutMapping("/ativacoes")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void ativarEmMassa(@RequestBody List<Long> restauranteIds) {
+        cadastroRestaurante.ativar(restauranteIds);
+    }
+
+    @DeleteMapping("/ativacoes")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void inativarEmMassa(@RequestBody List<Long> restauranteIds) {
+        cadastroRestaurante.inativar(restauranteIds);
+    }
+
 }

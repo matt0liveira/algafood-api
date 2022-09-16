@@ -6,4 +6,8 @@ public class NegocioException extends RuntimeException {
         super(msg);
     }
 
+    public NegocioException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }

@@ -17,9 +17,9 @@ CREATE TABLE pedido (
 
     status VARCHAR(10) NOT NULL,
     data_criacao DATETIME NOT NULL,
-    data_confirmacao DATETIME NOT NULL,
-    data_cancelamento DATETIME NOT NULL,
-    data_entrega DATETIME NOT NULL,
+    data_confirmacao DATETIME,
+    data_cancelamento DATETIME,
+    data_entrega DATETIME,
 
     CONSTRAINT fk_pedido_endereco_cidade FOREIGN KEY (endereco_cidade_id) REFERENCES cidade (id),
     CONSTRAINT fk_pedido_restaurante FOREIGN KEY (restaurante_id) REFERENCES restaurante (id),

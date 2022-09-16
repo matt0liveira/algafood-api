@@ -1,12 +1,16 @@
 package com.algafood.algafoodapi.domain.service;
 
 import com.algafood.algafoodapi.domain.exceptions.EntityInUseException;
+import com.algafood.algafoodapi.domain.exceptions.NegocioException;
 import com.algafood.algafoodapi.domain.exceptions.RestauranteNotfoundException;
 import com.algafood.algafoodapi.domain.models.Cidade;
 import com.algafood.algafoodapi.domain.models.Cozinha;
 import com.algafood.algafoodapi.domain.models.FormaPagamento;
 import com.algafood.algafoodapi.domain.models.Restaurante;
+import com.algafood.algafoodapi.domain.models.Usuario;
 import com.algafood.algafoodapi.domain.repository.RestauranteRepository;
+
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -28,6 +32,9 @@ public class CadastroRestauranteService {
 
     @Autowired
     private CadastroFormaPagamentoService cadastroFormaPagamento;
+
+    @Autowired
+    private CadastroUsuarioService cadastroUsuario;
 
     private static final String ENTITY_IN_USE_MSG = "Restaurante de código %d não pode ser removido, pois está em uso!";
 
@@ -69,6 +76,24 @@ public class CadastroRestauranteService {
     }
 
     @Transactional
+    public void ativar(List<Long> restauranteIds) {
+        try {
+            restauranteIds.forEach(this::ativar);
+        } catch(RestauranteNotfoundException e) {
+            throw new NegocioException(e.getMessage(), e);
+        }
+    }
+
+    @Transactional
+    public void inativar(List<Long> restauranteIds) {
+        try {
+            restauranteIds.forEach(this::inativar);
+        } catch(RestauranteNotfoundException e) {
+            throw new NegocioException(e.getMessage(), e);
+        }
+    }
+
+    @Transactional
     public void abrir(Long restauranteId) {
         Restaurante restaurante = findOrFail(restauranteId);
 
@@ -97,6 +122,22 @@ public class CadastroRestauranteService {
 
         restaurante.associarFormaPagamento(formaPagamento);
 
+    }
+
+    @Transactional
+    public void associarResponsavel(Long restauranteId, Long responsavelId) {
+        Restaurante restaurante = findOrFail(restauranteId);
+        Usuario responsavel = cadastroUsuario.findOrFail(responsavelId);
+
+        restaurante.associarResponsavel(responsavel);
+    }
+
+    @Transactional
+    public void desassociarResponsavel(Long restauranteId, Long responsavelId) {
+        Restaurante restaurante = findOrFail(restauranteId);
+        Usuario responsavel = cadastroUsuario.findOrFail(responsavelId);
+
+        restaurante.desassociarResponsavel(responsavel);
     }
 
     public Restaurante findOrFail(Long restauranteId) {

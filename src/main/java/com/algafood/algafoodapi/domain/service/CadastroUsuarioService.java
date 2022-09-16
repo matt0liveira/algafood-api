@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.algafood.algafoodapi.domain.exceptions.NegocioException;
 import com.algafood.algafoodapi.domain.exceptions.UsuarioNotfoundException;
+import com.algafood.algafoodapi.domain.models.Grupo;
 import com.algafood.algafoodapi.domain.models.Usuario;
 import com.algafood.algafoodapi.domain.repository.UsuarioRepository;
 
@@ -17,6 +18,9 @@ public class CadastroUsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private CadastroGrupoService cadastroGrupo;
 
     @Transactional
     public Usuario salvar(Usuario usuario) {
@@ -38,6 +42,22 @@ public class CadastroUsuarioService {
         }
 
         usuario.setSenha(senhaNova);
+    }
+
+    @Transactional
+    public void associarGrupo(Long usuarioId, Long grupoId) {
+        Usuario usuario = findOrFail(usuarioId);
+        Grupo grupo = cadastroGrupo.findOrFail(grupoId);
+
+        usuario.associarGrupo(grupo);
+    }
+
+    @Transactional
+    public void desassociarGrupo(Long usuarioId, Long grupoId) {
+        Usuario usuario = findOrFail(usuarioId);
+        Grupo grupo = cadastroGrupo.findOrFail(grupoId);
+
+        usuario.desassociarGrupo(grupo);
     }
 
     public Usuario findOrFail(Long usuarioId) {
