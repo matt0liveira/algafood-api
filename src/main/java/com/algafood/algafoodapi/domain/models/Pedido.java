@@ -5,7 +5,7 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -20,6 +20,7 @@ import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.algafood.algafoodapi.domain.exceptions.NegocioException;
 import com.algafood.algafoodapi.domain.models.enums.StatusPedido;
 
 import lombok.Data;
@@ -35,13 +36,8 @@ public class Pedido {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @Column(nullable = false)
     private BigDecimal subtotal;
-
-    @Column(nullable = false)
     private BigDecimal taxaFrete;
-
-    @Column(nullable = false)
     private BigDecimal valorTotal;
 
     @JoinColumn(name = "usuario_cliente_id", nullable = false)
@@ -56,7 +52,7 @@ public class Pedido {
     @ManyToOne(fetch = FetchType.LAZY)
     private FormaPagamento formaPagamento;
 
-    @OneToMany(mappedBy = "pedido")
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     private List<ItemPedido> itens = new ArrayList<>();
 
     @Embedded
@@ -73,6 +69,8 @@ public class Pedido {
     private OffsetDateTime dataCancelamento;
 
     public void calcularValorTotal() {
+        getItens().forEach(ItemPedido::calcularPrecoTotal);
+
         this.subtotal = getItens().stream()
             .map(item -> item.getPrecoTotal())
             .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -80,12 +78,27 @@ public class Pedido {
         this.valorTotal = this.subtotal.add(this.taxaFrete);
     }
 
-    public void definirFrete() {
-        setTaxaFrete(getRestaurante().getTaxaFrete());
+    public void confirmar() {
+        setStatus(StatusPedido.CONFIRMADO);
+        setDataConfirmacao(OffsetDateTime.now());
     }
 
-    public void atribuirPedidoAosItens() {
-        getItens().forEach(item -> item.setPedido(this));
+    public void entregar() {
+        setStatus(StatusPedido.ENTREGUE);
+        setDataEntrega(OffsetDateTime.now());
+    }
+
+    public void cancelar() {
+        setStatus(StatusPedido.CANCELADO);
+        setDataCancelamento(OffsetDateTime.now());
+    }
+
+    private void setStatus(StatusPedido newStatus) {
+        if(getStatus().cantUpdateTo(newStatus)) {
+            throw new NegocioException(String.format("Status do pedido %d não pode ser alterado de %s para %s", getId(), getStatus().getDescricao(), newStatus.getDescricao()));
+        }
+
+        this.status = newStatus;
     }
 
 }

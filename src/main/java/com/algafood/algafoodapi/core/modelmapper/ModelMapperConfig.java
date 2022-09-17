@@ -5,7 +5,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.algafood.algafoodapi.api.model.EnderecoDTO;
+import com.algafood.algafoodapi.api.model.input.ItemPedidoInput;
 import com.algafood.algafoodapi.domain.models.Endereco;
+import com.algafood.algafoodapi.domain.models.ItemPedido;
 
 @Configuration
 public class ModelMapperConfig {
@@ -14,6 +16,11 @@ public class ModelMapperConfig {
     public ModelMapper modelMapper() {
         var modelMapper = new ModelMapper();
         
+        modelMapper.createTypeMap(ItemPedidoInput.class, ItemPedido.class)
+        .addMappings(mapper -> mapper.skip(ItemPedido::setId));
+        
+        modelMapper.getConfiguration().setAmbiguityIgnored(true);
+
         var enderecoToEnderecoModelTypeMap = modelMapper.createTypeMap(Endereco.class, EnderecoDTO.class);
 
         enderecoToEnderecoModelTypeMap.<String>addMapping(

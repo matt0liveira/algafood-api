@@ -16,6 +16,9 @@ TRUNCATE restaurante_usuario_responsavel;
 TRUNCATE pedido;
 TRUNCATE item_pedido;
 
+alter table pedido auto_increment = 1;
+alter table item_pedido auto_increment = 1;
+
 SET foreign_key_checks = 1;
 
 insert into cozinha (id, nome) values (1, 'Tailandesa');

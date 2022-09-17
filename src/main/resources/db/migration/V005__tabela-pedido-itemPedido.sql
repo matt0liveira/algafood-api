@@ -1,8 +1,8 @@
 CREATE TABLE pedido (
     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    subtotal DECIMAL(10,2) NOT NULL,
-    taxa_frete DECIMAL(10,2) NOT NULL,
-    valor_total DECIMAL(10,2) NOT NULL,
+    subtotal DECIMAL(10,2),
+    taxa_frete DECIMAL(10,2),
+    valor_total DECIMAL(10,2),
 
     usuario_cliente_id BIGINT NOT NULL,
     restaurante_id BIGINT NOT NULL,
