@@ -51,9 +51,9 @@ public class PedidoController {
         return pedidoResumoModel.toCollectionDTO(pedidoRepository.findAll());
     }
 
-    @GetMapping("/{pedidoId}")
-    public PedidoDTO buscar(@PathVariable Long pedidoId) {
-        return pedidoModel.toDTO(cadastroPedido.findOrFail(pedidoId));
+    @GetMapping("/{codigo}")
+    public PedidoDTO buscar(@PathVariable String codigo) {
+        return pedidoModel.toDTO(cadastroPedido.findOrFail(codigo));
     }
 
     @PostMapping

@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 public class PedidoResumoDTO {
     
-    private Long id;
+    private String codigo;
     private Long subtotal;
     private Long taxaFrete;
     private Long  valorTotal;

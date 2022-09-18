@@ -2,12 +2,8 @@ package com.algafood.algafoodapi.domain.exceptions;
 
 public class PedidoNotfoundException extends EntityNotfoundException {
 
-    public PedidoNotfoundException(String msg) {
-        super(msg);
-    }
-
-    public PedidoNotfoundException(Long pedidoId) {
-        this(String.format("Pedido de código %d não encontrado!", pedidoId));
+    public PedidoNotfoundException(String codigoPedido) {
+        super(String.format("Pedido de código %s não encontrado!", codigoPedido));
     }
     
 }

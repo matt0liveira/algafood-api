@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 public class PedidoDTO {
     
-    private Long id;
+    private String codigo;
     private Long subtotal;
     private Long taxaFrete;
     private Long  valorTotal;
