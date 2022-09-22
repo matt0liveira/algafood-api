@@ -2,9 +2,12 @@ package com.algafood.algafoodapi.api.model;
 
 import java.time.OffsetDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+
 import lombok.Getter;
 import lombok.Setter;
 
+@JsonFilter("pedidoFilter")
 @Setter
 @Getter
 public class PedidoResumoDTO {
