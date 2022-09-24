@@ -1,0 +1,7 @@
+FORMAS DE MODELAR PESQUISAS COMPLEXAS NA API
+
+1) Receber parâmetros de URL no recurso de coleção
+2) Considerar a própria pesquisa como recurso
+    - passando payload
+3) Considerar a própria pesquisa como recurso (de verdade)
+    - cria um novo filtro da entidade

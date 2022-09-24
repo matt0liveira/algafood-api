@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,7 +26,7 @@ import com.algafood.algafoodapi.domain.service.CadastroRestauranteService;
 
 @RestController
 @RequestMapping("/restaurantes/{restauranteId}/produtos")
-public class ProdutoController {
+public class RestauranteProdutoController {
 
     @Autowired
     private ProdutoModelAssembler produtoModel;
@@ -43,10 +44,17 @@ public class ProdutoController {
     private ProdutoInputDisassembler produtoInputDisassembler;
 
     @GetMapping
-    public List<ProdutoDTO> listar(@PathVariable Long restauranteId) {
+    public List<ProdutoDTO> listar(@PathVariable Long restauranteId, @RequestParam(required = false) boolean includeInativos) {
         Restaurante restaurante = cadastroRestaurante.findOrFail(restauranteId);
+        List<Produto> produtos = null;
 
-        return produtoModel.toCollectionDTO(produtoRepository.findByRestaurante(restaurante));
+        if(includeInativos) {
+            produtos = produtoRepository.findAllByRestaurante(restaurante);
+        } else {
+            produtos = produtoRepository.findAtivosByRestaurante(restaurante);
+        }
+
+        return produtoModel.toCollectionDTO(produtos);
     }
 
     @GetMapping("/{produtoId}")
