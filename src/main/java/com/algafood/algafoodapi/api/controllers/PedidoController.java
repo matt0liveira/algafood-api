@@ -6,6 +6,9 @@ import javax.validation.Valid;
 
 // import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 // import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,8 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.algafood.algafoodapi.api.assembler.PedidoAssembler.PedidoInputDisassembler;
 import com.algafood.algafoodapi.api.assembler.PedidoAssembler.PedidoModelAssembler;
+import com.algafood.algafoodapi.api.assembler.PedidoAssembler.PedidoResumoModelAssembler;
 // import com.algafood.algafoodapi.api.assembler.PedidoAssembler.PedidoResumoModelAssembler;
 import com.algafood.algafoodapi.api.model.PedidoDTO;
+import com.algafood.algafoodapi.api.model.PedidoResumoDTO;
 // import com.algafood.algafoodapi.api.model.PedidoResumoDTO;
 import com.algafood.algafoodapi.api.model.input.PedidoInputDTO;
 import com.algafood.algafoodapi.domain.exceptions.EntityNotfoundException;
@@ -41,8 +46,8 @@ public class PedidoController {
     @Autowired
     private PedidoModelAssembler pedidoModel;
 
-    // @Autowired
-    // private PedidoResumoModelAssembler pedidoResumoModel;
+    @Autowired
+    private PedidoResumoModelAssembler pedidoResumoModel;
 
     @Autowired
     private CadastroPedidoService cadastroPedido;
@@ -73,8 +78,14 @@ public class PedidoController {
     // }
 
     @GetMapping
-    public List<PedidoDTO> pesquisar(PedidoFilter filter) {
-        return pedidoModel.toCollectionDTO(pedidoRepository.findAll(PedidoSpecs.usingFilter(filter)));
+    public Page<PedidoResumoDTO> pesquisar(PedidoFilter filter, Pageable pageable) {
+        Page<Pedido> pedidosPage = pedidoRepository.findAll(PedidoSpecs.usingFilter(filter), pageable);
+
+        List<PedidoResumoDTO> pedidosResumoModel = pedidoResumoModel.toCollectionDTO(pedidosPage.getContent());
+
+        Page<PedidoResumoDTO> pedidosResumoModelPage = new PageImpl<>(pedidosResumoModel, pageable, pedidosPage.getTotalElements());
+
+        return pedidosResumoModelPage;
     }
 
     @GetMapping("/{codigo}")
