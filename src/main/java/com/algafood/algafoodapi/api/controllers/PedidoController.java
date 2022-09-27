@@ -28,16 +28,18 @@ import com.algafood.algafoodapi.api.model.PedidoDTO;
 import com.algafood.algafoodapi.api.model.PedidoResumoDTO;
 // import com.algafood.algafoodapi.api.model.PedidoResumoDTO;
 import com.algafood.algafoodapi.api.model.input.PedidoInputDTO;
+import com.algafood.algafoodapi.core.data.PageableTranslator;
 import com.algafood.algafoodapi.domain.exceptions.EntityNotfoundException;
 import com.algafood.algafoodapi.domain.exceptions.NegocioException;
+import com.algafood.algafoodapi.domain.filter.PedidoFilter;
 import com.algafood.algafoodapi.domain.models.Pedido;
 import com.algafood.algafoodapi.domain.models.Usuario;
 import com.algafood.algafoodapi.domain.repository.PedidoRepository;
-import com.algafood.algafoodapi.domain.repository.filter.PedidoFilter;
 import com.algafood.algafoodapi.domain.service.CadastroPedidoService;
 // import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 // import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.algafood.algafoodapi.infrastructure.repository.spec.PedidoSpecs;
+import com.google.common.collect.ImmutableMap;
 
 @RestController
 @RequestMapping("/pedidos")
@@ -79,6 +81,7 @@ public class PedidoController {
 
     @GetMapping
     public Page<PedidoResumoDTO> pesquisar(PedidoFilter filter, Pageable pageable) {
+        pageable = translatePageable(pageable);
         Page<Pedido> pedidosPage = pedidoRepository.findAll(PedidoSpecs.usingFilter(filter), pageable);
 
         List<PedidoResumoDTO> pedidosResumoModel = pedidoResumoModel.toCollectionDTO(pedidosPage.getContent());
@@ -101,7 +104,7 @@ public class PedidoController {
 
             //TO-DO pegar usuário autenticado
             newPedido.setCliente(new Usuario());
-            newPedido.getCliente().setId(1L);
+            newPedido.getCliente().setId(2L);
     
             newPedido = cadastroPedido.salvar(newPedido);
     
@@ -109,5 +112,16 @@ public class PedidoController {
         } catch(EntityNotfoundException e) {
             throw new NegocioException(e.getMessage(), e);
         }
+    }
+
+    private Pageable translatePageable(Pageable pageable) {
+        var mapping = ImmutableMap.of(
+            "codigo", "codigo",
+            "nomeCliente", "cliente.nome",
+            "restaurante.nome", "restaurante.nome",
+            "valorTotal", "valorTotal"
+        );
+
+        return PageableTranslator.translate(pageable, mapping);
     }
 }

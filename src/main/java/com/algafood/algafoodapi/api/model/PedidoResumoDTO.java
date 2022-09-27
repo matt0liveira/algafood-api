@@ -21,7 +21,8 @@ public class PedidoResumoDTO {
     private OffsetDateTime dataConfirmacao;
     private OffsetDateTime dataEntrega;
     private OffsetDateTime dataCancelamento;
-    private UsuarioDTO cliente;
+    // private UsuarioDTO cliente;
+    private String nomeCliente;
     private RestauranteResumoDTO restaurante;
 
 }
