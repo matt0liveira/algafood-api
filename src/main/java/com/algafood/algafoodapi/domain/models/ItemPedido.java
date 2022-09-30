@@ -43,10 +43,6 @@ public class ItemPedido {
             precoUnitario = BigDecimal.ZERO;
         }
 
-        if(quantidade == null) {
-            quantidade = 0;
-        }
-
         this.setPrecoTotal(precoUnitario.multiply(new BigDecimal(quantidade)));
     }
 }
