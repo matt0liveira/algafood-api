@@ -1,4 +1,4 @@
-package com.algafood.algafoodapi.infrastructure.service;
+package com.algafood.algafoodapi.infrastructure.service.query;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,14 +23,22 @@ public class VendaQueryServiceImpl implements VendaQueryService {
     private EntityManager manager;
 
     @Override
-    public List<VendaDiaria> consultVendasDiarias(VendaDiariaFilter filter) {
+    public List<VendaDiaria> consultVendasDiarias(VendaDiariaFilter filter, String timeOffsset) {
         var builder = manager.getCriteriaBuilder();
         var query = builder.createQuery(VendaDiaria.class);   
         var root = query.from(Pedido.class);
         var predicates = new ArrayList<Predicate>();
 
+        var functionCovertTzDataCriacao = builder.function(
+            "convert_tz",
+        Date.class,
+            root.get("dataCriacao"),
+            builder.literal("+00:00"),
+            builder.literal(timeOffsset)
+        );
+
         var functionDateDataCriacao = builder.function(
-            "date", Date.class, root.get("dataCriacao"));
+            "date", Date.class, functionCovertTzDataCriacao);
 
         var selection = builder.construct(VendaDiaria.class,
             functionDateDataCriacao ,
