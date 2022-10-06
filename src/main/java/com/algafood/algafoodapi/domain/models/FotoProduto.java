@@ -2,23 +2,33 @@ package com.algafood.algafoodapi.domain.models;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.MapsId;
+import javax.persistence.OneToOne;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@Entity
 @Data
 @Embeddable
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class FotoProduto {
+
+    @Id
+    @EqualsAndHashCode.Include
+    @Column(name = "produto_id")
+    private Long id;
     
-    @Column(name = "foto_nome")
-    private String nome;
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    private Produto produto;
 
-    @Column(name = "foto_descricao")
+    private String nomeArquivo;
     private String descricao;
-
-    @Column(name = "foto_contentType")
     private String contentType;
-
-    @Column(name = "foto_tamanho")
     private Long tamanho;
 
 }

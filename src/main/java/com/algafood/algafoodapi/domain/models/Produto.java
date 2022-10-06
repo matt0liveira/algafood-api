@@ -40,7 +40,4 @@ public class Produto {
     @JoinColumn(nullable = false)
     private Restaurante restaurante;
 
-    // @Embedded
-    // private FotoProduto fotoProduto;
-
 }
