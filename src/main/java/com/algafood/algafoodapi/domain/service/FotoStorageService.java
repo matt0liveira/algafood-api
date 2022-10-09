@@ -10,6 +10,7 @@ public interface FotoStorageService {
     
     void armazenar(NewFoto newFoto);
     void remover(String nomeArquivo);
+    FotoRecuperada recuperar(String nomeArquivo);
 
     default String gerarNomeArquivo(String nomeArquivo) {
         return UUID.randomUUID() + "_" + nomeArquivo;
@@ -27,7 +28,23 @@ public interface FotoStorageService {
     @Builder
     class NewFoto {
         private String nomeArquivo;
+        private String contentType;
         private InputStream inputStream;
+    }
+
+    @Builder
+    @Getter
+    public class FotoRecuperada {
+        private InputStream inputStream;
+        private String url;
+
+        public boolean hasUrl() {
+            return url != null;
+        }
+
+        public boolean hasInputStream() {
+            return inputStream != null;
+        }
     }
 
 }
