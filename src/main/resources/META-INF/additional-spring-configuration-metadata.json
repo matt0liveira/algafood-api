@@ -34,6 +34,16 @@
       "name": "algafood.storage.type",
       "type": "java.lang.String",
       "description": "A description for 'algafood.storage.type'"
+    },
+    {
+      "name": "algafood.email.remetente",
+      "type": "java.lang.String",
+      "description": "A description for 'algafood.email.remetente'"
+    },
+    {
+      "name": "algafood.email.impl",
+      "type": "java.lang.String",
+      "description": "A description for 'algafood.email.impl'"
     }
   ]
 }
