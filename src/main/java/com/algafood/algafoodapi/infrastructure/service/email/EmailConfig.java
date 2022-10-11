@@ -13,15 +13,22 @@ public class EmailConfig {
     private ImplType type;
 
     public enum ImplType {
-        SMTP, FAKE
+        SMTP, FAKE, SANDBOX
     }
 
     @Bean
     public EnvioEmailService envioEmailService() {
-        if(ImplType.FAKE.equals(type)) {
-            return new FakeEnvioEmailService();
-        } else {
-            return new SmtpEnvioEmailService();
+        switch (type) {
+            case SMTP:
+                return new SmtpEnvioEmailService();
+            
+            case FAKE:
+                return new FakeEnvioEmailService();
+                
+            case SANDBOX:
+                return new SandBoxEnvioEmailService();
+            default:
+                return null;
         }
     }
 
