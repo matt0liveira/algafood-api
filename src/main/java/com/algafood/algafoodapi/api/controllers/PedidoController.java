@@ -1,6 +1,7 @@
 package com.algafood.algafoodapi.api.controllers;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -39,7 +40,6 @@ import com.algafood.algafoodapi.domain.service.CadastroPedidoService;
 // import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 // import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.algafood.algafoodapi.infrastructure.repository.spec.PedidoSpecs;
-import com.google.common.collect.ImmutableMap;
 
 @RestController
 @RequestMapping("/pedidos")
@@ -115,7 +115,7 @@ public class PedidoController {
     }
 
     private Pageable translatePageable(Pageable pageable) {
-        var mapping = ImmutableMap.of(
+        var mapping = Map.of(
             "codigo", "codigo",
             "nomeCliente", "cliente.nome",
             "restaurante.nome", "restaurante.nome",

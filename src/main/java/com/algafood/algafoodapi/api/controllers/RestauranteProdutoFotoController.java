@@ -1,7 +1,6 @@
 package com.algafood.algafoodapi.api.controllers;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 import javax.validation.Valid;
