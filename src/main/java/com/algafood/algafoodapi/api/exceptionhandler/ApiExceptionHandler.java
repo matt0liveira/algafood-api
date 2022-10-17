@@ -35,13 +35,13 @@ import com.fasterxml.jackson.databind.exc.PropertyBindingException;
 
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
-    
+
     /**
      *
      */
     private static final String ERROR_MSG_GENERIC = "Ocorreu um erro interno inesperado no sistema. Tente novamente e se o problema persistir, entre em contato com o administrador do sistema.";
 
-    @Autowired  
+    @Autowired
     private MessageSource messageSource;
 
     @Override
@@ -53,7 +53,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status,
             WebRequest request) {
-                
+
         return handleValidationInternal(ex, ex.getBindingResult(), headers, status, request);
     }
 
@@ -63,8 +63,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorApiType errorApiType = ErrorApiType.RESOURCE_NOT_FOUND;
         HttpStatus status = HttpStatus.NOT_FOUND;
         ErrorApi errorApi = instanceErrorApi(status, errorApiType, ex.getMessage())
-            .userMessage(ex.getMessage())
-            .build();
+                .userMessage(ex.getMessage())
+                .build();
 
         return handleExceptionInternal(ex, errorApi, new HttpHeaders(), status, req);
 
@@ -76,8 +76,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorApiType errorApiType = ErrorApiType.NEGOCIO;
         HttpStatus status = HttpStatus.BAD_REQUEST;
         ErrorApi errorApi = instanceErrorApi(status, errorApiType, ex.getMessage())
-            .userMessage(ex.getMessage())
-            .build();
+                .userMessage(ex.getMessage())
+                .build();
 
         return handleExceptionInternal(ex, errorApi, new HttpHeaders(), status, req);
 
@@ -85,12 +85,12 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(EntityInUseException.class)
     public ResponseEntity<?> handleEntityInUse(EntityInUseException ex, WebRequest req) {
-        
+
         ErrorApiType errorApiType = ErrorApiType.ENTITY_IN_USE;
         HttpStatus status = HttpStatus.CONFLICT;
         ErrorApi errorApi = instanceErrorApi(status, errorApiType, ex.getMessage())
-            .userMessage(ex.getMessage())
-            .build();
+                .userMessage(ex.getMessage())
+                .build();
 
         return handleExceptionInternal(ex, errorApi, new HttpHeaders(), status, req);
 
@@ -101,84 +101,93 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             HttpHeaders headers, HttpStatus status, WebRequest request) {
 
         Throwable rootCause = ExceptionUtils.getRootCause(ex);
-        
-        if(rootCause instanceof InvalidFormatException) {
+
+        if (rootCause instanceof InvalidFormatException) {
             return handleInvalidFormat((InvalidFormatException) rootCause, headers, status, request);
-        } else if(rootCause instanceof PropertyBindingException) {
+        } else if (rootCause instanceof PropertyBindingException) {
             return handlePropertyBinding((PropertyBindingException) rootCause, headers, status, request);
         }
 
         ErrorApiType errorApiType = ErrorApiType.UNREADABLE_BODY;
         ErrorApi errorApi = instanceErrorApi(status, errorApiType, "O corpo da requisição está inválido!")
-            .userMessage(ERROR_MSG_GENERIC)
-            .build();
-        
+                .userMessage(ERROR_MSG_GENERIC)
+                .build();
+
         return super.handleExceptionInternal(ex, errorApi, headers, status, request);
     }
 
-    private ResponseEntity<Object> handleInvalidFormat(InvalidFormatException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    private ResponseEntity<Object> handleInvalidFormat(InvalidFormatException ex, HttpHeaders headers,
+            HttpStatus status, WebRequest request) {
 
         ErrorApiType errorApiType = ErrorApiType.UNREADABLE_BODY;
 
         String path = joinPath(ex.getPath());
 
-        String detail = String.format("A propriedade '%s' recebeu o valor '%s' que é de um tipo inválido. Infome um valor compatível com o tipo %s.", path, ex.getValue(), ex.getTargetType().getSimpleName());
+        String detail = String.format(
+                "A propriedade '%s' recebeu o valor '%s' que é de um tipo inválido. Infome um valor compatível com o tipo %s.",
+                path, ex.getValue(), ex.getTargetType().getSimpleName());
 
         ErrorApi errorApi = instanceErrorApi(status, errorApiType, detail)
-            .userMessage(detail)
-            .build();
+                .userMessage(detail)
+                .build();
 
         return handleExceptionInternal(ex, errorApi, headers, status, request);
     }
 
-    private ResponseEntity<Object> handlePropertyBinding(PropertyBindingException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    private ResponseEntity<Object> handlePropertyBinding(PropertyBindingException ex, HttpHeaders headers,
+            HttpStatus status, WebRequest request) {
 
         ErrorApiType errorApiType = ErrorApiType.PROPERTY_NON_EXISTENT;
 
         String path = joinPath(ex.getPath());
 
-        String detail = String.format("Propriedade '%s' inexistente. Por favor, corrija ou remova a(s) propriedade(s) para continuar.", path);
+        String detail = String.format(
+                "Propriedade '%s' inexistente. Por favor, corrija ou remova a(s) propriedade(s) para continuar.", path);
         ErrorApi errorApi = instanceErrorApi(status, errorApiType, detail)
-            .userMessage(ERROR_MSG_GENERIC)
-            .build();
+                .userMessage(ERROR_MSG_GENERIC)
+                .build();
 
         return handleExceptionInternal(ex, errorApi, headers, status, request);
     }
 
     @Override
-    protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers,
+            HttpStatus status, WebRequest request) {
 
-        if(ex instanceof MethodArgumentTypeMismatchException) {
-            return handleMethodArgumentTypeMismatch((MethodArgumentTypeMismatchException)ex, headers, status, request);
+        if (ex instanceof MethodArgumentTypeMismatchException) {
+            return handleMethodArgumentTypeMismatch((MethodArgumentTypeMismatchException) ex, headers, status, request);
         }
 
         return super.handleTypeMismatch(ex, headers, status, request);
-       
+
     }
 
-    private ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-
+    private ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex,
+            HttpHeaders headers, HttpStatus status, WebRequest request) {
 
         ErrorApiType errorApiType = ErrorApiType.METHOD_ARGUMENT_TYPE_MISMATCH;
 
-        String detail = String.format("O parâmetrod da URL '%s' recebeu o valor '%s', que é de um tipo inválido. Informe um valor compatível com o tipo %s", ex.getName(), ex.getValue(), ex.getRequiredType().getName());
+        String detail = String.format(
+                "O parâmetrod da URL '%s' recebeu o valor '%s', que é de um tipo inválido. Informe um valor compatível com o tipo %s",
+                ex.getName(), ex.getValue(), ex.getRequiredType().getName());
 
         ErrorApi errorApi = instanceErrorApi(status, errorApiType, detail)
-            .userMessage(detail)
-            .build();
+                .userMessage(detail)
+                .build();
         return handleExceptionInternal(ex, errorApi, headers, status, request);
     }
 
     @Override
-    protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        
+    protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers,
+            HttpStatus status, WebRequest request) {
+
         ErrorApiType errorApiType = ErrorApiType.RESOURCE_NOT_FOUND;
 
         String detail = String.format("Recurso '%s' inexistente.", ex.getRequestURL());
 
         ErrorApi errorApi = instanceErrorApi(status, errorApiType, detail)
-            .userMessage(detail)
-            .build();
+                .userMessage(detail)
+                .build();
 
         return handleExceptionInternal(ex, errorApi, headers, status, request);
     }
@@ -188,7 +197,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         ErrorApiType errorApiType = ErrorApiType.SYSTEM_ERROR;
-        
+
         String detail = ERROR_MSG_GENERIC;
 
         ex.printStackTrace();
@@ -199,84 +208,87 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        
-       return handleValidationInternal(ex, ex.getBindingResult(), headers, status, request);
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+            HttpHeaders headers, HttpStatus status, WebRequest request) {
+
+        return handleValidationInternal(ex, ex.getBindingResult(), headers, status, request);
     }
 
-   private ResponseEntity<Object> handleValidationInternal(Exception ex, BindingResult bindingResult, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    private ResponseEntity<Object> handleValidationInternal(Exception ex, BindingResult bindingResult,
+            HttpHeaders headers, HttpStatus status, WebRequest request) {
 
         ErrorApiType errorApiType = ErrorApiType.INVALID_DATA;
 
         String detail = "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.";
 
         List<ErrorApi.Object> errorObjects = bindingResult.getAllErrors().stream()
-            .map(objError -> {
-                String msg = messageSource.getMessage(objError, LocaleContextHolder.getLocale());
+                .map(objError -> {
+                    String msg = messageSource.getMessage(objError, LocaleContextHolder.getLocale());
 
-                String name = objError.getObjectName();
+                    String name = objError.getObjectName();
 
-                if(objError instanceof FieldError) {
-                    name = ((FieldError) objError).getField();
-                }
+                    if (objError instanceof FieldError) {
+                        name = ((FieldError) objError).getField();
+                    }
 
-                return ErrorApi.Object.builder()
-                    .name(name)
-                    .userMessage(msg)
-                    .build();
-            })
-            .collect(Collectors.toList());
+                    return ErrorApi.Object.builder()
+                            .name(name)
+                            .userMessage(msg)
+                            .build();
+                })
+                .collect(Collectors.toList());
 
         ErrorApi errorApi = instanceErrorApi(status, errorApiType, detail)
-            .userMessage(detail)
-            .objects(errorObjects)
-            .build();
+                .userMessage(detail)
+                .objects(errorObjects)
+                .build();
 
         return handleExceptionInternal(ex, errorApi, headers, status, request);
 
-   }
+    }
 
-   public ResponseEntity<Object> handleValidationException(ValidationException ex, WebRequest request) {
+    public ResponseEntity<Object> handleValidationException(ValidationException ex, WebRequest request) {
 
         return handleValidationInternal(ex, ex.getBindingResult(), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 
-   }
+    }
 
     @Override
-    protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        
-        if(body == null) {
+    protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
+            HttpStatus status, WebRequest request) {
+
+        if (body == null) {
             body = ErrorApi.builder()
-                .title(status.getReasonPhrase())
-                .status(status.value())
-                .timestamp(OffsetDateTime.now())
-                .userMessage(ERROR_MSG_GENERIC)
-                .build();
-        } else if(body instanceof String) {
+                    .title(status.getReasonPhrase())
+                    .status(status.value())
+                    .timestamp(OffsetDateTime.now())
+                    .userMessage(ERROR_MSG_GENERIC)
+                    .build();
+        } else if (body instanceof String) {
             body = ErrorApi.builder()
-                .title((String) body)
-                .status(status.value())
-                .timestamp(OffsetDateTime.now())
-                .userMessage(ERROR_MSG_GENERIC)
-                .build();
+                    .title((String) body)
+                    .status(status.value())
+                    .timestamp(OffsetDateTime.now())
+                    .userMessage(ERROR_MSG_GENERIC)
+                    .build();
         }
 
         return super.handleExceptionInternal(ex, body, headers, status, request);
     }
 
-    public ErrorApi.ErrorApiBuilder instanceErrorApi(HttpStatus status, ErrorApiType errorApiType,String detail) {
+    public ErrorApi.ErrorApiBuilder instanceErrorApi(HttpStatus status, ErrorApiType errorApiType, String detail) {
         return ErrorApi.builder()
-            .status(status.value())
-            .type(errorApiType.getUri())
-            .title(errorApiType.getTitle())
-            .detail(detail)
-            .timestamp(OffsetDateTime.now());
+                .status(status.value())
+                .type(errorApiType.getUri())
+                .title(errorApiType.getTitle())
+                .detail(detail)
+                .timestamp(OffsetDateTime.now());
     }
 
     public String joinPath(List<Reference> refs) {
-        return  refs.stream()
-            .map(ref -> ref.getFieldName())
-            .collect(Collectors.joining("."));
+        return refs.stream()
+                .map(ref -> ref.getFieldName())
+                .collect(Collectors.joining("."));
     }
 
 }

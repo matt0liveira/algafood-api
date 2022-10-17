@@ -1,14 +1,8 @@
 package com.algafood.algafoodapi.api.controllers;
 
-import com.algafood.algafoodapi.api.assembler.CidadeAssembler.CidadeInputDisassembler;
-import com.algafood.algafoodapi.api.assembler.CidadeAssembler.CidadeModelAssembler;
-import com.algafood.algafoodapi.api.model.CidadeDTO;
-import com.algafood.algafoodapi.api.model.input.CidadeInputDTO;
-import com.algafood.algafoodapi.domain.exceptions.EstadoNotfoundException;
-import com.algafood.algafoodapi.domain.exceptions.NegocioException;
-import com.algafood.algafoodapi.domain.models.Cidade;
-import com.algafood.algafoodapi.domain.repository.CidadeRepository;
-import com.algafood.algafoodapi.domain.service.CadastroCidadeService;
+import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,14 +17,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
-import javax.validation.Valid;
+import com.algafood.algafoodapi.api.assembler.CidadeAssembler.CidadeInputDisassembler;
+import com.algafood.algafoodapi.api.assembler.CidadeAssembler.CidadeModelAssembler;
+import com.algafood.algafoodapi.api.controllers.openapi.CidadeControllerOpenApi;
+import com.algafood.algafoodapi.api.model.CidadeDTO;
+import com.algafood.algafoodapi.api.model.input.CidadeInputDTO;
+import com.algafood.algafoodapi.domain.exceptions.EstadoNotfoundException;
+import com.algafood.algafoodapi.domain.exceptions.NegocioException;
+import com.algafood.algafoodapi.domain.models.Cidade;
+import com.algafood.algafoodapi.domain.repository.CidadeRepository;
+import com.algafood.algafoodapi.domain.service.CadastroCidadeService;
 
 @RestController
 @RequestMapping("cidades")
-public class CidadeController {
-    
+public class CidadeController implements CidadeControllerOpenApi {
+
     @Autowired
     private CidadeRepository cidadeRepository;
 
@@ -51,7 +52,8 @@ public class CidadeController {
     }
 
     @PostMapping
-    public ResponseEntity<?> add(@RequestBody @Valid CidadeInputDTO cidadeInputDTO) {
+    public ResponseEntity<?> add(
+            @RequestBody @Valid CidadeInputDTO cidadeInputDTO) {
         try {
             Cidade cidade = cidadeInputDisassembler.toDomainObject(cidadeInputDTO);
             cidade = cadastroCidade.salvar(cidade);
@@ -62,11 +64,12 @@ public class CidadeController {
     }
 
     @PutMapping("/{cidadeId}")
-    public ResponseEntity<?> atualizar(@PathVariable Long cidadeId, @RequestBody @Valid CidadeInputDTO cidadeInputDTO) {
+    public ResponseEntity<?> atualizar(@PathVariable Long cidadeId,
+            @RequestBody @Valid CidadeInputDTO cidadeInputDTO) {
 
         try {
             Cidade cidadeCurrent = cadastroCidade.findOrFail(cidadeId);
-            
+
             cidadeInputDisassembler.copyToDomainOject(cidadeInputDTO, cidadeCurrent);
 
             cidadeCurrent = cadastroCidade.salvar(cidadeCurrent);
@@ -75,7 +78,7 @@ public class CidadeController {
         } catch (EstadoNotfoundException e) {
             throw new NegocioException(e.getMessage());
         }
-        
+
     }
 
     @DeleteMapping("/{cidadeId}")
