@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +27,7 @@ import com.algafood.algafoodapi.api.assembler.FormaPagamentoAssembler.FormaPagam
 import com.algafood.algafoodapi.api.assembler.FormaPagamentoAssembler.FormaPagamentoModelAssembler;
 import com.algafood.algafoodapi.api.model.FormaPagamentoDTO;
 import com.algafood.algafoodapi.api.model.input.FormaPagamentoInputDTO;
+import com.algafood.algafoodapi.api.openapi.controller.FormaPagamentoControllerOpenApi;
 import com.algafood.algafoodapi.domain.exceptions.FormaPagamentoNotfoundException;
 import com.algafood.algafoodapi.domain.exceptions.NegocioException;
 import com.algafood.algafoodapi.domain.models.FormaPagamento;
@@ -33,9 +35,9 @@ import com.algafood.algafoodapi.domain.repository.FormaPagamentoRepository;
 import com.algafood.algafoodapi.domain.service.CadastroFormaPagamentoService;
 
 @RestController
-@RequestMapping("formas-pagamentos")
-public class FormaPagamentoControlller {
-    
+@RequestMapping(path = "formas-pagamentos", produces = MediaType.APPLICATION_JSON_VALUE)
+public class FormaPagamentoControlller implements FormaPagamentoControllerOpenApi {
+
     @Autowired
     private FormaPagamentoRepository formaPagamentoRepository;
 
@@ -56,11 +58,11 @@ public class FormaPagamentoControlller {
 
         OffsetDateTime dataUltimaAtualizacao = formaPagamentoRepository.getDataUltimaAtualiazacao();
 
-        if(dataUltimaAtualizacao != null) {
+        if (dataUltimaAtualizacao != null) {
             eTag = String.valueOf(dataUltimaAtualizacao.toEpochSecond());
         }
 
-        if(req.checkNotModified(eTag)) {
+        if (req.checkNotModified(eTag)) {
             return null;
         }
 
@@ -69,35 +71,37 @@ public class FormaPagamentoControlller {
         List<FormaPagamentoDTO> formasPagamentosModel = formaPagamentoModelAssembler.toCollectionDTO(formasPagamentos);
 
         return ResponseEntity.ok()
-            .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
-            .eTag(eTag)
-            .body(formasPagamentosModel);
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
+                .eTag(eTag)
+                .body(formasPagamentosModel);
     }
 
     @GetMapping("/{formaPagamentoId}")
     public ResponseEntity<FormaPagamentoDTO> buscar(@PathVariable Long formaPagamentoId) {
-        FormaPagamentoDTO formaPagamentoModel = formaPagamentoModelAssembler.toDTO(cadastroFormaPagamentoService.findOrFail(formaPagamentoId));
+        FormaPagamentoDTO formaPagamentoModel = formaPagamentoModelAssembler
+                .toDTO(cadastroFormaPagamentoService.findOrFail(formaPagamentoId));
 
         return ResponseEntity.ok()
-            .cacheControl(CacheControl.maxAge(15, TimeUnit.SECONDS).cachePublic())
-            .body(formaPagamentoModel);
+                .cacheControl(CacheControl.maxAge(15, TimeUnit.SECONDS).cachePublic())
+                .body(formaPagamentoModel);
     }
 
     @PostMapping
-    public ResponseEntity<?> add(@RequestBody @Valid FormaPagamentoInputDTO formaPagamentoInputDTO) {
+    public ResponseEntity<FormaPagamentoDTO> add(@RequestBody @Valid FormaPagamentoInputDTO formaPagamentoInputDTO) {
         try {
             FormaPagamento formaPagamento = formaPagamentoInputDisassembler.toDomainObject(formaPagamentoInputDTO);
 
             formaPagamento = cadastroFormaPagamentoService.salvar(formaPagamento);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(formaPagamentoModelAssembler.toDTO(formaPagamento));
-        } catch(FormaPagamentoNotfoundException e) {
+        } catch (FormaPagamentoNotfoundException e) {
             throw new NegocioException(e.getMessage());
         }
     }
 
     @PutMapping("/{formaPagamentoId}")
-    public ResponseEntity<?> alterar(@PathVariable Long formaPagamentoId, @RequestBody FormaPagamentoInputDTO formaPagamentoInputDTO) {
+    public ResponseEntity<FormaPagamentoDTO> alterar(@PathVariable Long formaPagamentoId,
+            @RequestBody FormaPagamentoInputDTO formaPagamentoInputDTO) {
         try {
             FormaPagamento formaPagamentoCurrent = cadastroFormaPagamentoService.findOrFail(formaPagamentoId);
 
@@ -106,7 +110,7 @@ public class FormaPagamentoControlller {
             formaPagamentoCurrent = cadastroFormaPagamentoService.salvar(formaPagamentoCurrent);
 
             return ResponseEntity.status(HttpStatus.OK).body(formaPagamentoModelAssembler.toDTO(formaPagamentoCurrent));
-        } catch(FormaPagamentoNotfoundException e) {
+        } catch (FormaPagamentoNotfoundException e) {
             throw new NegocioException(e.getMessage());
         }
     }
