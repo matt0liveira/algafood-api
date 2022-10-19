@@ -15,19 +15,19 @@ import io.swagger.annotations.ApiParam;
 public interface GrupoControllerOpenApi {
 
         @ApiOperation("Lista todos os grupos de permissões")
-        public List<GrupoDTO> listar();
+        List<GrupoDTO> listar();
 
         @ApiOperation("Busca um grupo pelo ID")
-        public GrupoDTO buscar(@ApiParam(value = "ID de um grupo", example = "1") Long grupoId);
+        GrupoDTO buscar(@ApiParam(value = "ID de um grupo", example = "1") Long grupoId);
 
         @ApiOperation("Cadastra um grupo de permissão")
-        public ResponseEntity<GrupoDTO> add(
+        ResponseEntity<GrupoDTO> add(
                         @ApiParam(name = "Corpo", value = "Representação de um novo grupo") GrupoInputDTO grupoInput);
 
         @ApiOperation("Altera dados de cadastro do grupo de permissão pelo ID")
-        public ResponseEntity<GrupoDTO> alterar(@ApiParam(value = "ID de um grupo") Long grupoId,
+        ResponseEntity<GrupoDTO> alterar(@ApiParam(value = "ID de um grupo") Long grupoId,
                         @ApiParam(value = "Representação de um grupo atualizado") GrupoInputDTO grupoInput);
 
         @ApiOperation("Remove um grupo de permissão pelo ID")
-        public void remover(@ApiParam(value = "ID de um grupo", example = "1") Long grupoId);
+        void remover(@ApiParam(value = "ID de um grupo", example = "1") Long grupoId);
 }

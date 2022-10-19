@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +19,7 @@ import com.algafood.algafoodapi.api.assembler.ProdutoAssembler.ProdutoInputDisas
 import com.algafood.algafoodapi.api.assembler.ProdutoAssembler.ProdutoModelAssembler;
 import com.algafood.algafoodapi.api.model.ProdutoDTO;
 import com.algafood.algafoodapi.api.model.input.ProdutoInputDTO;
+import com.algafood.algafoodapi.api.openapi.controller.RestauranteProdutoControllerOpenApi;
 import com.algafood.algafoodapi.domain.models.Produto;
 import com.algafood.algafoodapi.domain.models.Restaurante;
 import com.algafood.algafoodapi.domain.repository.ProdutoRepository;
@@ -25,8 +27,8 @@ import com.algafood.algafoodapi.domain.service.CadastroProdutoService;
 import com.algafood.algafoodapi.domain.service.CadastroRestauranteService;
 
 @RestController
-@RequestMapping("/restaurantes/{restauranteId}/produtos")
-public class RestauranteProdutoController {
+@RequestMapping(path = "/restaurantes/{restauranteId}/produtos", produces = MediaType.APPLICATION_JSON_VALUE)
+public class RestauranteProdutoController implements RestauranteProdutoControllerOpenApi {
 
     @Autowired
     private ProdutoModelAssembler produtoModel;
@@ -44,11 +46,12 @@ public class RestauranteProdutoController {
     private ProdutoInputDisassembler produtoInputDisassembler;
 
     @GetMapping
-    public List<ProdutoDTO> listar(@PathVariable Long restauranteId, @RequestParam(required = false) boolean includeInativos) {
+    public List<ProdutoDTO> listar(@PathVariable Long restauranteId,
+            @RequestParam(required = false) boolean includeInativos) {
         Restaurante restaurante = cadastroRestaurante.findOrFail(restauranteId);
         List<Produto> produtos = null;
 
-        if(includeInativos) {
+        if (includeInativos) {
             produtos = produtoRepository.findAllByRestaurante(restaurante);
         } else {
             produtos = produtoRepository.findAtivosByRestaurante(restaurante);
@@ -78,7 +81,8 @@ public class RestauranteProdutoController {
     }
 
     @PutMapping("/{produtoId}")
-    public ProdutoDTO alterar(@PathVariable Long restauranteId, @PathVariable Long produtoId, @RequestBody ProdutoInputDTO produtoInput) {
+    public ProdutoDTO alterar(@PathVariable Long restauranteId, @PathVariable Long produtoId,
+            @RequestBody ProdutoInputDTO produtoInput) {
         Produto produtoCurrent = cadastroProduto.findOrFail(restauranteId, produtoId);
 
         produtoInputDisassembler.copyToDomainObject(produtoInput, produtoCurrent);

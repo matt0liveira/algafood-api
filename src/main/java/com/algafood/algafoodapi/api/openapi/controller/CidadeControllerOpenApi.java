@@ -20,20 +20,20 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public interface CidadeControllerOpenApi {
 
         @ApiOperation("Lista todas as cidades")
-        public List<CidadeDTO> listar();
+        List<CidadeDTO> listar();
 
         @ApiOperation("Cadastra uma cidade")
         @ApiResponses({ @ApiResponse(responseCode = "201", description = "Created")
 
         })
-        public ResponseEntity<?> add(
+        ResponseEntity<?> add(
                         @ApiParam(name = "Corpo", value = "Representação de uma nova cidade") CidadeInputDTO cidadeInputDTO);
 
         @ApiOperation("Altera os dados do cadastro de uma cidade por id")
         @ApiResponses({
                         @ApiResponse(responseCode = "404", description = "Cidade não encontrada", content = @Content(schema = @Schema(implementation = ErrorApi.class)))
         })
-        public ResponseEntity<?> atualizar(@ApiParam(value = "ID de uma cidade", example = "1") Long cidadeId,
+        ResponseEntity<?> atualizar(@ApiParam(value = "ID de uma cidade", example = "1") Long cidadeId,
                         @ApiParam(name = "Corpo", value = "Representação de uma cidade com os dados atualizados") CidadeInputDTO cidadeInputDTO);
 
         @ApiOperation("Remove uma cidade por id")
@@ -41,5 +41,5 @@ public interface CidadeControllerOpenApi {
                         @ApiResponse(responseCode = "204", description = "Cidade excluída"),
                         @ApiResponse(responseCode = "404", description = "Cidade não encontrada", content = @Content(schema = @Schema(implementation = ErrorApi.class)))
         })
-        public void remover(@ApiParam("ID de uma cidade") Long cidadeId);
+        void remover(@ApiParam("ID de uma cidade") Long cidadeId);
 }

@@ -23,7 +23,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 public interface CozinhaControllerOpenApi {
 
 	@ApiOperation("Lista todas as cozinhas")
-	public Page<CozinhaDTO> listar(@PageableDefault(size = 10) Pageable pageable);
+	Page<CozinhaDTO> listar(@PageableDefault(size = 10) Pageable pageable);
 
 	@ApiResponses({
 			@ApiResponse(responseCode = "404", description = "Cozinha não encontrada", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
@@ -31,19 +31,19 @@ public interface CozinhaControllerOpenApi {
 			@ApiResponse(responseCode = "400", description = "Requisição inválida (erro do cliente)", content = @Content(schema = @Schema(implementation = ErrorApi.class)))
 	})
 	@ApiOperation("Busca uma cozinha pelo ID")
-	public CozinhaDTO buscar(@ApiParam(example = "1", value = "ID da cozinha") Long cozinhaId);
+	CozinhaDTO buscar(@ApiParam(example = "1", value = "ID da cozinha") Long cozinhaId);
 
 	@ApiResponses({
 			@ApiResponse(responseCode = "201", description = "Cozinha cadastrada com sucesso")
 	})
 	@ApiOperation("Cadastra uma cozinha")
-	public ResponseEntity<?> add(CozinhaInputDTO cozinhaInputDTO);
+	ResponseEntity<?> add(CozinhaInputDTO cozinhaInputDTO);
 
 	@ApiResponses({
 			@ApiResponse(responseCode = "404", description = "Cozinha não encontrada", content = @Content(schema = @Schema(implementation = ErrorApi.class)))
 	})
 	@ApiOperation("Altera os dados do cadastro de uma cozinha pelo ID")
-	public ResponseEntity<CozinhaDTO> alterar(Long cozinhaId, CozinhaInputDTO cozinhaInputDTO);
+	ResponseEntity<CozinhaDTO> alterar(Long cozinhaId, CozinhaInputDTO cozinhaInputDTO);
 
 	@ApiResponses({
 			@ApiResponse(responseCode = "404", description = "Cozinha não encontrada", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
@@ -51,8 +51,8 @@ public interface CozinhaControllerOpenApi {
 			@ApiResponse(responseCode = "204", description = "Cozinha excluída com sucesso")
 	})
 	@ApiOperation("Remove uma cozinha pelo ID")
-	public void remover(Long cozinhaId);
+	void remover(Long cozinhaId);
 
 	@ApiOperation("Busca uma cozinha pelo NOME")
-	public List<CozinhaDTO> buscarPorNome(String nome);
+	List<CozinhaDTO> buscarPorNome(String nome);
 }

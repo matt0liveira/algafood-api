@@ -24,15 +24,15 @@ public interface PedidoControllerOpenApi {
 
     @ApiImplicitParams(@ApiImplicitParam(name = "fields", value = "Nome das propriedades para filtrar na resposta, separadas por vírgula", paramType = "query", type = "string"))
     @ApiOperation("Pesquisa de pedidos")
-    public Page<PedidoResumoDTO> pesquisar(PedidoFilter filter, Pageable pageable);
+    Page<PedidoResumoDTO> pesquisar(PedidoFilter filter, Pageable pageable);
 
     @ApiImplicitParams(@ApiImplicitParam(name = "fields", value = "Nome das propriedades para filtrar na resposta, separadas por vírgula", paramType = "query", type = "string"))
     @ApiResponses({
             @ApiResponse(responseCode = "404", description = "Pedido não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class)))
     })
     @ApiOperation("Busca de pedidos pelo CÓDIGO")
-    public PedidoDTO buscar(@ApiParam(value = "Código do pedido") String codigo);
+    PedidoDTO buscar(@ApiParam(value = "Código do pedido") String codigo);
 
     @ApiOperation("Emissão de pedidos")
-    public PedidoDTO emitir(PedidoInputDTO pedidoInput);
+    PedidoDTO emitir(PedidoInputDTO pedidoInput);
 }
