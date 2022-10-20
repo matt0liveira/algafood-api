@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,18 +53,19 @@ public class RestauranteProdutoFotoController implements RestauranteProdutoFotoC
 
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public FotoProdutoDTO atualizarFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId,
-            @Valid FotoProdutoInputDTO fotoProdutoInput) throws IOException {
+            @Valid FotoProdutoInputDTO fotoProdutoInput, @RequestPart(required = true) MultipartFile arquivo)
+            throws IOException {
         Produto produto = cadastroProduto.findOrFail(restauranteId, produtoId);
 
-        MultipartFile file = fotoProdutoInput.getArquivo();
+        // MultipartFile file = fotoProdutoInput.getArquivo();
         FotoProduto foto = new FotoProduto();
         foto.setProduto(produto);
         foto.setDescricao(fotoProdutoInput.getDescricao());
-        foto.setContentType(file.getContentType());
-        foto.setTamanho(file.getSize());
-        foto.setNomeArquivo(file.getOriginalFilename());
+        foto.setContentType(arquivo.getContentType());
+        foto.setTamanho(arquivo.getSize());
+        foto.setNomeArquivo(arquivo.getOriginalFilename());
 
-        FotoProduto fotoSalva = catalogoFoto.salvar(foto, file.getInputStream());
+        FotoProduto fotoSalva = catalogoFoto.salvar(foto, arquivo.getInputStream());
 
         return fotoProdutoModel.toDTO(fotoSalva);
     }

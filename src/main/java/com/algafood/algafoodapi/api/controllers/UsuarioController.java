@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,14 +23,15 @@ import com.algafood.algafoodapi.api.model.UsuarioDTO;
 import com.algafood.algafoodapi.api.model.input.SenhaInput;
 import com.algafood.algafoodapi.api.model.input.UsuarioComSenhaInput;
 import com.algafood.algafoodapi.api.model.input.UsuarioInputDTO;
+import com.algafood.algafoodapi.api.openapi.controller.UsuarioControllerOpenApi;
 import com.algafood.algafoodapi.domain.models.Usuario;
 import com.algafood.algafoodapi.domain.repository.UsuarioRepository;
 import com.algafood.algafoodapi.domain.service.CadastroUsuarioService;
 
 @RestController
-@RequestMapping("/usuarios")
-public class UsuarioController {
-    
+@RequestMapping(path = "/usuarios", produces = MediaType.APPLICATION_JSON_VALUE)
+public class UsuarioController implements UsuarioControllerOpenApi {
+
     @Autowired
     private UsuarioRepository usuarioRepository;
 
@@ -64,7 +66,8 @@ public class UsuarioController {
     }
 
     @PutMapping("/{usuarioId}")
-    public ResponseEntity<UsuarioDTO> alterar(@RequestBody @Valid UsuarioInputDTO usuarioInputDTO, @PathVariable Long usuarioId) {
+    public ResponseEntity<UsuarioDTO> alterar(@RequestBody @Valid UsuarioInputDTO usuarioInputDTO,
+            @PathVariable Long usuarioId) {
         Usuario usuarioCurrent = cadastroUsuario.findOrFail(usuarioId);
         usuarioInputDisassembler.copyToDomainObject(usuarioInputDTO, usuarioCurrent);
         cadastroUsuario.salvar(usuarioCurrent);

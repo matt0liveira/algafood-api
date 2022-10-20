@@ -23,38 +23,36 @@ public class VendaQueryServiceImpl implements VendaQueryService {
     private EntityManager manager;
 
     @Override
-    public List<VendaDiaria> consultVendasDiarias(VendaDiariaFilter filter, String timeOffsset) {
+    public List<VendaDiaria> consultVendasDiarias(VendaDiariaFilter filter, String timeOffset) {
         var builder = manager.getCriteriaBuilder();
-        var query = builder.createQuery(VendaDiaria.class);   
+        var query = builder.createQuery(VendaDiaria.class);
         var root = query.from(Pedido.class);
         var predicates = new ArrayList<Predicate>();
 
         var functionCovertTzDataCriacao = builder.function(
-            "convert_tz",
-        Date.class,
-            root.get("dataCriacao"),
-            builder.literal("+00:00"),
-            builder.literal(timeOffsset)
-        );
+                "convert_tz",
+                Date.class,
+                root.get("dataCriacao"),
+                builder.literal("+00:00"),
+                builder.literal(timeOffset));
 
         var functionDateDataCriacao = builder.function(
-            "date", Date.class, functionCovertTzDataCriacao);
+                "date", Date.class, functionCovertTzDataCriacao);
 
         var selection = builder.construct(VendaDiaria.class,
-            functionDateDataCriacao ,
-            builder.count(root.get("id")),
-            builder.sum(root.get("valorTotal"))
-        );
+                functionDateDataCriacao,
+                builder.count(root.get("id")),
+                builder.sum(root.get("valorTotal")));
 
-        if(filter.getRestauranteId() != null) {
+        if (filter.getRestauranteId() != null) {
             predicates.add(builder.equal(root.get("restaurante"), filter.getRestauranteId()));
         }
 
-        if(filter.getDataCriacaoInicio() != null) {
+        if (filter.getDataCriacaoInicio() != null) {
             predicates.add(builder.greaterThanOrEqualTo(root.get("dataCriacao"), filter.getDataCriacaoInicio()));
         }
 
-        if(filter.getDataCriacaoFim() != null) {
+        if (filter.getDataCriacaoFim() != null) {
             predicates.add(builder.lessThanOrEqualTo(root.get("dataCriacao"), filter.getDataCriacaoFim()));
         }
 
@@ -63,8 +61,8 @@ public class VendaQueryServiceImpl implements VendaQueryService {
         query.select(selection);
         query.where(predicates.toArray(new Predicate[0]));
         query.groupBy(functionDateDataCriacao);
-        
+
         return manager.createQuery(query).getResultList();
     }
-    
+
 }
