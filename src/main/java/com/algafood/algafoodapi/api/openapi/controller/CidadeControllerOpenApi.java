@@ -22,6 +22,9 @@ public interface CidadeControllerOpenApi {
         @ApiOperation("Lista todas as cidades")
         List<CidadeDTO> listar();
 
+        @ApiOperation("Busca uma cidade pelo ID")
+        ResponseEntity<CidadeDTO> buscar(Long cidadeId);
+
         @ApiOperation("Cadastra uma cidade")
         @ApiResponses({ @ApiResponse(responseCode = "201", description = "Created")
 
