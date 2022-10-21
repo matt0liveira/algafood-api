@@ -50,6 +50,11 @@ public class EstadoController implements EstadoControllerOpenApi {
         return estadoModelAssembler.toCollectionDTO(estados);
     }
 
+    @GetMapping("/{estadoId}")
+    public ResponseEntity<EstadoDTO> buscar(@PathVariable Long estadoId) {
+        return ResponseEntity.ok(estadoModelAssembler.toDTO(cadastroEstado.findOrFail(estadoId)));
+    }
+
     @PostMapping
     public ResponseEntity<EstadoDTO> add(@RequestBody @Valid EstadoInputDTO estadoInputDTO) {
         Estado estado = estadoInputDisassembler.toDomainObject(estadoInputDTO);

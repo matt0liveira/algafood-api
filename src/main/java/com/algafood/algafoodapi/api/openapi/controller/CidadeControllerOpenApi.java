@@ -1,7 +1,6 @@
 package com.algafood.algafoodapi.api.openapi.controller;
 
-import java.util.List;
-
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 
 import com.algafood.algafoodapi.api.exceptionhandler.ErrorApi;
@@ -20,7 +19,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public interface CidadeControllerOpenApi {
 
         @ApiOperation("Lista todas as cidades")
-        List<CidadeDTO> listar();
+        CollectionModel<CidadeDTO> listar();
 
         @ApiOperation("Busca uma cidade pelo ID")
         ResponseEntity<CidadeDTO> buscar(Long cidadeId);
