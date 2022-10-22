@@ -3,7 +3,7 @@ package com.algafood.algafoodapi.api.openapi.controller;
 import org.springframework.hateoas.CollectionModel;
 
 import com.algafood.algafoodapi.api.exceptionhandler.ErrorApi;
-import com.algafood.algafoodapi.api.model.UsuarioDTO;
+import com.algafood.algafoodapi.api.model.UsuarioModel;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,7 +20,7 @@ public interface RestauranteUsuarioControllerOpenApi {
                         @ApiResponse(responseCode = "404", description = "Restaurante não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class)))
         })
         @ApiOperation("Lista todos responsáveis por um restaurante")
-        public CollectionModel<UsuarioDTO> listar(@ApiParam(value = "ID do restaurante") Long restauranteId);
+        public CollectionModel<UsuarioModel> listar(@ApiParam(value = "ID do restaurante") Long restauranteId);
 
         @ApiResponses({
                         @ApiResponse(responseCode = "404", description = "Restaurante e/ou usuário não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class))),

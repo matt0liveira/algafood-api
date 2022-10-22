@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.algafood.algafoodapi.api.assembler.UsuarioAssembler.UsuarioModelAssembler;
-import com.algafood.algafoodapi.api.model.UsuarioDTO;
+import com.algafood.algafoodapi.api.model.UsuarioModel;
 import com.algafood.algafoodapi.api.openapi.controller.RestauranteUsuarioControllerOpenApi;
 import com.algafood.algafoodapi.domain.models.Restaurante;
 import com.algafood.algafoodapi.domain.service.CadastroRestauranteService;
@@ -30,7 +30,7 @@ public class RestauranteUsuarioController implements RestauranteUsuarioControlle
     private UsuarioModelAssembler usuarioModel;
 
     @GetMapping
-    public CollectionModel<UsuarioDTO> listar(@PathVariable Long restauranteId) {
+    public CollectionModel<UsuarioModel> listar(@PathVariable Long restauranteId) {
         Restaurante restaurante = cadastroRestaurante.findOrFail(restauranteId);
 
         return usuarioModel

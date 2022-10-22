@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.algafood.algafoodapi.api.ResourceUriHelper;
 import com.algafood.algafoodapi.api.assembler.CidadeAssembler.CidadeInputDisassembler;
 import com.algafood.algafoodapi.api.assembler.CidadeAssembler.CidadeModelAssembler;
-import com.algafood.algafoodapi.api.model.CidadeDTO;
-import com.algafood.algafoodapi.api.model.input.CidadeInputDTO;
+import com.algafood.algafoodapi.api.model.CidadeModel;
+import com.algafood.algafoodapi.api.model.input.CidadeInputModel;
 import com.algafood.algafoodapi.api.openapi.controller.CidadeControllerOpenApi;
 import com.algafood.algafoodapi.domain.exceptions.EstadoNotfoundException;
 import com.algafood.algafoodapi.domain.exceptions.NegocioException;
@@ -48,7 +48,7 @@ public class CidadeController implements CidadeControllerOpenApi {
     private CidadeInputDisassembler cidadeInputDisassembler;
 
     @GetMapping
-    public CollectionModel<CidadeDTO> listar() {
+    public CollectionModel<CidadeModel> listar() {
         List<Cidade> cidades = cidadeRepository.findAll();
 
         return cidadeModelAssembler.toCollectionModel(cidades);
@@ -56,15 +56,15 @@ public class CidadeController implements CidadeControllerOpenApi {
 
     @Override
     @GetMapping("/{cidadeId}")
-    public ResponseEntity<CidadeDTO> buscar(@PathVariable Long cidadeId) {
-        CidadeDTO cidadeModel = cidadeModelAssembler.toModel(cadastroCidade.findOrFail(cidadeId));
+    public ResponseEntity<CidadeModel> buscar(@PathVariable Long cidadeId) {
+        CidadeModel cidadeModel = cidadeModelAssembler.toModel(cadastroCidade.findOrFail(cidadeId));
 
         return ResponseEntity.ok(cidadeModel);
     }
 
     @PostMapping
     public ResponseEntity<?> add(
-            @RequestBody @Valid CidadeInputDTO cidadeInputDTO) {
+            @RequestBody @Valid CidadeInputModel cidadeInputDTO) {
         try {
             Cidade cidade = cidadeInputDisassembler.toDomainObject(cidadeInputDTO);
             cidade = cadastroCidade.salvar(cidade);
@@ -79,7 +79,7 @@ public class CidadeController implements CidadeControllerOpenApi {
 
     @PutMapping("/{cidadeId}")
     public ResponseEntity<?> atualizar(@PathVariable Long cidadeId,
-            @RequestBody @Valid CidadeInputDTO cidadeInputDTO) {
+            @RequestBody @Valid CidadeInputModel cidadeInputDTO) {
 
         try {
             Cidade cidadeCurrent = cadastroCidade.findOrFail(cidadeId);

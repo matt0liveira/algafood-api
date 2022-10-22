@@ -1,29 +1,41 @@
 package com.algafood.algafoodapi.api.assembler.EstadoAssembler;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
-import com.algafood.algafoodapi.api.model.EstadoDTO;
+import com.algafood.algafoodapi.api.controllers.EstadoController;
+import com.algafood.algafoodapi.api.model.EstadoModel;
 import com.algafood.algafoodapi.domain.models.Estado;
 
 @Component
-public class EstadoModelAssembler {
-    
+public class EstadoModelAssembler extends RepresentationModelAssemblerSupport<Estado, EstadoModel> {
+
     @Autowired
     private ModelMapper modelMapper;
 
-    public EstadoDTO toDTO(Estado estado) {
-        return modelMapper.map(estado, EstadoDTO.class);
+    public EstadoModelAssembler() {
+        super(EstadoController.class, EstadoModel.class);
     }
 
-    public List<EstadoDTO> toCollectionDTO(List<Estado> estados) {
-        return estados.stream()
-            .map(estado -> toDTO(estado))
-            .collect(Collectors.toList());       
+    @Override
+    public EstadoModel toModel(Estado estado) {
+        EstadoModel estadoModel = createModelWithId(estado.getId(), estado);
+
+        modelMapper.map(estado, estadoModel);
+
+        estadoModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EstadoController.class).listar())
+                .withRel(IanaLinkRelations.COLLECTION));
+
+        return estadoModel;
     }
 
+    @Override
+    public CollectionModel<EstadoModel> toCollectionModel(Iterable<? extends Estado> entities) {
+        return super.toCollectionModel(entities).add(WebMvcLinkBuilder.linkTo(EstadoController.class).withSelfRel());
+    }
 }

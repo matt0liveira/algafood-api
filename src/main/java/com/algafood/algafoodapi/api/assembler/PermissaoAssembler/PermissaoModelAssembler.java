@@ -7,22 +7,22 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.algafood.algafoodapi.api.model.PermissaoDTO;
+import com.algafood.algafoodapi.api.model.PermissaoModel;
 import com.algafood.algafoodapi.domain.models.Permissao;
 
 @Component
 public class PermissaoModelAssembler {
-    
+
     @Autowired
     private ModelMapper modelMapper;
 
-    public PermissaoDTO toDTO(Permissao permissao) {
-        return modelMapper.map(permissao, PermissaoDTO.class);
+    public PermissaoModel toDTO(Permissao permissao) {
+        return modelMapper.map(permissao, PermissaoModel.class);
     }
 
-    public List<PermissaoDTO> toCollectionDTO(List<Permissao> permissoes) {
+    public List<PermissaoModel> toCollectionDTO(List<Permissao> permissoes) {
         return permissoes.stream()
-            .map(permissao -> toDTO(permissao))
-            .collect(Collectors.toList());
+                .map(permissao -> toDTO(permissao))
+                .collect(Collectors.toList());
     }
 }

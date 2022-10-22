@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.algafood.algafoodapi.api.assembler.FormaPagamentoAssembler.FormaPagamentoModelAssembler;
-import com.algafood.algafoodapi.api.model.FormaPagamentoDTO;
+import com.algafood.algafoodapi.api.model.FormaPagamentoModel;
 import com.algafood.algafoodapi.api.openapi.controller.RestauranteFormaPagamentoControllerOpenApi;
 import com.algafood.algafoodapi.domain.models.Restaurante;
 import com.algafood.algafoodapi.domain.service.CadastroRestauranteService;
@@ -33,7 +33,7 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
     private FormaPagamentoModelAssembler formaPagamentoModelAssembler;
 
     @GetMapping
-    public List<FormaPagamentoDTO> listar(@PathVariable Long restauranteId) {
+    public List<FormaPagamentoModel> listar(@PathVariable Long restauranteId) {
         Restaurante restaurante = cadastroRestaurante.findOrFail(restauranteId);
 
         return formaPagamentoModelAssembler.toCollectionDTO(restaurante.getFormasPagamento());

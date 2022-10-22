@@ -15,7 +15,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class FotoProdutoInputDTO {
+public class FotoProdutoInputModel {
 
     @ApiModelProperty(hidden = true)
     @NotNull

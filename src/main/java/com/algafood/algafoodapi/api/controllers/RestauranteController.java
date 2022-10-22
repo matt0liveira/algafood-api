@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.algafood.algafoodapi.api.assembler.RestauranteAssembler.RestauranteInputDisassembler;
 import com.algafood.algafoodapi.api.assembler.RestauranteAssembler.RestauranteModelAssembler;
-import com.algafood.algafoodapi.api.model.RestauranteDTO;
+import com.algafood.algafoodapi.api.model.RestauranteModel;
 import com.algafood.algafoodapi.api.model.input.RestauranteInputDTO;
 import com.algafood.algafoodapi.api.model.view.RestauranteView;
 import com.algafood.algafoodapi.api.openapi.controller.RestauranteControllerOpenApi;
@@ -55,7 +55,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 
     @GetMapping
     public MappingJacksonValue listar(@RequestParam(required = false) String projecao) {
-        List<RestauranteDTO> restaurantesModel = restauranteModelAssembler
+        List<RestauranteModel> restaurantesModel = restauranteModelAssembler
                 .toCollectionDTO(restauranteRepository.findAll());
 
         MappingJacksonValue restaurantesWrapper = new MappingJacksonValue(restaurantesModel);
@@ -72,22 +72,22 @@ public class RestauranteController implements RestauranteControllerOpenApi {
     }
 
     @GetMapping("/{restauranteId}")
-    public ResponseEntity<RestauranteDTO> buscar(@PathVariable Long restauranteId) {
+    public ResponseEntity<RestauranteModel> buscar(@PathVariable Long restauranteId) {
 
         Restaurante restaurante = cadastroRestaurante.findOrFail(restauranteId);
 
-        RestauranteDTO restauranteDTO = restauranteModelAssembler.toDTO(restaurante);
+        RestauranteModel restauranteDTO = restauranteModelAssembler.toDTO(restaurante);
 
         return ResponseEntity.ok(restauranteDTO);
 
     }
 
     @PostMapping
-    public ResponseEntity<RestauranteDTO> add(@RequestBody @Valid RestauranteInputDTO restauranteInputDTO) {
+    public ResponseEntity<RestauranteModel> add(@RequestBody @Valid RestauranteInputDTO restauranteInputDTO) {
         try {
             Restaurante restaurante = restauranteInputDisassembler.toDomainObject(restauranteInputDTO);
 
-            RestauranteDTO restauranteDTO = restauranteModelAssembler.toDTO(cadastroRestaurante.salvar(restaurante));
+            RestauranteModel restauranteDTO = restauranteModelAssembler.toDTO(cadastroRestaurante.salvar(restaurante));
             return ResponseEntity.status(HttpStatus.CREATED).body(restauranteDTO);
         } catch (EntityNotfoundException e) {
             throw new NegocioException(e.getMessage());
@@ -96,7 +96,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
     }
 
     @PutMapping("{restauranteId}")
-    public ResponseEntity<RestauranteDTO> atualizar(@PathVariable Long restauranteId,
+    public ResponseEntity<RestauranteModel> atualizar(@PathVariable Long restauranteId,
             @RequestBody @Valid RestauranteInputDTO restauranteInputDTO) {
 
         try {
@@ -108,7 +108,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
             // BeanUtils.copyProperties(restaurante, restauranteCurrent, "id",
             // "formasPagamento", "endereco", "dataCadastro", "produtos");
             restauranteInputDisassembler.copyToDomainObject(restauranteInputDTO, restauranteCurrent);
-            RestauranteDTO restauranteDTO = restauranteModelAssembler
+            RestauranteModel restauranteDTO = restauranteModelAssembler
                     .toDTO(cadastroRestaurante.salvar(restauranteCurrent));
             return ResponseEntity.ok(restauranteDTO);
         } catch (EntityNotfoundException e) {

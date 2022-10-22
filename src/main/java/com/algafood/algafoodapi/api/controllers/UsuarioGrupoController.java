@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.algafood.algafoodapi.api.assembler.GrupoAssembler.GrupoModelAssembler;
-import com.algafood.algafoodapi.api.model.GrupoDTO;
+import com.algafood.algafoodapi.api.model.GrupoModel;
 import com.algafood.algafoodapi.api.openapi.controller.UsuarioGrupoControllerOpenApi;
 import com.algafood.algafoodapi.domain.models.Usuario;
 import com.algafood.algafoodapi.domain.service.CadastroUsuarioService;
@@ -30,7 +30,7 @@ public class UsuarioGrupoController implements UsuarioGrupoControllerOpenApi {
     private GrupoModelAssembler grupoModel;
 
     @GetMapping
-    public List<GrupoDTO> listar(@PathVariable Long usuarioId) {
+    public List<GrupoModel> listar(@PathVariable Long usuarioId) {
         Usuario usuario = cadastroUsuario.findOrFail(usuarioId);
 
         return grupoModel.toCollectionDTO(usuario.getGrupos());

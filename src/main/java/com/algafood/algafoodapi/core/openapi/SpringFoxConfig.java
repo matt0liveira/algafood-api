@@ -14,8 +14,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.context.request.ServletWebRequest;
 
 import com.algafood.algafoodapi.api.exceptionhandler.ErrorApi;
-import com.algafood.algafoodapi.api.model.CozinhaDTO;
-import com.algafood.algafoodapi.api.model.PedidoResumoDTO;
+import com.algafood.algafoodapi.api.model.CozinhaModel;
+import com.algafood.algafoodapi.api.model.PedidoResumoModel;
 import com.algafood.algafoodapi.api.openapi.model.CozinhasModelOpenApi;
 import com.algafood.algafoodapi.api.openapi.model.PageableModelOpenApi;
 import com.algafood.algafoodapi.api.openapi.model.PedidosModelOpenApi;
@@ -75,10 +75,10 @@ public class SpringFoxConfig {
 				.additionalModels(typeResolver.resolve(ErrorApi.class))
 				.directModelSubstitute(Pageable.class, PageableModelOpenApi.class)
 				.alternateTypeRules(AlternateTypeRules.newRule(
-						typeResolver.resolve(Page.class, CozinhaDTO.class),
+						typeResolver.resolve(Page.class, CozinhaModel.class),
 						CozinhasModelOpenApi.class))
 				.alternateTypeRules(AlternateTypeRules.newRule(
-						typeResolver.resolve(Page.class, PedidoResumoDTO.class),
+						typeResolver.resolve(Page.class, PedidoResumoModel.class),
 						PedidosModelOpenApi.class))
 				.ignoredParameterTypes(ServletWebRequest.class);
 		// .globalRequestParameters(Arrays.asList(

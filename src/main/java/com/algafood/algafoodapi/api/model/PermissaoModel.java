@@ -5,11 +5,8 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class FotoProdutoDTO {
-    
+public class PermissaoModel {
+    private Long id;
     private String nome;
     private String descricao;
-    private String contentType;
-    private Long tamanho;
-
 }

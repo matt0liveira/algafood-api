@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class RestauranteInputDTO {
-    
+
     @NotBlank
     private String nome;
 
@@ -27,6 +27,6 @@ public class RestauranteInputDTO {
 
     @Valid
     @NotNull
-    private EnderecoInputDTO endereco;
+    private EnderecoInputModel endereco;
 
 }

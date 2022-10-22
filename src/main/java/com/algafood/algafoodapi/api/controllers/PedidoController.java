@@ -1,6 +1,5 @@
 package com.algafood.algafoodapi.api.controllers;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -8,8 +7,9 @@ import javax.validation.Valid;
 // import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 // import org.springframework.http.converter.json.MappingJacksonValue;
@@ -26,10 +26,10 @@ import com.algafood.algafoodapi.api.assembler.PedidoAssembler.PedidoInputDisasse
 import com.algafood.algafoodapi.api.assembler.PedidoAssembler.PedidoModelAssembler;
 import com.algafood.algafoodapi.api.assembler.PedidoAssembler.PedidoResumoModelAssembler;
 // import com.algafood.algafoodapi.api.assembler.PedidoAssembler.PedidoResumoModelAssembler;
-import com.algafood.algafoodapi.api.model.PedidoDTO;
-import com.algafood.algafoodapi.api.model.PedidoResumoDTO;
+import com.algafood.algafoodapi.api.model.PedidoModel;
+import com.algafood.algafoodapi.api.model.PedidoResumoModel;
 // import com.algafood.algafoodapi.api.model.PedidoResumoDTO;
-import com.algafood.algafoodapi.api.model.input.PedidoInputDTO;
+import com.algafood.algafoodapi.api.model.input.PedidoInputModel;
 import com.algafood.algafoodapi.api.openapi.controller.PedidoControllerOpenApi;
 import com.algafood.algafoodapi.core.data.PageableTranslator;
 import com.algafood.algafoodapi.domain.exceptions.EntityNotfoundException;
@@ -62,6 +62,9 @@ public class PedidoController implements PedidoControllerOpenApi {
     @Autowired
     private PedidoInputDisassembler pedidoInputDisassembler;
 
+    @Autowired
+    private PagedResourcesAssembler<Pedido> pagedResourcesAssembler;
+
     // EXEMPLO DE FILTRO DE CAMPOS NA LISTAGEM SEM O USO DE BIBLIOTECAS
     // @GetMapping
     // public MappingJacksonValue listar(@RequestParam(required = false) String
@@ -86,26 +89,24 @@ public class PedidoController implements PedidoControllerOpenApi {
     // }
 
     @GetMapping
-    public Page<PedidoResumoDTO> pesquisar(PedidoFilter filter, Pageable pageable) {
+    public PagedModel<PedidoResumoModel> pesquisar(PedidoFilter filter, Pageable pageable) {
         pageable = translatePageable(pageable);
         Page<Pedido> pedidosPage = pedidoRepository.findAll(PedidoSpecs.usingFilter(filter), pageable);
 
-        List<PedidoResumoDTO> pedidosResumoModel = pedidoResumoModel.toCollectionDTO(pedidosPage.getContent());
+        PagedModel<PedidoResumoModel> pedidosPagedModel = pagedResourcesAssembler.toModel(pedidosPage,
+                pedidoResumoModel);
 
-        Page<PedidoResumoDTO> pedidosResumoModelPage = new PageImpl<>(pedidosResumoModel, pageable,
-                pedidosPage.getTotalElements());
-
-        return pedidosResumoModelPage;
+        return pedidosPagedModel;
     }
 
     @GetMapping("/{codigo}")
-    public PedidoDTO buscar(@PathVariable String codigo) {
-        return pedidoModel.toDTO(cadastroPedido.findOrFail(codigo));
+    public PedidoModel buscar(@PathVariable String codigo) {
+        return pedidoModel.toModel(cadastroPedido.findOrFail(codigo));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PedidoDTO emitir(@Valid @RequestBody PedidoInputDTO pedidoInput) {
+    public PedidoModel emitir(@Valid @RequestBody PedidoInputModel pedidoInput) {
         try {
             Pedido newPedido = pedidoInputDisassembler.toDomainObject(pedidoInput);
 
@@ -115,7 +116,7 @@ public class PedidoController implements PedidoControllerOpenApi {
 
             newPedido = cadastroPedido.salvar(newPedido);
 
-            return pedidoModel.toDTO(newPedido);
+            return pedidoModel.toModel(newPedido);
         } catch (EntityNotfoundException e) {
             throw new NegocioException(e.getMessage(), e);
         }

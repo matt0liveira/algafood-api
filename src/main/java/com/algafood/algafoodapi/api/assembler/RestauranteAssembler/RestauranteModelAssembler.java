@@ -7,7 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.algafood.algafoodapi.api.model.RestauranteDTO;
+import com.algafood.algafoodapi.api.model.RestauranteModel;
 import com.algafood.algafoodapi.domain.models.Restaurante;
 
 @Component
@@ -16,14 +16,14 @@ public class RestauranteModelAssembler {
     @Autowired
     private ModelMapper modelMapper;
 
-    public RestauranteDTO toDTO(Restaurante restaurante) {
-        return modelMapper.map(restaurante, RestauranteDTO.class);
+    public RestauranteModel toDTO(Restaurante restaurante) {
+        return modelMapper.map(restaurante, RestauranteModel.class);
     }
 
-    public List<RestauranteDTO> toCollectionDTO(List<Restaurante> restaurantes) {
+    public List<RestauranteModel> toCollectionDTO(List<Restaurante> restaurantes) {
         return restaurantes.stream()
-            .map(restaurante -> toDTO(restaurante))
-            .collect(Collectors.toList());
+                .map(restaurante -> toDTO(restaurante))
+                .collect(Collectors.toList());
     }
-    
+
 }

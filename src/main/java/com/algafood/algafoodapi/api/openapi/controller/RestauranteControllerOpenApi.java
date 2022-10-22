@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 
 import com.algafood.algafoodapi.api.exceptionhandler.ErrorApi;
-import com.algafood.algafoodapi.api.model.RestauranteDTO;
+import com.algafood.algafoodapi.api.model.RestauranteModel;
 import com.algafood.algafoodapi.api.model.input.RestauranteInputDTO;
 import com.algafood.algafoodapi.domain.models.Restaurante;
 
@@ -31,17 +31,17 @@ public interface RestauranteControllerOpenApi {
                         @ApiResponse(responseCode = "400", description = "Requisição inválida (erro do cliente)", content = @Content(schema = @Schema(implementation = ErrorApi.class)))
         })
         @ApiOperation("Busca um restaurante pelo ID")
-        ResponseEntity<RestauranteDTO> buscar(@ApiParam(value = "ID de um restaurante") Long restauranteId);
+        ResponseEntity<RestauranteModel> buscar(@ApiParam(value = "ID de um restaurante") Long restauranteId);
 
         @ApiResponses({
                         @ApiResponse(responseCode = "201", description = "Restaurante criado com sucesso")
         })
         @ApiOperation("Cadastra um restaurante")
-        ResponseEntity<RestauranteDTO> add(RestauranteInputDTO restauranteInputDTO);
+        ResponseEntity<RestauranteModel> add(RestauranteInputDTO restauranteInputDTO);
 
         @ApiResponses(@ApiResponse(responseCode = "404", description = "Restaurante não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class))))
         @ApiOperation("Altera os dados de um restaurante pelo ID")
-        ResponseEntity<RestauranteDTO> atualizar(@ApiParam(value = "ID de um restaurante") Long restauranteId,
+        ResponseEntity<RestauranteModel> atualizar(@ApiParam(value = "ID de um restaurante") Long restauranteId,
                         RestauranteInputDTO restauranteInputDTO);
 
         @ApiResponses({

@@ -10,7 +10,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class RestauranteDTO {
+public class RestauranteModel {
 
     @JsonView({ RestauranteView.Resumo.class, RestauranteView.ApenasNome.class })
     private Long id;
@@ -22,8 +22,8 @@ public class RestauranteDTO {
     private BigDecimal frete;
 
     @JsonView(RestauranteView.Resumo.class)
-    private CozinhaDTO cozinha;
+    private CozinhaModel cozinha;
     private Boolean ativo;
     private Boolean aberto;
-    private EnderecoDTO endereco;
+    private EnderecoModel endereco;
 }

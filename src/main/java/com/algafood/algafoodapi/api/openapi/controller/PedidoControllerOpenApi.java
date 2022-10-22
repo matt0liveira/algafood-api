@@ -1,12 +1,12 @@
 package com.algafood.algafoodapi.api.openapi.controller;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.PagedModel;
 
 import com.algafood.algafoodapi.api.exceptionhandler.ErrorApi;
-import com.algafood.algafoodapi.api.model.PedidoDTO;
-import com.algafood.algafoodapi.api.model.PedidoResumoDTO;
-import com.algafood.algafoodapi.api.model.input.PedidoInputDTO;
+import com.algafood.algafoodapi.api.model.PedidoModel;
+import com.algafood.algafoodapi.api.model.PedidoResumoModel;
+import com.algafood.algafoodapi.api.model.input.PedidoInputModel;
 import com.algafood.algafoodapi.domain.filter.PedidoFilter;
 
 import io.swagger.annotations.Api;
@@ -24,15 +24,15 @@ public interface PedidoControllerOpenApi {
 
     @ApiImplicitParams(@ApiImplicitParam(name = "fields", value = "Nome das propriedades para filtrar na resposta, separadas por vírgula", paramType = "query", type = "string"))
     @ApiOperation("Pesquisa de pedidos")
-    Page<PedidoResumoDTO> pesquisar(PedidoFilter filter, Pageable pageable);
+    PagedModel<PedidoResumoModel> pesquisar(PedidoFilter filter, Pageable pageable);
 
     @ApiImplicitParams(@ApiImplicitParam(name = "fields", value = "Nome das propriedades para filtrar na resposta, separadas por vírgula", paramType = "query", type = "string"))
     @ApiResponses({
             @ApiResponse(responseCode = "404", description = "Pedido não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class)))
     })
     @ApiOperation("Busca de pedidos pelo CÓDIGO")
-    PedidoDTO buscar(@ApiParam(value = "Código do pedido") String codigo);
+    PedidoModel buscar(@ApiParam(value = "Código do pedido") String codigo);
 
     @ApiOperation("Emissão de pedidos")
-    PedidoDTO emitir(PedidoInputDTO pedidoInput);
+    PedidoModel emitir(PedidoInputModel pedidoInput);
 }

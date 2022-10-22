@@ -11,7 +11,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class PedidoInputDTO {
+public class PedidoInputModel {
 
     @Valid
     @NotNull
@@ -23,7 +23,7 @@ public class PedidoInputDTO {
 
     @Valid
     @NotNull
-    private EnderecoInputDTO enderecoEntrega;
+    private EnderecoInputModel enderecoEntrega;
 
     @Valid
     @Size(min = 1)

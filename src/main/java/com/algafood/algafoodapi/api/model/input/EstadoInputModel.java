@@ -7,9 +7,8 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class GrupoInputDTO {
-    
+public class EstadoInputModel {
+
     @NotBlank
     private String nome;
-
 }

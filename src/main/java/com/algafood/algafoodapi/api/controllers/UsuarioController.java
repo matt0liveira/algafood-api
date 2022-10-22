@@ -21,10 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.algafood.algafoodapi.api.ResourceUriHelper;
 import com.algafood.algafoodapi.api.assembler.UsuarioAssembler.UsuarioInputDisassembler;
 import com.algafood.algafoodapi.api.assembler.UsuarioAssembler.UsuarioModelAssembler;
-import com.algafood.algafoodapi.api.model.UsuarioDTO;
+import com.algafood.algafoodapi.api.model.UsuarioModel;
 import com.algafood.algafoodapi.api.model.input.SenhaInput;
 import com.algafood.algafoodapi.api.model.input.UsuarioComSenhaInput;
-import com.algafood.algafoodapi.api.model.input.UsuarioInputDTO;
+import com.algafood.algafoodapi.api.model.input.UsuarioInputModel;
 import com.algafood.algafoodapi.api.openapi.controller.UsuarioControllerOpenApi;
 import com.algafood.algafoodapi.domain.models.Usuario;
 import com.algafood.algafoodapi.domain.repository.UsuarioRepository;
@@ -47,14 +47,14 @@ public class UsuarioController implements UsuarioControllerOpenApi {
     private UsuarioInputDisassembler usuarioInputDisassembler;
 
     @GetMapping
-    public CollectionModel<UsuarioDTO> listar() {
+    public CollectionModel<UsuarioModel> listar() {
         List<Usuario> usuarios = usuarioRepository.findAll();
 
         return usuarioModel.toCollectionModel(usuarios);
     }
 
     @GetMapping("/{usuarioId}")
-    public UsuarioDTO buscar(@PathVariable Long usuarioId) {
+    public UsuarioModel buscar(@PathVariable Long usuarioId) {
         Usuario usuario = cadastroUsuario.findOrFail(usuarioId);
 
         return usuarioModel.toModel(usuario);
@@ -62,7 +62,7 @@ public class UsuarioController implements UsuarioControllerOpenApi {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<UsuarioDTO> add(@RequestBody @Valid UsuarioComSenhaInput usuarioInputDTO) {
+    public ResponseEntity<UsuarioModel> add(@RequestBody @Valid UsuarioComSenhaInput usuarioInputDTO) {
         Usuario usuario = usuarioInputDisassembler.toDomainObject(usuarioInputDTO);
         usuario = cadastroUsuario.salvar(usuario);
 
@@ -72,7 +72,7 @@ public class UsuarioController implements UsuarioControllerOpenApi {
     }
 
     @PutMapping("/{usuarioId}")
-    public ResponseEntity<UsuarioDTO> alterar(@RequestBody @Valid UsuarioInputDTO usuarioInputDTO,
+    public ResponseEntity<UsuarioModel> alterar(@RequestBody @Valid UsuarioInputModel usuarioInputDTO,
             @PathVariable Long usuarioId) {
         Usuario usuarioCurrent = cadastroUsuario.findOrFail(usuarioId);
         usuarioInputDisassembler.copyToDomainObject(usuarioInputDTO, usuarioCurrent);

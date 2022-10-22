@@ -10,22 +10,22 @@ import org.springframework.stereotype.Component;
 
 import com.algafood.algafoodapi.api.controllers.UsuarioController;
 import com.algafood.algafoodapi.api.controllers.UsuarioGrupoController;
-import com.algafood.algafoodapi.api.model.UsuarioDTO;
+import com.algafood.algafoodapi.api.model.UsuarioModel;
 import com.algafood.algafoodapi.domain.models.Usuario;
 
 @Component
-public class UsuarioModelAssembler extends RepresentationModelAssemblerSupport<Usuario, UsuarioDTO> {
+public class UsuarioModelAssembler extends RepresentationModelAssemblerSupport<Usuario, UsuarioModel> {
 
     @Autowired
     private ModelMapper modelMapper;
 
     public UsuarioModelAssembler() {
-        super(UsuarioController.class, UsuarioDTO.class);
+        super(UsuarioController.class, UsuarioModel.class);
     }
 
     @Override
-    public UsuarioDTO toModel(Usuario usuario) {
-        UsuarioDTO usuarioModel = createModelWithId(usuario.getId(), usuario);
+    public UsuarioModel toModel(Usuario usuario) {
+        UsuarioModel usuarioModel = createModelWithId(usuario.getId(), usuario);
 
         modelMapper.map(usuario, usuarioModel);
 
@@ -44,7 +44,7 @@ public class UsuarioModelAssembler extends RepresentationModelAssemblerSupport<U
     }
 
     @Override
-    public CollectionModel<UsuarioDTO> toCollectionModel(Iterable<? extends Usuario> entities) {
+    public CollectionModel<UsuarioModel> toCollectionModel(Iterable<? extends Usuario> entities) {
         return super.toCollectionModel(entities).add(WebMvcLinkBuilder.linkTo(UsuarioController.class).withSelfRel());
     }
 }

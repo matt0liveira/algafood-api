@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.algafood.algafoodapi.api.assembler.GrupoAssembler.GrupoInputDisassembler;
 import com.algafood.algafoodapi.api.assembler.GrupoAssembler.GrupoModelAssembler;
-import com.algafood.algafoodapi.api.model.GrupoDTO;
-import com.algafood.algafoodapi.api.model.input.GrupoInputDTO;
+import com.algafood.algafoodapi.api.model.GrupoModel;
+import com.algafood.algafoodapi.api.model.input.GrupoInputModel;
 import com.algafood.algafoodapi.api.openapi.controller.GrupoControllerOpenApi;
 import com.algafood.algafoodapi.domain.models.Grupo;
 import com.algafood.algafoodapi.domain.repository.GrupoRepository;
@@ -43,26 +43,27 @@ public class GrupoController implements GrupoControllerOpenApi {
     private GrupoInputDisassembler grupoInputDisassembler;
 
     @GetMapping
-    public List<GrupoDTO> listar() {
+    public List<GrupoModel> listar() {
         return grupoModel.toCollectionDTO(grupoRepository.findAll());
     }
 
     @GetMapping("/{grupoId}")
-    public GrupoDTO buscar(@PathVariable Long grupoId) {
+    public GrupoModel buscar(@PathVariable Long grupoId) {
         return grupoModel.toDTO(cadastroGrupo.findOrFail(grupoId));
     }
 
     @PostMapping
-    public ResponseEntity<GrupoDTO> add(@RequestBody @Valid GrupoInputDTO grupoInput) {
+    public ResponseEntity<GrupoModel> add(@RequestBody @Valid GrupoInputModel grupoInput) {
         Grupo grupo = grupoInputDisassembler.toDomainObject(grupoInput);
 
-        GrupoDTO grupoDTO = grupoModel.toDTO(cadastroGrupo.salvar(grupo));
+        GrupoModel grupoDTO = grupoModel.toDTO(cadastroGrupo.salvar(grupo));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(grupoDTO);
     }
 
     @PutMapping("/{grupoId}")
-    public ResponseEntity<GrupoDTO> alterar(@PathVariable Long grupoId, @RequestBody @Valid GrupoInputDTO grupoInput) {
+    public ResponseEntity<GrupoModel> alterar(@PathVariable Long grupoId,
+            @RequestBody @Valid GrupoInputModel grupoInput) {
         Grupo grupoCurrent = cadastroGrupo.findOrFail(grupoId);
 
         grupoInputDisassembler.copyToDomainObject(grupoInput, grupoCurrent);

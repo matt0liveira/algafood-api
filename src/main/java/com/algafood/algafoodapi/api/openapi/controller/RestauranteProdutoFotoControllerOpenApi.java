@@ -7,8 +7,8 @@ import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.algafood.algafoodapi.api.exceptionhandler.ErrorApi;
-import com.algafood.algafoodapi.api.model.FotoProdutoDTO;
-import com.algafood.algafoodapi.api.model.input.FotoProdutoInputDTO;
+import com.algafood.algafoodapi.api.model.FotoProdutoModel;
+import com.algafood.algafoodapi.api.model.input.FotoProdutoInputModel;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,16 +25,16 @@ public interface RestauranteProdutoFotoControllerOpenApi {
                         @ApiResponse(responseCode = "404", description = "Restaurante e/ou produto não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class)))
         })
         @ApiOperation("Insere uma nova foto no produto")
-        public FotoProdutoDTO atualizarFoto(@ApiParam(value = "ID do restaurante") Long restauranteId,
+        public FotoProdutoModel atualizarFoto(@ApiParam(value = "ID do restaurante") Long restauranteId,
                         @ApiParam(value = "ID do produto") Long produtoId,
-                        FotoProdutoInputDTO fotoProdutoInput,
+                        FotoProdutoInputModel fotoProdutoInput,
                         @ApiParam(value = "Arquivo da foto do produto (máximo 500KB, apenas JPG e PNG)", required = true) MultipartFile arquivo)
                         throws IOException;
 
         @ApiResponses({
                         @ApiResponse(responseCode = "404", description = "Restaurante e/ou produto não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
                         @ApiResponse(responseCode = "400", description = "Requisição inválida (erro do cliente)", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
-                        @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = FotoProdutoDTO.class), mediaType = "application/json")),
+                        @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = FotoProdutoModel.class), mediaType = "application/json")),
                         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "image/png")),
                         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "image/jpeg"))
         })

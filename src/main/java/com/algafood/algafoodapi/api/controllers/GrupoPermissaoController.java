@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.algafood.algafoodapi.api.assembler.PermissaoAssembler.PermissaoModelAssembler;
-import com.algafood.algafoodapi.api.model.PermissaoDTO;
+import com.algafood.algafoodapi.api.model.PermissaoModel;
 import com.algafood.algafoodapi.api.openapi.controller.GrupoPermissaoControllerOpenApi;
 import com.algafood.algafoodapi.domain.models.Grupo;
 import com.algafood.algafoodapi.domain.service.CadastroGrupoService;
@@ -30,7 +30,7 @@ public class GrupoPermissaoController implements GrupoPermissaoControllerOpenApi
     private PermissaoModelAssembler permissaoModel;
 
     @GetMapping
-    public List<PermissaoDTO> listar(@PathVariable Long grupoId) {
+    public List<PermissaoModel> listar(@PathVariable Long grupoId) {
         Grupo grupo = cadastroGrupo.findOrFail(grupoId);
 
         return permissaoModel.toCollectionDTO(grupo.getPermissoes());

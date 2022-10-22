@@ -5,12 +5,12 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class EnderecoDTO {
-    
+public class EnderecoModel {
+
     private String cep;
     private String logradouro;
     private String numero;
     private String complemento;
     private String bairro;
-    private CidadeResumoDTO cidade;
+    private CidadeResumoModel cidade;
 }

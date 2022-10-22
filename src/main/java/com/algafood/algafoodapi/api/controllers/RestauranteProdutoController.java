@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.algafood.algafoodapi.api.assembler.ProdutoAssembler.ProdutoInputDisassembler;
 import com.algafood.algafoodapi.api.assembler.ProdutoAssembler.ProdutoModelAssembler;
-import com.algafood.algafoodapi.api.model.ProdutoDTO;
-import com.algafood.algafoodapi.api.model.input.ProdutoInputDTO;
+import com.algafood.algafoodapi.api.model.ProdutoModel;
+import com.algafood.algafoodapi.api.model.input.ProdutoInputModel;
 import com.algafood.algafoodapi.api.openapi.controller.RestauranteProdutoControllerOpenApi;
 import com.algafood.algafoodapi.domain.models.Produto;
 import com.algafood.algafoodapi.domain.models.Restaurante;
@@ -46,7 +46,7 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
     private ProdutoInputDisassembler produtoInputDisassembler;
 
     @GetMapping
-    public List<ProdutoDTO> listar(@PathVariable Long restauranteId,
+    public List<ProdutoModel> listar(@PathVariable Long restauranteId,
             @RequestParam(required = false) boolean includeInativos) {
         Restaurante restaurante = cadastroRestaurante.findOrFail(restauranteId);
         List<Produto> produtos = null;
@@ -61,7 +61,7 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
     }
 
     @GetMapping("/{produtoId}")
-    public ProdutoDTO buscar(@PathVariable Long restauranteId, @PathVariable Long produtoId) {
+    public ProdutoModel buscar(@PathVariable Long restauranteId, @PathVariable Long produtoId) {
         Produto produto = cadastroProduto.findOrFail(restauranteId, produtoId);
 
         return produtoModel.toDTO(produto);
@@ -69,7 +69,7 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ProdutoDTO add(@PathVariable Long restauranteId, @RequestBody ProdutoInputDTO produtoInput) {
+    public ProdutoModel add(@PathVariable Long restauranteId, @RequestBody ProdutoInputModel produtoInput) {
         Restaurante restaurante = cadastroRestaurante.findOrFail(restauranteId);
 
         Produto produto = produtoInputDisassembler.toDomainObject(produtoInput);
@@ -81,8 +81,8 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
     }
 
     @PutMapping("/{produtoId}")
-    public ProdutoDTO alterar(@PathVariable Long restauranteId, @PathVariable Long produtoId,
-            @RequestBody ProdutoInputDTO produtoInput) {
+    public ProdutoModel alterar(@PathVariable Long restauranteId, @PathVariable Long produtoId,
+            @RequestBody ProdutoInputModel produtoInput) {
         Produto produtoCurrent = cadastroProduto.findOrFail(restauranteId, produtoId);
 
         produtoInputDisassembler.copyToDomainObject(produtoInput, produtoCurrent);

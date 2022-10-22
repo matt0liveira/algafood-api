@@ -4,8 +4,8 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 
 import com.algafood.algafoodapi.api.exceptionhandler.ErrorApi;
-import com.algafood.algafoodapi.api.model.CidadeDTO;
-import com.algafood.algafoodapi.api.model.input.CidadeInputDTO;
+import com.algafood.algafoodapi.api.model.CidadeModel;
+import com.algafood.algafoodapi.api.model.input.CidadeInputModel;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,24 +19,24 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public interface CidadeControllerOpenApi {
 
         @ApiOperation("Lista todas as cidades")
-        CollectionModel<CidadeDTO> listar();
+        CollectionModel<CidadeModel> listar();
 
         @ApiOperation("Busca uma cidade pelo ID")
-        ResponseEntity<CidadeDTO> buscar(Long cidadeId);
+        ResponseEntity<CidadeModel> buscar(Long cidadeId);
 
         @ApiOperation("Cadastra uma cidade")
         @ApiResponses({ @ApiResponse(responseCode = "201", description = "Created")
 
         })
         ResponseEntity<?> add(
-                        @ApiParam(name = "Corpo", value = "Representação de uma nova cidade") CidadeInputDTO cidadeInputDTO);
+                        @ApiParam(name = "Corpo", value = "Representação de uma nova cidade") CidadeInputModel cidadeInputDTO);
 
         @ApiOperation("Altera os dados do cadastro de uma cidade por id")
         @ApiResponses({
                         @ApiResponse(responseCode = "404", description = "Cidade não encontrada", content = @Content(schema = @Schema(implementation = ErrorApi.class)))
         })
         ResponseEntity<?> atualizar(@ApiParam(value = "ID de uma cidade", example = "1") Long cidadeId,
-                        @ApiParam(name = "Corpo", value = "Representação de uma cidade com os dados atualizados") CidadeInputDTO cidadeInputDTO);
+                        @ApiParam(name = "Corpo", value = "Representação de uma cidade com os dados atualizados") CidadeInputModel cidadeInputDTO);
 
         @ApiOperation("Remove uma cidade por id")
         @ApiResponses({

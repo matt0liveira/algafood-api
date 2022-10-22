@@ -1,15 +1,14 @@
 package com.algafood.algafoodapi.api.openapi.controller;
 
-import java.util.List;
-
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 
 import com.algafood.algafoodapi.api.exceptionhandler.ErrorApi;
-import com.algafood.algafoodapi.api.model.CozinhaDTO;
-import com.algafood.algafoodapi.api.model.input.CozinhaInputDTO;
+import com.algafood.algafoodapi.api.model.CozinhaModel;
+import com.algafood.algafoodapi.api.model.input.CozinhaInputModel;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,7 +22,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 public interface CozinhaControllerOpenApi {
 
 	@ApiOperation("Lista todas as cozinhas")
-	Page<CozinhaDTO> listar(@PageableDefault(size = 10) Pageable pageable);
+	PagedModel<CozinhaModel> listar(@PageableDefault(size = 10) Pageable pageable);
 
 	@ApiResponses({
 			@ApiResponse(responseCode = "404", description = "Cozinha não encontrada", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
@@ -31,19 +30,19 @@ public interface CozinhaControllerOpenApi {
 			@ApiResponse(responseCode = "400", description = "Requisição inválida (erro do cliente)", content = @Content(schema = @Schema(implementation = ErrorApi.class)))
 	})
 	@ApiOperation("Busca uma cozinha pelo ID")
-	CozinhaDTO buscar(@ApiParam(example = "1", value = "ID da cozinha") Long cozinhaId);
+	CozinhaModel buscar(@ApiParam(example = "1", value = "ID da cozinha") Long cozinhaId);
 
 	@ApiResponses({
 			@ApiResponse(responseCode = "201", description = "Cozinha cadastrada com sucesso")
 	})
 	@ApiOperation("Cadastra uma cozinha")
-	ResponseEntity<?> add(CozinhaInputDTO cozinhaInputDTO);
+	ResponseEntity<?> add(CozinhaInputModel cozinhaInputDTO);
 
 	@ApiResponses({
 			@ApiResponse(responseCode = "404", description = "Cozinha não encontrada", content = @Content(schema = @Schema(implementation = ErrorApi.class)))
 	})
 	@ApiOperation("Altera os dados do cadastro de uma cozinha pelo ID")
-	ResponseEntity<CozinhaDTO> alterar(Long cozinhaId, CozinhaInputDTO cozinhaInputDTO);
+	ResponseEntity<CozinhaModel> alterar(Long cozinhaId, CozinhaInputModel cozinhaInputDTO);
 
 	@ApiResponses({
 			@ApiResponse(responseCode = "404", description = "Cozinha não encontrada", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
@@ -54,5 +53,5 @@ public interface CozinhaControllerOpenApi {
 	void remover(Long cozinhaId);
 
 	@ApiOperation("Busca uma cozinha pelo NOME")
-	List<CozinhaDTO> buscarPorNome(String nome);
+	CollectionModel<CozinhaModel> buscarPorNome(String nome);
 }

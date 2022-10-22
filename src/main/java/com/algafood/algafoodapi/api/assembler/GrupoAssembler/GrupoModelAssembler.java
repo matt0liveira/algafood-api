@@ -8,23 +8,23 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.algafood.algafoodapi.api.model.GrupoDTO;
+import com.algafood.algafoodapi.api.model.GrupoModel;
 import com.algafood.algafoodapi.domain.models.Grupo;
 
 @Component
 public class GrupoModelAssembler {
-    
+
     @Autowired
     private ModelMapper modelMapper;
 
-    public GrupoDTO toDTO(Grupo grupo) {
-        return modelMapper.map(grupo, GrupoDTO.class);
+    public GrupoModel toDTO(Grupo grupo) {
+        return modelMapper.map(grupo, GrupoModel.class);
     }
 
-    public List<GrupoDTO> toCollectionDTO(Collection<Grupo> grupos) {
+    public List<GrupoModel> toCollectionDTO(Collection<Grupo> grupos) {
         return grupos.stream()
-            .map(grupo -> toDTO(grupo))
-            .collect(Collectors.toList());
+                .map(grupo -> toDTO(grupo))
+                .collect(Collectors.toList());
     }
 
 }

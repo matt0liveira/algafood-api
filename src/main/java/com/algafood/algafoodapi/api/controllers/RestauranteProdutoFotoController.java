@@ -24,8 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.algafood.algafoodapi.api.assembler.FotoProdutoAssembler.FotoProdutoModelAssembler;
-import com.algafood.algafoodapi.api.model.FotoProdutoDTO;
-import com.algafood.algafoodapi.api.model.input.FotoProdutoInputDTO;
+import com.algafood.algafoodapi.api.model.FotoProdutoModel;
+import com.algafood.algafoodapi.api.model.input.FotoProdutoInputModel;
 import com.algafood.algafoodapi.api.openapi.controller.RestauranteProdutoFotoControllerOpenApi;
 import com.algafood.algafoodapi.domain.exceptions.EntityNotfoundException;
 import com.algafood.algafoodapi.domain.models.FotoProduto;
@@ -52,8 +52,8 @@ public class RestauranteProdutoFotoController implements RestauranteProdutoFotoC
     private FotoStorageService fotoStorage;
 
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public FotoProdutoDTO atualizarFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId,
-            @Valid FotoProdutoInputDTO fotoProdutoInput, @RequestPart(required = true) MultipartFile arquivo)
+    public FotoProdutoModel atualizarFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId,
+            @Valid FotoProdutoInputModel fotoProdutoInput, @RequestPart(required = true) MultipartFile arquivo)
             throws IOException {
         Produto produto = cadastroProduto.findOrFail(restauranteId, produtoId);
 

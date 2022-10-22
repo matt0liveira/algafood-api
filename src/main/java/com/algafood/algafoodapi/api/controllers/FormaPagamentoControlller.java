@@ -25,7 +25,7 @@ import org.springframework.web.filter.ShallowEtagHeaderFilter;
 
 import com.algafood.algafoodapi.api.assembler.FormaPagamentoAssembler.FormaPagamentoInputDisassembler;
 import com.algafood.algafoodapi.api.assembler.FormaPagamentoAssembler.FormaPagamentoModelAssembler;
-import com.algafood.algafoodapi.api.model.FormaPagamentoDTO;
+import com.algafood.algafoodapi.api.model.FormaPagamentoModel;
 import com.algafood.algafoodapi.api.model.input.FormaPagamentoInputDTO;
 import com.algafood.algafoodapi.api.openapi.controller.FormaPagamentoControllerOpenApi;
 import com.algafood.algafoodapi.domain.exceptions.FormaPagamentoNotfoundException;
@@ -51,7 +51,7 @@ public class FormaPagamentoControlller implements FormaPagamentoControllerOpenAp
     private FormaPagamentoInputDisassembler formaPagamentoInputDisassembler;
 
     @GetMapping
-    public ResponseEntity<List<FormaPagamentoDTO>> listar(ServletWebRequest req) {
+    public ResponseEntity<List<FormaPagamentoModel>> listar(ServletWebRequest req) {
         ShallowEtagHeaderFilter.disableContentCaching(req.getRequest());
 
         String eTag = "0";
@@ -68,7 +68,8 @@ public class FormaPagamentoControlller implements FormaPagamentoControllerOpenAp
 
         List<FormaPagamento> formasPagamentos = formaPagamentoRepository.findAll();
 
-        List<FormaPagamentoDTO> formasPagamentosModel = formaPagamentoModelAssembler.toCollectionDTO(formasPagamentos);
+        List<FormaPagamentoModel> formasPagamentosModel = formaPagamentoModelAssembler
+                .toCollectionDTO(formasPagamentos);
 
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
@@ -77,8 +78,8 @@ public class FormaPagamentoControlller implements FormaPagamentoControllerOpenAp
     }
 
     @GetMapping("/{formaPagamentoId}")
-    public ResponseEntity<FormaPagamentoDTO> buscar(@PathVariable Long formaPagamentoId) {
-        FormaPagamentoDTO formaPagamentoModel = formaPagamentoModelAssembler
+    public ResponseEntity<FormaPagamentoModel> buscar(@PathVariable Long formaPagamentoId) {
+        FormaPagamentoModel formaPagamentoModel = formaPagamentoModelAssembler
                 .toDTO(cadastroFormaPagamentoService.findOrFail(formaPagamentoId));
 
         return ResponseEntity.ok()
@@ -87,7 +88,7 @@ public class FormaPagamentoControlller implements FormaPagamentoControllerOpenAp
     }
 
     @PostMapping
-    public ResponseEntity<FormaPagamentoDTO> add(@RequestBody @Valid FormaPagamentoInputDTO formaPagamentoInputDTO) {
+    public ResponseEntity<FormaPagamentoModel> add(@RequestBody @Valid FormaPagamentoInputDTO formaPagamentoInputDTO) {
         try {
             FormaPagamento formaPagamento = formaPagamentoInputDisassembler.toDomainObject(formaPagamentoInputDTO);
 
@@ -100,7 +101,7 @@ public class FormaPagamentoControlller implements FormaPagamentoControllerOpenAp
     }
 
     @PutMapping("/{formaPagamentoId}")
-    public ResponseEntity<FormaPagamentoDTO> alterar(@PathVariable Long formaPagamentoId,
+    public ResponseEntity<FormaPagamentoModel> alterar(@PathVariable Long formaPagamentoId,
             @RequestBody FormaPagamentoInputDTO formaPagamentoInputDTO) {
         try {
             FormaPagamento formaPagamentoCurrent = cadastroFormaPagamentoService.findOrFail(formaPagamentoId);

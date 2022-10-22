@@ -4,16 +4,18 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.algafood.algafoodapi.api.ResourceUriHelper;
 import com.algafood.algafoodapi.api.assembler.EstadoAssembler.EstadoInputDisassembler;
 import com.algafood.algafoodapi.api.assembler.EstadoAssembler.EstadoModelAssembler;
-import com.algafood.algafoodapi.api.model.EstadoDTO;
-import com.algafood.algafoodapi.api.model.input.EstadoInputDTO;
+import com.algafood.algafoodapi.api.model.EstadoModel;
+import com.algafood.algafoodapi.api.model.input.EstadoInputModel;
 import com.algafood.algafoodapi.api.openapi.controller.EstadoControllerOpenApi;
 import com.algafood.algafoodapi.domain.models.Estado;
 import com.algafood.algafoodapi.domain.repository.EstadoRepository;
 import com.algafood.algafoodapi.domain.service.CadastroEstadoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -44,36 +46,38 @@ public class EstadoController implements EstadoControllerOpenApi {
     private EstadoInputDisassembler estadoInputDisassembler;
 
     @GetMapping
-    public List<EstadoDTO> listar() {
+    public CollectionModel<EstadoModel> listar() {
         List<Estado> estados = estadoRepository.findAll();
 
-        return estadoModelAssembler.toCollectionDTO(estados);
+        return estadoModelAssembler.toCollectionModel(estados);
     }
 
     @GetMapping("/{estadoId}")
-    public ResponseEntity<EstadoDTO> buscar(@PathVariable Long estadoId) {
-        return ResponseEntity.ok(estadoModelAssembler.toDTO(cadastroEstado.findOrFail(estadoId)));
+    public ResponseEntity<EstadoModel> buscar(@PathVariable Long estadoId) {
+        return ResponseEntity.ok(estadoModelAssembler.toModel(cadastroEstado.findOrFail(estadoId)));
     }
 
     @PostMapping
-    public ResponseEntity<EstadoDTO> add(@RequestBody @Valid EstadoInputDTO estadoInputDTO) {
+    public ResponseEntity<EstadoModel> add(@RequestBody @Valid EstadoInputModel estadoInputDTO) {
         Estado estado = estadoInputDisassembler.toDomainObject(estadoInputDTO);
 
         estado = cadastroEstado.salvar(estado);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(estadoModelAssembler.toDTO(estado));
+        return ResponseEntity
+                .created(ResourceUriHelper.addUriInResponseHeader(estado.getId()))
+                .body(estadoModelAssembler.toModel(estado));
     }
 
     @PutMapping("/{estadoId}")
-    public ResponseEntity<EstadoDTO> atualizar(@PathVariable Long estadoId,
-            @RequestBody @Valid EstadoInputDTO estadoInputDTO) {
+    public ResponseEntity<EstadoModel> atualizar(@PathVariable Long estadoId,
+            @RequestBody @Valid EstadoInputModel estadoInputDTO) {
 
         Estado estadoCurrent = cadastroEstado.findOrFail(estadoId);
 
         estadoInputDisassembler.copyToDomainOject(estadoInputDTO, estadoCurrent);
 
         estadoCurrent = cadastroEstado.salvar(estadoCurrent);
-        return ResponseEntity.ok(estadoModelAssembler.toDTO(estadoCurrent));
+        return ResponseEntity.ok(estadoModelAssembler.toModel(estadoCurrent));
 
     }
 

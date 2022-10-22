@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class EnderecoInputDTO {
+public class EnderecoInputModel {
 
     @NotBlank
     private String cep;

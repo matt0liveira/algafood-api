@@ -4,10 +4,10 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 
 import com.algafood.algafoodapi.api.exceptionhandler.ErrorApi;
-import com.algafood.algafoodapi.api.model.UsuarioDTO;
+import com.algafood.algafoodapi.api.model.UsuarioModel;
 import com.algafood.algafoodapi.api.model.input.SenhaInput;
 import com.algafood.algafoodapi.api.model.input.UsuarioComSenhaInput;
-import com.algafood.algafoodapi.api.model.input.UsuarioInputDTO;
+import com.algafood.algafoodapi.api.model.input.UsuarioInputModel;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,7 +21,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 public interface UsuarioControllerOpenApi {
 
         @ApiOperation("Lista todos os usuários")
-        public CollectionModel<UsuarioDTO> listar();
+        public CollectionModel<UsuarioModel> listar();
 
         @ApiResponses({
                         @ApiResponse(responseCode = "400", description = "Requisição inválida (erro do cliente)", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
@@ -29,21 +29,21 @@ public interface UsuarioControllerOpenApi {
                         @ApiResponse(responseCode = "404", description = "Usuário não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class)))
         })
         @ApiOperation("Busca um usuário pelo ID")
-        public UsuarioDTO buscar(@ApiParam(value = "ID do usuário") Long usuarioId);
+        public UsuarioModel buscar(@ApiParam(value = "ID do usuário") Long usuarioId);
 
         @ApiResponses({
                         @ApiResponse(responseCode = "201", description = "Usuário cadastrado com sucesso")
         })
         @ApiOperation("Cadastra um novo usuário")
-        public ResponseEntity<UsuarioDTO> add(
+        public ResponseEntity<UsuarioModel> add(
                         @ApiParam(name = "Corpo", value = "Representação de um novo usuário") UsuarioComSenhaInput usuarioInputDTO);
 
         @ApiResponses({
                         @ApiResponse(responseCode = "404", description = "Usuário não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class)))
         })
         @ApiOperation("Altera os dados de um usuário pelo ID")
-        public ResponseEntity<UsuarioDTO> alterar(
-                        @ApiParam(name = "Corpo", value = "Representação de um usuário com os dados atualizados") UsuarioInputDTO usuarioInputDTO,
+        public ResponseEntity<UsuarioModel> alterar(
+                        @ApiParam(name = "Corpo", value = "Representação de um usuário com os dados atualizados") UsuarioInputModel usuarioInputDTO,
                         @ApiParam(value = "ID do usuário") Long usuarioId);
 
         @ApiResponses({
