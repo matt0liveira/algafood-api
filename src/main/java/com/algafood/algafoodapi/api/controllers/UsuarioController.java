@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.algafood.algafoodapi.api.ResourceUriHelper;
 import com.algafood.algafoodapi.api.assembler.UsuarioAssembler.UsuarioInputDisassembler;
 import com.algafood.algafoodapi.api.assembler.UsuarioAssembler.UsuarioModelAssembler;
 import com.algafood.algafoodapi.api.model.UsuarioDTO;
@@ -45,24 +47,28 @@ public class UsuarioController implements UsuarioControllerOpenApi {
     private UsuarioInputDisassembler usuarioInputDisassembler;
 
     @GetMapping
-    public List<UsuarioDTO> listar() {
-        return usuarioModel.toCollectionDTO(usuarioRepository.findAll());
+    public CollectionModel<UsuarioDTO> listar() {
+        List<Usuario> usuarios = usuarioRepository.findAll();
+
+        return usuarioModel.toCollectionModel(usuarios);
     }
 
     @GetMapping("/{usuarioId}")
     public UsuarioDTO buscar(@PathVariable Long usuarioId) {
         Usuario usuario = cadastroUsuario.findOrFail(usuarioId);
 
-        return usuarioModel.toDTO(usuario);
+        return usuarioModel.toModel(usuario);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UsuarioDTO add(@RequestBody @Valid UsuarioComSenhaInput usuarioInputDTO) {
+    public ResponseEntity<UsuarioDTO> add(@RequestBody @Valid UsuarioComSenhaInput usuarioInputDTO) {
         Usuario usuario = usuarioInputDisassembler.toDomainObject(usuarioInputDTO);
         usuario = cadastroUsuario.salvar(usuario);
 
-        return usuarioModel.toDTO(usuario);
+        return ResponseEntity
+                .created(ResourceUriHelper.addUriInResponseHeader(usuario.getId()))
+                .body(usuarioModel.toModel(usuario));
     }
 
     @PutMapping("/{usuarioId}")
@@ -72,7 +78,7 @@ public class UsuarioController implements UsuarioControllerOpenApi {
         usuarioInputDisassembler.copyToDomainObject(usuarioInputDTO, usuarioCurrent);
         cadastroUsuario.salvar(usuarioCurrent);
 
-        return ResponseEntity.status(HttpStatus.OK).body(usuarioModel.toDTO(usuarioCurrent));
+        return ResponseEntity.status(HttpStatus.OK).body(usuarioModel.toModel(usuarioCurrent));
     }
 
     @PutMapping("/{usuarioId}/alterar-senha")
