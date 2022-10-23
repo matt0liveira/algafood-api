@@ -8,8 +8,8 @@ import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSuppor
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
+import com.algafood.algafoodapi.api.InstanceLink;
 import com.algafood.algafoodapi.api.controllers.CidadeController;
-import com.algafood.algafoodapi.api.controllers.EstadoController;
 import com.algafood.algafoodapi.api.model.CidadeModel;
 import com.algafood.algafoodapi.domain.models.Cidade;
 
@@ -23,49 +23,20 @@ public class CidadeModelAssembler extends RepresentationModelAssemblerSupport<Ci
         @Autowired
         private ModelMapper modelMapper;
 
+        @Autowired
+        private InstanceLink instanceLink;
+
         @Override
         public CidadeModel toModel(Cidade cidade) {
                 CidadeModel cidadeModel = createModelWithId(cidade.getId(), cidade);
 
                 modelMapper.map(cidade, cidadeModel);
 
-                cidadeModel.add(WebMvcLinkBuilder
-                                .linkTo(WebMvcLinkBuilder
-                                                .methodOn(CidadeController.class)
-                                                .buscar(cidadeModel.getId()))
-                                .withSelfRel());
+                cidadeModel.add(instanceLink.linkToCidades(cidadeModel.getId()));
+                cidadeModel.add(instanceLink.linkToCidades(IanaLinkRelations.COLLECTION_VALUE));
 
-                // HARD CODE -> NÃO RECOMENDADO
-                // cidadeModel.add(Link.of("http://api.algafood.local:8080/cidades",
-                // IanaLinkRelations.COLLECTION));
-
-                // MONTANDO LINK DE FORMA DINÂMICA COM SLASH
-                // cidadeModel.add(WebMvcLinkBuilder
-                // .linkTo(CidadeController.class)
-                // .withRel(IanaLinkRelations.COLLECTION));
-
-                // MONTANDO LINK DE FORMA DINÂMICA APONTANDO PARA MÉTODO
-                cidadeModel.add(WebMvcLinkBuilder
-                                .linkTo(WebMvcLinkBuilder
-                                                .methodOn(CidadeController.class)
-                                                .listar())
-                                .withRel(IanaLinkRelations.COLLECTION));
-
-                // HARD CODE -> NÃO RECOMENDADO
-                // cidadeModel.getEstado().add(Link.of("http://api.algafood.local:8080/estados/1"));
-
-                // MONTANDO LINK DE FORMA DINÂMICA COM SLASH
-                // cidadeModel.getEstado().add(WebMvcLinkBuilder
-                // .linkTo(EstadoController.class)
-                // .slash(cidadeModel.getEstado().getId())
-                // .withSelfRel());
-
-                // MONTANDO LINK DE FORMA DINÂMICA APONTANDO PARA MÉTODO
-                cidadeModel.getEstado().add(WebMvcLinkBuilder
-                                .linkTo(WebMvcLinkBuilder
-                                                .methodOn(EstadoController.class)
-                                                .buscar(cidadeModel.getEstado().getId()))
-                                .withSelfRel());
+                // ESTADO
+                cidadeModel.getEstado().add(instanceLink.linkToEstados(cidadeModel.getEstado().getId()));
 
                 return cidadeModel;
         }

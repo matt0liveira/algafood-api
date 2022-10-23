@@ -8,95 +8,54 @@ import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSuppor
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
-import com.algafood.algafoodapi.api.controllers.CidadeController;
-import com.algafood.algafoodapi.api.controllers.FormaPagamentoControlller;
+import com.algafood.algafoodapi.api.InstanceLink;
 import com.algafood.algafoodapi.api.controllers.PedidoController;
-import com.algafood.algafoodapi.api.controllers.RestauranteController;
-import com.algafood.algafoodapi.api.controllers.UsuarioController;
 import com.algafood.algafoodapi.api.model.PedidoModel;
 import com.algafood.algafoodapi.domain.models.Pedido;
 
 @Component
 public class PedidoModelAssembler extends RepresentationModelAssemblerSupport<Pedido, PedidoModel> {
 
-    @Autowired
-    private ModelMapper modelMapper;
+	@Autowired
+	private ModelMapper modelMapper;
 
-    public PedidoModelAssembler() {
-        super(PedidoController.class, PedidoModel.class);
-    }
+	@Autowired
+	private InstanceLink instanceLink;
 
-    public PedidoModel toModel(Pedido pedido) {
-        PedidoModel pedidoModel = createModelWithId(pedido.getCodigo(), pedido);
-        modelMapper.map(pedido, pedidoModel);
+	public PedidoModelAssembler() {
+		super(PedidoController.class, PedidoModel.class);
+	}
 
-        // CLIENTE
-        pedidoModel.getCliente().add(
-                WebMvcLinkBuilder.linkTo(
-                        WebMvcLinkBuilder
-                                .methodOn(UsuarioController.class)
-                                .buscar(pedido.getCliente().getId()))
-                        .withSelfRel());
+	public PedidoModel toModel(Pedido pedido) {
+		PedidoModel pedidoModel = createModelWithId(pedido.getCodigo(), pedido);
+		modelMapper.map(pedido, pedidoModel);
 
-        pedidoModel.getCliente().add(
-                WebMvcLinkBuilder.linkTo(
-                        WebMvcLinkBuilder
-                                .methodOn(UsuarioController.class)
-                                .listar())
-                        .withRel(IanaLinkRelations.COLLECTION));
+		pedidoModel.add(instanceLink.linkToPedidos());
 
-        // RESTAURANTE
-        pedidoModel.getRestaurante().add(
-                WebMvcLinkBuilder.linkTo(
-                        WebMvcLinkBuilder
-                                .methodOn(RestauranteController.class)
-                                .buscar(pedidoModel.getRestaurante().getId()))
-                        .withSelfRel());
+		// CLIENTE
+		pedidoModel.getCliente().add(instanceLink.linkToUsuarios(pedidoModel.getCliente().getId()));
+		pedidoModel.getCliente().add(instanceLink.linkToUsuarios(IanaLinkRelations.COLLECTION_VALUE));
 
-        pedidoModel.getRestaurante().add(
-                WebMvcLinkBuilder.linkTo(
-                        WebMvcLinkBuilder
-                                .methodOn(RestauranteController.class)
-                                .listar(""))
-                        .withRel(IanaLinkRelations.COLLECTION));
+		// RESTAURANTE
+		pedidoModel.getRestaurante().add(instanceLink.linkToRestaurantes(pedidoModel.getRestaurante().getId()));
+		pedidoModel.getRestaurante().add(instanceLink.linkToRestaurantes(IanaLinkRelations.COLLECTION_VALUE));
 
-        // FORMA DE PAGAMENTO
-        pedidoModel.getFormaPagamento().add(
-                WebMvcLinkBuilder.linkTo(
-                        WebMvcLinkBuilder
-                                .methodOn(FormaPagamentoControlller.class)
-                                .buscar(pedidoModel.getFormaPagamento().getId()))
-                        .withSelfRel());
+		// FORMA DE PAGAMENTO
+		pedidoModel.getFormaPagamento()
+				.add(instanceLink.linkToFormasPagamentos(pedidoModel.getFormaPagamento().getId()));
+		pedidoModel.getFormaPagamento().add(instanceLink.linkToFormasPagamentos(IanaLinkRelations.COLLECTION_VALUE));
 
-        pedidoModel.getFormaPagamento().add(
-                WebMvcLinkBuilder.linkTo(
-                        WebMvcLinkBuilder
-                                .methodOn(FormaPagamentoControlller.class)
-                                .listar(null))
-                        .withRel(IanaLinkRelations.COLLECTION));
+		// CIDADE
+		pedidoModel.getEndereco().getCidade()
+				.add(instanceLink.linkToCidades(pedidoModel.getEndereco().getCidade().getId()));
+		pedidoModel.getEndereco().getCidade().add(instanceLink.linkToCidades(IanaLinkRelations.COLLECTION_VALUE));
 
-        // CIDADE
-        pedidoModel.getEndereco().getCidade().add(
-                WebMvcLinkBuilder
-                        .linkTo(
-                                WebMvcLinkBuilder
-                                        .methodOn(CidadeController.class)
-                                        .buscar(pedidoModel.getEndereco().getCidade().getId()))
-                        .withSelfRel());
+		return pedidoModel;
+	}
 
-        pedidoModel.getEndereco().getCidade().add(
-                WebMvcLinkBuilder
-                        .linkTo(
-                                WebMvcLinkBuilder
-                                        .methodOn(CidadeController.class)
-                                        .listar())
-                        .withRel(IanaLinkRelations.COLLECTION));
-
-        return pedidoModel;
-    }
-
-    @Override
-    public CollectionModel<PedidoModel> toCollectionModel(Iterable<? extends Pedido> entities) {
-        return super.toCollectionModel(entities).add(WebMvcLinkBuilder.linkTo(PedidoController.class).withSelfRel());
-    }
+	@Override
+	public CollectionModel<PedidoModel> toCollectionModel(Iterable<? extends Pedido> entities) {
+		return super.toCollectionModel(entities)
+				.add(WebMvcLinkBuilder.linkTo(PedidoController.class).withSelfRel());
+	}
 }
