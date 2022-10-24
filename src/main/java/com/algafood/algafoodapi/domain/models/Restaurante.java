@@ -34,7 +34,7 @@ import lombok.EqualsAndHashCode;
 public class Restaurante {
     @EqualsAndHashCode.Include
     @Id
-    //AUTO INCREMENT
+    // AUTO INCREMENT
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -64,22 +64,14 @@ public class Restaurante {
     private OffsetDateTime dataAtualizacao;
 
     @ManyToMany
-    @JoinTable(
-        name = "restaurante_forma_pagamento", 
-        joinColumns = @JoinColumn(name = "restaurante_id"),
-        inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id")
-    )
+    @JoinTable(name = "restaurante_forma_pagamento", joinColumns = @JoinColumn(name = "restaurante_id"), inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id"))
     private Set<FormaPagamento> formasPagamento = new HashSet<>();
 
     @OneToMany(mappedBy = "restaurante")
     private List<Produto> produtos = new ArrayList<>();
 
     @ManyToMany
-    @JoinTable(
-        name = "restaurante_usuario_responsavel",
-        joinColumns = @JoinColumn(name = "restaurante_id"),
-        inverseJoinColumns = @JoinColumn(name = "usuario_id")
-    )
+    @JoinTable(name = "restaurante_usuario_responsavel", joinColumns = @JoinColumn(name = "restaurante_id"), inverseJoinColumns = @JoinColumn(name = "usuario_id"))
     private Set<Usuario> responsaveis = new HashSet<>();
 
     public void ativar() {
@@ -97,15 +89,14 @@ public class Restaurante {
     public void fechar() {
         setAberto(false);
     }
-    
+
     public boolean associarFormaPagamento(FormaPagamento formaPagamento) {
         return getFormasPagamento().add(formaPagamento);
     }
-    
+
     public boolean desassociarFormaPagamento(FormaPagamento formaPagamento) {
         return getFormasPagamento().remove(formaPagamento);
     }
-
 
     public boolean associarResponsavel(Usuario usuario) {
         return getResponsaveis().add(usuario);
@@ -121,5 +112,37 @@ public class Restaurante {
 
     public boolean naoAceitaFormaPagamento(FormaPagamento formaPagamento) {
         return !aceitaFormaPagamento(formaPagamento);
+    }
+
+    public boolean isAberto() {
+        return this.aberto;
+    }
+
+    public boolean isFechado() {
+        return !isAberto();
+    }
+
+    public boolean isAtivo() {
+        return this.ativo;
+    }
+
+    public boolean isInativo() {
+        return !isAtivo();
+    }
+
+    public boolean podeAtivar() {
+        return isInativo();
+    }
+
+    public boolean podeInativar() {
+        return isAtivo();
+    }
+
+    public boolean podeAbrir() {
+        return isAtivo() && isFechado();
+    }
+
+    public boolean podeFechar() {
+        return isAberto();
     }
 }

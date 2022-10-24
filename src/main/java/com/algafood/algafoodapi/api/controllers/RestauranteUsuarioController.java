@@ -39,7 +39,7 @@ public class RestauranteUsuarioController implements RestauranteUsuarioControlle
         return usuarioModel
                 .toCollectionModel(restaurante.getResponsaveis())
                 .removeLinks()
-                .add(instanceLink.linkToRestaurantesUsuarios(restaurante.getId()));
+                .add(instanceLink.linkToRestaurantesUsuarios(restaurante.getId(), "responsaveis"));
     }
 
     @PutMapping("/{responsavelId}")

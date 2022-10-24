@@ -17,7 +17,7 @@ public class PedidoModel extends RepresentationModel<PedidoModel> {
     private Long taxaFrete;
     private Long valorTotal;
     private UsuarioModel cliente;
-    private RestauranteResumoModel restaurante;
+    private RestauranteApenasNomeModel restaurante;
     private FormaPagamentoModel formaPagamento;
     private ItemPedidoModel itemPedido;
     private EnderecoModel endereco;

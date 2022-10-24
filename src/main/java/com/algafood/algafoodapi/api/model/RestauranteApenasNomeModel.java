@@ -6,11 +6,10 @@ import org.springframework.hateoas.server.core.Relation;
 import lombok.Getter;
 import lombok.Setter;
 
-@Relation(collectionRelation = "formas-pagamentos")
+@Relation(collectionRelation = "restaurantes")
 @Setter
 @Getter
-public class FormaPagamentoModel extends RepresentationModel<FormaPagamentoModel> {
-
+public class RestauranteApenasNomeModel extends RepresentationModel<RestauranteApenasNomeModel> {
     private Long id;
-    private String descricao;
+    private String nome;
 }

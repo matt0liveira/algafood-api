@@ -32,12 +32,12 @@ public class PedidoResumoModelAssembler extends RepresentationModelAssemblerSupp
 
                 // RESTAURANTE
                 pedidoResumoModel.getRestaurante()
-                                .add(instanceLink.linkToRestaurantes(pedidoResumoModel.getRestaurante().getId()));
+                                .add(instanceLink.linkToRestaurante(pedidoResumoModel.getRestaurante().getId()));
                 pedidoResumoModel.getRestaurante()
                                 .add(instanceLink.linkToRestaurantes(IanaLinkRelations.COLLECTION_VALUE));
 
                 // CLIENTE
-                pedidoResumoModel.getCliente().add(instanceLink.linkToUsuarios(pedidoResumoModel.getCliente().getId()));
+                pedidoResumoModel.getCliente().add(instanceLink.linkToUsuario(pedidoResumoModel.getCliente().getId()));
                 pedidoResumoModel.getCliente().add(instanceLink.linkToUsuarios(IanaLinkRelations.COLLECTION_VALUE));
 
                 return pedidoResumoModel;

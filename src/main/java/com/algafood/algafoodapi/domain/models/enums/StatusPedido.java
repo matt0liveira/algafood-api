@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum StatusPedido {
-    
+
     CRIADO("Criado"),
     CONFIRMADO("Confirmado", CRIADO),
     ENTREGUE("Entregue", CONFIRMADO),
@@ -24,6 +24,10 @@ public enum StatusPedido {
 
     public boolean cantUpdateTo(StatusPedido newStatus) {
         return !newStatus.statusCompativeis.contains(this);
+    }
+
+    public boolean canUpdateTo(StatusPedido newStatus) {
+        return !cantUpdateTo(newStatus);
     }
 
 }

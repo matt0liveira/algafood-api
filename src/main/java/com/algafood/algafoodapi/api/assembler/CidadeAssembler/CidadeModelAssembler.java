@@ -32,11 +32,11 @@ public class CidadeModelAssembler extends RepresentationModelAssemblerSupport<Ci
 
                 modelMapper.map(cidade, cidadeModel);
 
-                cidadeModel.add(instanceLink.linkToCidades(cidadeModel.getId()));
+                cidadeModel.add(instanceLink.linkToCidade(cidadeModel.getId()));
                 cidadeModel.add(instanceLink.linkToCidades(IanaLinkRelations.COLLECTION_VALUE));
 
                 // ESTADO
-                cidadeModel.getEstado().add(instanceLink.linkToEstados(cidadeModel.getEstado().getId()));
+                cidadeModel.getEstado().add(instanceLink.linkToEstado(cidadeModel.getEstado().getId()));
 
                 return cidadeModel;
         }

@@ -27,6 +27,6 @@ public class PedidoResumoModel extends RepresentationModel<PedidoResumoModel> {
     private OffsetDateTime dataCancelamento;
     private UsuarioModel cliente;
     // private String nomeCliente;
-    private RestauranteResumoModel restaurante;
+    private RestauranteApenasNomeModel restaurante;
 
 }

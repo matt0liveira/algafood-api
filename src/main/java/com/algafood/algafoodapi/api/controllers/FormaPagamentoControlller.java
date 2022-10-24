@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.ShallowEtagHeaderFilter;
 
+import com.algafood.algafoodapi.api.ResourceUriHelper;
 import com.algafood.algafoodapi.api.assembler.FormaPagamentoAssembler.FormaPagamentoInputDisassembler;
 import com.algafood.algafoodapi.api.assembler.FormaPagamentoAssembler.FormaPagamentoModelAssembler;
 import com.algafood.algafoodapi.api.model.FormaPagamentoModel;
@@ -69,7 +70,7 @@ public class FormaPagamentoControlller implements FormaPagamentoControllerOpenAp
         List<FormaPagamento> formasPagamentos = formaPagamentoRepository.findAll();
 
         List<FormaPagamentoModel> formasPagamentosModel = formaPagamentoModelAssembler
-                .toCollectionDTO(formasPagamentos);
+                .toCollectionModel(formasPagamentos);
 
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
@@ -80,7 +81,7 @@ public class FormaPagamentoControlller implements FormaPagamentoControllerOpenAp
     @GetMapping("/{formaPagamentoId}")
     public ResponseEntity<FormaPagamentoModel> buscar(@PathVariable Long formaPagamentoId) {
         FormaPagamentoModel formaPagamentoModel = formaPagamentoModelAssembler
-                .toDTO(cadastroFormaPagamentoService.findOrFail(formaPagamentoId));
+                .toModel(cadastroFormaPagamentoService.findOrFail(formaPagamentoId));
 
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(15, TimeUnit.SECONDS).cachePublic())
@@ -94,7 +95,9 @@ public class FormaPagamentoControlller implements FormaPagamentoControllerOpenAp
 
             formaPagamento = cadastroFormaPagamentoService.salvar(formaPagamento);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(formaPagamentoModelAssembler.toDTO(formaPagamento));
+            return ResponseEntity.created(ResourceUriHelper
+                    .addUriInResponseHeader(formaPagamento.getId()))
+                    .body(formaPagamentoModelAssembler.toModel(formaPagamento));
         } catch (FormaPagamentoNotfoundException e) {
             throw new NegocioException(e.getMessage());
         }
@@ -110,7 +113,8 @@ public class FormaPagamentoControlller implements FormaPagamentoControllerOpenAp
 
             formaPagamentoCurrent = cadastroFormaPagamentoService.salvar(formaPagamentoCurrent);
 
-            return ResponseEntity.status(HttpStatus.OK).body(formaPagamentoModelAssembler.toDTO(formaPagamentoCurrent));
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(formaPagamentoModelAssembler.toModel(formaPagamentoCurrent));
         } catch (FormaPagamentoNotfoundException e) {
             throw new NegocioException(e.getMessage());
         }

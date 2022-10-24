@@ -35,7 +35,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Entity
 public class Pedido extends AbstractAggregateRoot<Pedido> {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
@@ -79,8 +79,8 @@ public class Pedido extends AbstractAggregateRoot<Pedido> {
         getItens().forEach(ItemPedido::calcularPrecoTotal);
 
         this.subtotal = getItens().stream()
-            .map(item -> item.getPrecoTotal())
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .map(item -> item.getPrecoTotal())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         this.valorTotal = this.subtotal.add(this.taxaFrete);
     }
@@ -104,9 +104,22 @@ public class Pedido extends AbstractAggregateRoot<Pedido> {
         registerEvent(new PedidoCanceladoEvent(this));
     }
 
+    public boolean canBeConfirmado() {
+        return getStatus().canUpdateTo(StatusPedido.CONFIRMADO);
+    }
+
+    public boolean canBeEntregue() {
+        return getStatus().canUpdateTo(StatusPedido.ENTREGUE);
+    }
+
+    public boolean canBeCancelado() {
+        return getStatus().canUpdateTo(StatusPedido.CANCELADO);
+    }
+
     private void setStatus(StatusPedido newStatus) {
-        if(getStatus().cantUpdateTo(newStatus)) {
-            throw new NegocioException(String.format("Status do pedido %s não pode ser alterado de %s para %s", getCodigo(), getStatus().getDescricao(), newStatus.getDescricao()));
+        if (getStatus().cantUpdateTo(newStatus)) {
+            throw new NegocioException(String.format("Status do pedido %s não pode ser alterado de %s para %s",
+                    getCodigo(), getStatus().getDescricao(), newStatus.getDescricao()));
         }
 
         this.status = newStatus;

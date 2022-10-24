@@ -30,24 +30,37 @@ public class PedidoModelAssembler extends RepresentationModelAssemblerSupport<Pe
 		PedidoModel pedidoModel = createModelWithId(pedido.getCodigo(), pedido);
 		modelMapper.map(pedido, pedidoModel);
 
-		pedidoModel.add(instanceLink.linkToPedidos());
+		pedidoModel.add(instanceLink.linkToPedidos("pedidos"));
+
+		// GERENCIAMENTO DE STATUS DO PEDIDO
+		if (pedido.canBeConfirmado()) {
+			pedidoModel.add(instanceLink.linkToConfirmacaoPedido(pedidoModel.getCodigo(), "confirmar"));
+		}
+
+		if (pedido.canBeEntregue()) {
+			pedidoModel.add(instanceLink.linkToEntregaPedido(pedidoModel.getCodigo(), "entregar"));
+		}
+
+		if (pedido.canBeCancelado()) {
+			pedidoModel.add(instanceLink.linkToCancelamentoPedido(pedidoModel.getCodigo(), "cancelar"));
+		}
 
 		// CLIENTE
-		pedidoModel.getCliente().add(instanceLink.linkToUsuarios(pedidoModel.getCliente().getId()));
+		pedidoModel.getCliente().add(instanceLink.linkToUsuario(pedidoModel.getCliente().getId()));
 		pedidoModel.getCliente().add(instanceLink.linkToUsuarios(IanaLinkRelations.COLLECTION_VALUE));
 
 		// RESTAURANTE
-		pedidoModel.getRestaurante().add(instanceLink.linkToRestaurantes(pedidoModel.getRestaurante().getId()));
+		pedidoModel.getRestaurante().add(instanceLink.linkToRestaurante(pedidoModel.getRestaurante().getId()));
 		pedidoModel.getRestaurante().add(instanceLink.linkToRestaurantes(IanaLinkRelations.COLLECTION_VALUE));
 
 		// FORMA DE PAGAMENTO
 		pedidoModel.getFormaPagamento()
-				.add(instanceLink.linkToFormasPagamentos(pedidoModel.getFormaPagamento().getId()));
+				.add(instanceLink.linkToFormasPagamento(pedidoModel.getFormaPagamento().getId()));
 		pedidoModel.getFormaPagamento().add(instanceLink.linkToFormasPagamentos(IanaLinkRelations.COLLECTION_VALUE));
 
 		// CIDADE
 		pedidoModel.getEndereco().getCidade()
-				.add(instanceLink.linkToCidades(pedidoModel.getEndereco().getCidade().getId()));
+				.add(instanceLink.linkToCidade(pedidoModel.getEndereco().getCidade().getId()));
 		pedidoModel.getEndereco().getCidade().add(instanceLink.linkToCidades(IanaLinkRelations.COLLECTION_VALUE));
 
 		return pedidoModel;
