@@ -3,6 +3,7 @@ package com.algafood.algafoodapi.api.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.algafood.algafoodapi.api.InstanceLink;
 import com.algafood.algafoodapi.api.openapi.controller.EstatisticasControllerOpenApi;
 import com.algafood.algafoodapi.domain.filter.VendaDiariaFilter;
 import com.algafood.algafoodapi.domain.models.dto.VendaDiaria;
@@ -26,6 +28,18 @@ public class EstatisticasController implements EstatisticasControllerOpenApi {
 
     @Autowired
     private VendaReportService vendaReportService;
+
+    @Autowired
+    private InstanceLink instanceLink;
+
+    @GetMapping
+    public EstatisticasModel root() {
+        var estatisticasModel = new EstatisticasModel();
+
+        estatisticasModel.add(instanceLink.linkToVendasDiarias("vendas-diarias"));
+
+        return estatisticasModel;
+    }
 
     @GetMapping(path = "/vendas-diarias")
     public List<VendaDiaria> consultVendasDiarias(VendaDiariaFilter filter,
@@ -47,6 +61,9 @@ public class EstatisticasController implements EstatisticasControllerOpenApi {
                 .headers(headers)
                 .body(bytesPdf);
 
+    }
+
+    public static class EstatisticasModel extends RepresentationModel<EstatisticasModel> {
     }
 
 }

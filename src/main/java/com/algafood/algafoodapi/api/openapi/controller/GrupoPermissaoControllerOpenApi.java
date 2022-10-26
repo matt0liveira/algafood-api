@@ -1,6 +1,7 @@
 package com.algafood.algafoodapi.api.openapi.controller;
 
-import java.util.List;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.http.ResponseEntity;
 
 import com.algafood.algafoodapi.api.exceptionhandler.ErrorApi;
 import com.algafood.algafoodapi.api.model.PermissaoModel;
@@ -22,7 +23,7 @@ public interface GrupoPermissaoControllerOpenApi {
                         @ApiResponse(responseCode = "404", description = "Grupo não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class)))
         })
         @ApiOperation("Lista as permissões de um grupo")
-        public List<PermissaoModel> listar(@ApiParam(value = "ID do grupo") Long grupoId);
+        public CollectionModel<PermissaoModel> listar(@ApiParam(value = "ID do grupo") Long grupoId);
 
         @ApiResponses({
                         @ApiResponse(responseCode = "404", description = "Grupo e/ou permissão não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
@@ -30,7 +31,7 @@ public interface GrupoPermissaoControllerOpenApi {
                         @ApiResponse(responseCode = "204", description = "Associação feita com sucesso")
         })
         @ApiOperation("Associa uma permissão a um grupo")
-        public void associar(@ApiParam(value = "ID do grupo") Long grupoId,
+        public ResponseEntity<Void> associar(@ApiParam(value = "ID do grupo") Long grupoId,
                         @ApiParam(value = "ID da permissão") Long permissaoId);
 
         @ApiResponses({
@@ -39,6 +40,6 @@ public interface GrupoPermissaoControllerOpenApi {
                         @ApiResponse(responseCode = "204", description = "Desassociação feita com sucesso")
         })
         @ApiOperation("Desassocia uma permissão a um grupo")
-        public void desassociar(@ApiParam(value = "ID do grupo") Long grupoId,
+        public ResponseEntity<Void> desassociar(@ApiParam(value = "ID do grupo") Long grupoId,
                         @ApiParam(value = "ID da permissão") Long permissaoId);
 }

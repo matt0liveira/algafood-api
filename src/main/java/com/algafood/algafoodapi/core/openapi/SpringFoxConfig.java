@@ -9,14 +9,22 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.Links;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.web.context.request.ServletWebRequest;
 
 import com.algafood.algafoodapi.api.exceptionhandler.ErrorApi;
+import com.algafood.algafoodapi.api.model.CidadeModel;
 import com.algafood.algafoodapi.api.model.CozinhaModel;
+import com.algafood.algafoodapi.api.model.EstadoModel;
 import com.algafood.algafoodapi.api.model.PedidoResumoModel;
+import com.algafood.algafoodapi.api.openapi.model.CidadesModelOpenApi;
 import com.algafood.algafoodapi.api.openapi.model.CozinhasModelOpenApi;
+import com.algafood.algafoodapi.api.openapi.model.EstadosModelOpenApi;
+import com.algafood.algafoodapi.api.openapi.model.LinksModelOpenApi;
 import com.algafood.algafoodapi.api.openapi.model.PageableModelOpenApi;
 import com.algafood.algafoodapi.api.openapi.model.PedidosModelOpenApi;
 import com.fasterxml.classmate.TypeResolver;
@@ -65,7 +73,8 @@ public class SpringFoxConfig {
 						new Tag("Estados", "Gerencia os estados"),
 						new Tag("Produtos", "Gerencia os produtos de restaurantes"),
 						new Tag("Usuários", "Gerencia os usuários"),
-						new Tag("Estatísticas", "Gerencia dados estatísticos"))
+						new Tag("Estatísticas", "Gerencia dados estatísticos"),
+						new Tag("Permissões", "Gerencia as permissões"))
 
 				.useDefaultResponseMessages(false)
 				.globalResponses(HttpMethod.GET, globalGetResponseMessages())
@@ -74,12 +83,19 @@ public class SpringFoxConfig {
 				.globalResponses(HttpMethod.DELETE, globalDeleteResponseMessages())
 				.additionalModels(typeResolver.resolve(ErrorApi.class))
 				.directModelSubstitute(Pageable.class, PageableModelOpenApi.class)
+				.directModelSubstitute(Links.class, LinksModelOpenApi.class)
 				.alternateTypeRules(AlternateTypeRules.newRule(
-						typeResolver.resolve(Page.class, CozinhaModel.class),
+						typeResolver.resolve(PagedModel.class, CozinhaModel.class),
 						CozinhasModelOpenApi.class))
 				.alternateTypeRules(AlternateTypeRules.newRule(
 						typeResolver.resolve(Page.class, PedidoResumoModel.class),
 						PedidosModelOpenApi.class))
+				.alternateTypeRules(AlternateTypeRules.newRule(
+						typeResolver.resolve(CollectionModel.class, CidadeModel.class),
+						CidadesModelOpenApi.class))
+				.alternateTypeRules(AlternateTypeRules.newRule(
+						typeResolver.resolve(CollectionModel.class, EstadoModel.class),
+						EstadosModelOpenApi.class))
 				.ignoredParameterTypes(ServletWebRequest.class);
 		// .globalRequestParameters(Arrays.asList(
 		// new RequestParameterBuilder()

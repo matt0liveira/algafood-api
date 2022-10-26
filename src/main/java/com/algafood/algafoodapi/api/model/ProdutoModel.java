@@ -2,12 +2,16 @@ package com.algafood.algafoodapi.api.model;
 
 import java.math.BigDecimal;
 
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
+
 import lombok.Getter;
 import lombok.Setter;
 
+@Relation(collectionRelation = "produtos")
 @Setter
 @Getter
-public class ProdutoModel {
+public class ProdutoModel extends RepresentationModel<ProdutoModel> {
     private Long id;
     private String nome;
     private String descricao;

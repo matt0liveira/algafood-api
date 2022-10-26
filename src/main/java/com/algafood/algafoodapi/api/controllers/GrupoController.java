@@ -1,10 +1,9 @@
 package com.algafood.algafoodapi.api.controllers;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,20 +42,20 @@ public class GrupoController implements GrupoControllerOpenApi {
     private GrupoInputDisassembler grupoInputDisassembler;
 
     @GetMapping
-    public List<GrupoModel> listar() {
-        return grupoModel.toCollectionDTO(grupoRepository.findAll());
+    public CollectionModel<GrupoModel> listar() {
+        return grupoModel.toCollectionModel(grupoRepository.findAll());
     }
 
     @GetMapping("/{grupoId}")
     public GrupoModel buscar(@PathVariable Long grupoId) {
-        return grupoModel.toDTO(cadastroGrupo.findOrFail(grupoId));
+        return grupoModel.toModel(cadastroGrupo.findOrFail(grupoId));
     }
 
     @PostMapping
     public ResponseEntity<GrupoModel> add(@RequestBody @Valid GrupoInputModel grupoInput) {
         Grupo grupo = grupoInputDisassembler.toDomainObject(grupoInput);
 
-        GrupoModel grupoDTO = grupoModel.toDTO(cadastroGrupo.salvar(grupo));
+        GrupoModel grupoDTO = grupoModel.toModel(cadastroGrupo.salvar(grupo));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(grupoDTO);
     }
@@ -70,7 +69,7 @@ public class GrupoController implements GrupoControllerOpenApi {
 
         grupoCurrent = cadastroGrupo.salvar(grupoCurrent);
 
-        return ResponseEntity.status(HttpStatus.OK).body(grupoModel.toDTO(grupoCurrent));
+        return ResponseEntity.status(HttpStatus.OK).body(grupoModel.toModel(grupoCurrent));
     }
 
     @DeleteMapping("/{grupoId}")

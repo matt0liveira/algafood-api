@@ -1,7 +1,6 @@
 package com.algafood.algafoodapi.api.openapi.controller;
 
-import java.util.List;
-
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 
 import com.algafood.algafoodapi.api.model.GrupoModel;
@@ -15,7 +14,7 @@ import io.swagger.annotations.ApiParam;
 public interface GrupoControllerOpenApi {
 
         @ApiOperation("Lista todos os grupos de permissões")
-        List<GrupoModel> listar();
+        CollectionModel<GrupoModel> listar();
 
         @ApiOperation("Busca um grupo pelo ID")
         GrupoModel buscar(@ApiParam(value = "ID de um grupo", example = "1") Long grupoId);
