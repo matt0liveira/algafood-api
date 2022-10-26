@@ -1,9 +1,5 @@
 package com.algafood.algafoodapi.api.assembler.FormaPagamentoAssembler;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
@@ -30,13 +26,12 @@ public class FormaPagamentoModelAssembler
     }
 
     public FormaPagamentoModel toModel(FormaPagamento formaPagamento) {
-        return modelMapper.map(formaPagamento, FormaPagamentoModel.class);
-    }
+        FormaPagamentoModel formaPagamentoModel = createModelWithId(formaPagamento.getId(), formaPagamento);
+        modelMapper.map(formaPagamento, formaPagamentoModel);
 
-    public List<FormaPagamentoModel> toCollectionModel(Collection<FormaPagamento> formasPagamentos) {
-        return formasPagamentos.stream()
-                .map(formaPagamento -> toModel(formaPagamento))
-                .collect(Collectors.toList());
+        formaPagamentoModel.add(instanceLink.linkToFormasPagamentos(IanaLinkRelations.COLLECTION_VALUE));
+
+        return formaPagamentoModel;
     }
 
     @Override

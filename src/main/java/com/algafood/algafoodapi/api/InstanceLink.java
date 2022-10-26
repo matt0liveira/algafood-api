@@ -221,4 +221,36 @@ public class InstanceLink {
 						.fechar(restauranteId))
 				.withRel(rel);
 	}
+
+	public Link linkToDesassociacaoFormaPagamento(Long restauranteId, Long formaPagamentoId, String rel) {
+		return WebMvcLinkBuilder.linkTo(
+				WebMvcLinkBuilder
+						.methodOn(RestauranteFormaPagamentoController.class)
+						.desassociar(restauranteId, formaPagamentoId))
+				.withRel(rel);
+	}
+
+	public Link linkToAssociacaoFormaPagamento(Long restauranteId, String rel) {
+		return WebMvcLinkBuilder.linkTo(
+				WebMvcLinkBuilder
+						.methodOn(RestauranteFormaPagamentoController.class)
+						.desassociar(restauranteId, null))
+				.withRel(rel);
+	}
+
+	public Link linkToDesassociacaoRestauranteResponsavel(Long restauranteId, Long usuarioId, String rel) {
+		return WebMvcLinkBuilder.linkTo(
+				WebMvcLinkBuilder
+						.methodOn(RestauranteUsuarioController.class)
+						.desassociar(restauranteId, usuarioId))
+				.withRel(rel);
+	}
+
+	public Link linkToAssociacaoRestauranteResponsavel(Long restauranteId, String rel) {
+		return WebMvcLinkBuilder.linkTo(
+				WebMvcLinkBuilder
+						.methodOn(RestauranteUsuarioController.class)
+						.associar(restauranteId, null))
+				.withRel(rel);
+	}
 }

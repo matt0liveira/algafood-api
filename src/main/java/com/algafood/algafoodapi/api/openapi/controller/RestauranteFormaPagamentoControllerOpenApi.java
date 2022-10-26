@@ -1,6 +1,7 @@
 package com.algafood.algafoodapi.api.openapi.controller;
 
-import java.util.List;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.http.ResponseEntity;
 
 import com.algafood.algafoodapi.api.exceptionhandler.ErrorApi;
 import com.algafood.algafoodapi.api.model.FormaPagamentoModel;
@@ -20,7 +21,7 @@ public interface RestauranteFormaPagamentoControllerOpenApi {
                         @ApiResponse(responseCode = "404", description = "Restaurante não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class)))
         })
         @ApiOperation("Lista as formas de pagamento associadas a um restaurante")
-        public List<FormaPagamentoModel> listar(@ApiParam(value = "ID do restaurante") Long restauranteId);
+        public CollectionModel<FormaPagamentoModel> listar(@ApiParam(value = "ID do restaurante") Long restauranteId);
 
         @ApiResponses({
                         @ApiResponse(responseCode = "404", description = "Restaurante e/ou forma de pagamento não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
@@ -28,7 +29,7 @@ public interface RestauranteFormaPagamentoControllerOpenApi {
                         @ApiResponse(responseCode = "204", description = "Forma de pagamento desassociada com sucesso")
         })
         @ApiOperation("Desassocia uma forma de pagamento de um restaurante")
-        public void desassociar(@ApiParam(value = "ID do restaurante") Long restauranteId,
+        public ResponseEntity<Void> desassociar(@ApiParam(value = "ID do restaurante") Long restauranteId,
                         @ApiParam(value = "ID da forma de pagamento") Long formaPagamentoId);
 
         @ApiResponses({
@@ -37,6 +38,6 @@ public interface RestauranteFormaPagamentoControllerOpenApi {
                         @ApiResponse(responseCode = "204", description = "Forma de pagamento associada com sucesso")
         })
         @ApiOperation("Associa uma forma de pagamento a restaurante")
-        public void associar(@ApiParam(value = "ID do restaurante") Long restauranteId,
+        public ResponseEntity<Void> associar(@ApiParam(value = "ID do restaurante") Long restauranteId,
                         @ApiParam(value = "ID da forma de pagamento") Long formaPagamentoId);
 }

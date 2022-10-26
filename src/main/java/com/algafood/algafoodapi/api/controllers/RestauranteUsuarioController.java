@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,35 +24,46 @@ import com.algafood.algafoodapi.domain.service.CadastroRestauranteService;
 @RequestMapping(path = "/restaurantes/{restauranteId}/responsaveis", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RestauranteUsuarioController implements RestauranteUsuarioControllerOpenApi {
 
-    @Autowired
-    private CadastroRestauranteService cadastroRestaurante;
+	@Autowired
+	private CadastroRestauranteService cadastroRestaurante;
 
-    @Autowired
-    private UsuarioModelAssembler usuarioModel;
+	@Autowired
+	private UsuarioModelAssembler usuarioModelAssembler;
 
-    @Autowired
-    private InstanceLink instanceLink;
+	@Autowired
+	private InstanceLink instanceLink;
 
-    @GetMapping
-    public CollectionModel<UsuarioModel> listar(@PathVariable Long restauranteId) {
-        Restaurante restaurante = cadastroRestaurante.findOrFail(restauranteId);
+	@GetMapping
+	public CollectionModel<UsuarioModel> listar(@PathVariable Long restauranteId) {
+		Restaurante restaurante = cadastroRestaurante.findOrFail(restauranteId);
 
-        return usuarioModel
-                .toCollectionModel(restaurante.getResponsaveis())
-                .removeLinks()
-                .add(instanceLink.linkToRestaurantesUsuarios(restaurante.getId(), "responsaveis"));
-    }
+		CollectionModel<UsuarioModel> usuariosModel = usuarioModelAssembler
+				.toCollectionModel(restaurante.getResponsaveis())
+				.removeLinks()
+				.add(instanceLink.linkToRestaurantesUsuarios(restaurante.getId(), "responsaveis"))
+				.add(instanceLink.linkToAssociacaoRestauranteResponsavel(restauranteId, "associar"));
 
-    @PutMapping("/{responsavelId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void associar(@PathVariable Long restauranteId, @PathVariable Long responsavelId) {
-        cadastroRestaurante.associarResponsavel(restauranteId, responsavelId);
-    }
+		usuariosModel.getContent().forEach(usuarioModel -> {
+			usuarioModel.add(instanceLink.linkToDesassociacaoRestauranteResponsavel(restaurante.getId(),
+					usuarioModel.getId(), "desassociar"));
+		});
 
-    @DeleteMapping("/{responsavelId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void desassociar(@PathVariable Long restauranteId, @PathVariable Long responsavelId) {
-        cadastroRestaurante.desassociarResponsavel(restauranteId, responsavelId);
-    }
+		return usuariosModel;
+	}
+
+	@PutMapping("/{responsavelId}")
+	public ResponseEntity<Void> associar(@PathVariable Long restauranteId, @PathVariable Long responsavelId) {
+		cadastroRestaurante.associarResponsavel(restauranteId, responsavelId);
+
+		return ResponseEntity.noContent().build();
+	}
+
+	@DeleteMapping("/{responsavelId}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public ResponseEntity<Void> desassociar(@PathVariable Long restauranteId, @PathVariable Long responsavelId) {
+		cadastroRestaurante.desassociarResponsavel(restauranteId, responsavelId);
+
+		return ResponseEntity.noContent().build();
+	}
 
 }

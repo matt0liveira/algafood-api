@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -52,7 +53,7 @@ public class FormaPagamentoControlller implements FormaPagamentoControllerOpenAp
     private FormaPagamentoInputDisassembler formaPagamentoInputDisassembler;
 
     @GetMapping
-    public ResponseEntity<List<FormaPagamentoModel>> listar(ServletWebRequest req) {
+    public ResponseEntity<CollectionModel<FormaPagamentoModel>> listar(ServletWebRequest req) {
         ShallowEtagHeaderFilter.disableContentCaching(req.getRequest());
 
         String eTag = "0";
@@ -69,7 +70,7 @@ public class FormaPagamentoControlller implements FormaPagamentoControllerOpenAp
 
         List<FormaPagamento> formasPagamentos = formaPagamentoRepository.findAll();
 
-        List<FormaPagamentoModel> formasPagamentosModel = formaPagamentoModelAssembler
+        CollectionModel<FormaPagamentoModel> formasPagamentosModel = formaPagamentoModelAssembler
                 .toCollectionModel(formasPagamentos);
 
         return ResponseEntity.ok()

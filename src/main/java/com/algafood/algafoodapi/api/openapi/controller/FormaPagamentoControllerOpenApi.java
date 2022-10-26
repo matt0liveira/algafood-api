@@ -1,7 +1,6 @@
 package com.algafood.algafoodapi.api.openapi.controller;
 
-import java.util.List;
-
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.ServletWebRequest;
 
@@ -21,7 +20,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 public interface FormaPagamentoControllerOpenApi {
 
         @ApiOperation("Lista todas as formas de pagamento")
-        ResponseEntity<List<FormaPagamentoModel>> listar(ServletWebRequest req);
+        ResponseEntity<CollectionModel<FormaPagamentoModel>> listar(ServletWebRequest req);
 
         @ApiResponses({
                         @ApiResponse(responseCode = "400", description = "Requisição inválida (erro do cliente)", content = @Content(schema = @Schema(implementation = ErrorApi.class))),

@@ -1,6 +1,7 @@
 package com.algafood.algafoodapi.api.openapi.controller;
 
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.http.ResponseEntity;
 
 import com.algafood.algafoodapi.api.exceptionhandler.ErrorApi;
 import com.algafood.algafoodapi.api.model.UsuarioModel;
@@ -28,7 +29,7 @@ public interface RestauranteUsuarioControllerOpenApi {
                         @ApiResponse(responseCode = "204", description = "Associação feita com sucesso")
         })
         @ApiOperation("Associa um responsável a um restaurante")
-        public void associar(@ApiParam(value = "ID do restaurante") Long restauranteId,
+        public ResponseEntity<Void> associar(@ApiParam(value = "ID do restaurante") Long restauranteId,
                         @ApiParam(value = "ID do responsável") Long responsavelId);
 
         @ApiResponses({
@@ -37,6 +38,6 @@ public interface RestauranteUsuarioControllerOpenApi {
                         @ApiResponse(responseCode = "204", description = "Desassociação feita com sucesso")
         })
         @ApiOperation("Desassocia um responsável de um restaurante")
-        public void desassociar(@ApiParam(value = "ID do restaurante") Long restauranteId,
+        public ResponseEntity<Void> desassociar(@ApiParam(value = "ID do restaurante") Long restauranteId,
                         @ApiParam(value = "ID do responsável") Long responsavelId);
 }
