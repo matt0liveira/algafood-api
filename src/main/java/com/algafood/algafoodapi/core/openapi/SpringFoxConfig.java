@@ -20,13 +20,25 @@ import com.algafood.algafoodapi.api.exceptionhandler.ErrorApi;
 import com.algafood.algafoodapi.api.model.CidadeModel;
 import com.algafood.algafoodapi.api.model.CozinhaModel;
 import com.algafood.algafoodapi.api.model.EstadoModel;
+import com.algafood.algafoodapi.api.model.FormaPagamentoModel;
+import com.algafood.algafoodapi.api.model.GrupoModel;
 import com.algafood.algafoodapi.api.model.PedidoResumoModel;
+import com.algafood.algafoodapi.api.model.PermissaoModel;
+import com.algafood.algafoodapi.api.model.ProdutoModel;
+import com.algafood.algafoodapi.api.model.RestauranteResumoModel;
+import com.algafood.algafoodapi.api.model.UsuarioModel;
 import com.algafood.algafoodapi.api.openapi.model.CidadesModelOpenApi;
 import com.algafood.algafoodapi.api.openapi.model.CozinhasModelOpenApi;
 import com.algafood.algafoodapi.api.openapi.model.EstadosModelOpenApi;
+import com.algafood.algafoodapi.api.openapi.model.FormasPagamentosModelOpenApi;
+import com.algafood.algafoodapi.api.openapi.model.GrupoPermissoesModelOpenApi;
+import com.algafood.algafoodapi.api.openapi.model.GruposModelOpenApi;
 import com.algafood.algafoodapi.api.openapi.model.LinksModelOpenApi;
 import com.algafood.algafoodapi.api.openapi.model.PageableModelOpenApi;
 import com.algafood.algafoodapi.api.openapi.model.PedidosModelOpenApi;
+import com.algafood.algafoodapi.api.openapi.model.ProdutosModelOpenApi;
+import com.algafood.algafoodapi.api.openapi.model.RestaurantesModelOpenApi;
+import com.algafood.algafoodapi.api.openapi.model.UsuariosModelOpenApi;
 import com.fasterxml.classmate.TypeResolver;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
@@ -88,6 +100,9 @@ public class SpringFoxConfig {
 						typeResolver.resolve(PagedModel.class, CozinhaModel.class),
 						CozinhasModelOpenApi.class))
 				.alternateTypeRules(AlternateTypeRules.newRule(
+						typeResolver.resolve(PagedModel.class, PedidoResumoModel.class),
+						PedidosModelOpenApi.class))
+				.alternateTypeRules(AlternateTypeRules.newRule(
 						typeResolver.resolve(Page.class, PedidoResumoModel.class),
 						PedidosModelOpenApi.class))
 				.alternateTypeRules(AlternateTypeRules.newRule(
@@ -96,6 +111,24 @@ public class SpringFoxConfig {
 				.alternateTypeRules(AlternateTypeRules.newRule(
 						typeResolver.resolve(CollectionModel.class, EstadoModel.class),
 						EstadosModelOpenApi.class))
+				.alternateTypeRules(AlternateTypeRules.newRule(
+						typeResolver.resolve(CollectionModel.class, FormaPagamentoModel.class),
+						FormasPagamentosModelOpenApi.class))
+				.alternateTypeRules(AlternateTypeRules.newRule(
+						typeResolver.resolve(CollectionModel.class, GrupoModel.class),
+						GruposModelOpenApi.class))
+				.alternateTypeRules(AlternateTypeRules.newRule(
+						typeResolver.resolve(CollectionModel.class, PermissaoModel.class),
+						GrupoPermissoesModelOpenApi.class))
+				.alternateTypeRules(AlternateTypeRules.newRule(
+						typeResolver.resolve(CollectionModel.class, ProdutoModel.class),
+						ProdutosModelOpenApi.class))
+				.alternateTypeRules(AlternateTypeRules.newRule(
+						typeResolver.resolve(CollectionModel.class, RestauranteResumoModel.class),
+						RestaurantesModelOpenApi.class))
+				.alternateTypeRules(AlternateTypeRules.newRule(
+						typeResolver.resolve(CollectionModel.class, UsuarioModel.class),
+						UsuariosModelOpenApi.class))
 				.ignoredParameterTypes(ServletWebRequest.class);
 		// .globalRequestParameters(Arrays.asList(
 		// new RequestParameterBuilder()

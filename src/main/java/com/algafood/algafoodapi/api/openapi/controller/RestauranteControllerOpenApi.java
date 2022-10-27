@@ -20,11 +20,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import springfox.documentation.annotations.ApiIgnore;
 
 @Api(tags = "Restaurantes")
 public interface RestauranteControllerOpenApi {
 
-	@ApiOperation("Lista todos os restaurantes")
+	@ApiIgnore
+	@ApiOperation(value = "Lista todos os restaurantes", hidden = true)
 	CollectionModel<RestauranteApenasNomeModel> listar(String projecao);
 
 	@ApiOperation("Lista todos os restaurantes")

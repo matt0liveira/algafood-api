@@ -17,7 +17,11 @@ public class CozinhasModelOpenApi {
 
     private CozinhaEmbeddedModelOpenApi _embedded;
     private Links _links;
+    private PageModelOpenApi page;
 
+    @ApiModel("CozinhaModel")
+    @Setter
+    @Getter
     public class CozinhaEmbeddedModelOpenApi {
         List<CozinhaModel> cozinhas;
     }
