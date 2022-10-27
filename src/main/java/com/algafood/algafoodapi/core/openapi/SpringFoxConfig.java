@@ -17,32 +17,39 @@ import org.springframework.http.MediaType;
 import org.springframework.web.context.request.ServletWebRequest;
 
 import com.algafood.algafoodapi.api.exceptionhandler.ErrorApi;
-import com.algafood.algafoodapi.api.model.CidadeModel;
-import com.algafood.algafoodapi.api.model.CozinhaModel;
-import com.algafood.algafoodapi.api.model.EstadoModel;
-import com.algafood.algafoodapi.api.model.FormaPagamentoModel;
-import com.algafood.algafoodapi.api.model.GrupoModel;
-import com.algafood.algafoodapi.api.model.PedidoResumoModel;
-import com.algafood.algafoodapi.api.model.PermissaoModel;
-import com.algafood.algafoodapi.api.model.ProdutoModel;
-import com.algafood.algafoodapi.api.model.RestauranteResumoModel;
-import com.algafood.algafoodapi.api.model.UsuarioModel;
-import com.algafood.algafoodapi.api.openapi.model.CidadesModelOpenApi;
-import com.algafood.algafoodapi.api.openapi.model.CozinhasModelOpenApi;
-import com.algafood.algafoodapi.api.openapi.model.EstadosModelOpenApi;
-import com.algafood.algafoodapi.api.openapi.model.FormasPagamentosModelOpenApi;
-import com.algafood.algafoodapi.api.openapi.model.GrupoPermissoesModelOpenApi;
-import com.algafood.algafoodapi.api.openapi.model.GruposModelOpenApi;
-import com.algafood.algafoodapi.api.openapi.model.LinksModelOpenApi;
-import com.algafood.algafoodapi.api.openapi.model.PageableModelOpenApi;
-import com.algafood.algafoodapi.api.openapi.model.PedidosModelOpenApi;
-import com.algafood.algafoodapi.api.openapi.model.ProdutosModelOpenApi;
-import com.algafood.algafoodapi.api.openapi.model.RestaurantesModelOpenApi;
-import com.algafood.algafoodapi.api.openapi.model.UsuariosModelOpenApi;
+import com.algafood.algafoodapi.api.v1.model.CidadeModel;
+import com.algafood.algafoodapi.api.v1.model.CozinhaModel;
+import com.algafood.algafoodapi.api.v1.model.EstadoModel;
+import com.algafood.algafoodapi.api.v1.model.FormaPagamentoModel;
+import com.algafood.algafoodapi.api.v1.model.GrupoModel;
+import com.algafood.algafoodapi.api.v1.model.PedidoResumoModel;
+import com.algafood.algafoodapi.api.v1.model.PermissaoModel;
+import com.algafood.algafoodapi.api.v1.model.ProdutoModel;
+import com.algafood.algafoodapi.api.v1.model.RestauranteResumoModel;
+import com.algafood.algafoodapi.api.v1.model.UsuarioModel;
+import com.algafood.algafoodapi.api.v1.openapi.model.CidadesModelOpenApi;
+import com.algafood.algafoodapi.api.v1.openapi.model.CozinhasModelOpenApi;
+import com.algafood.algafoodapi.api.v1.openapi.model.EstadosModelOpenApi;
+import com.algafood.algafoodapi.api.v1.openapi.model.FormasPagamentosModelOpenApi;
+import com.algafood.algafoodapi.api.v1.openapi.model.GrupoPermissoesModelOpenApi;
+import com.algafood.algafoodapi.api.v1.openapi.model.GruposModelOpenApi;
+import com.algafood.algafoodapi.api.v1.openapi.model.LinksModelOpenApi;
+import com.algafood.algafoodapi.api.v1.openapi.model.PageableModelOpenApi;
+import com.algafood.algafoodapi.api.v1.openapi.model.PedidosModelOpenApi;
+import com.algafood.algafoodapi.api.v1.openapi.model.ProdutosModelOpenApi;
+import com.algafood.algafoodapi.api.v1.openapi.model.RestaurantesModelOpenApi;
+import com.algafood.algafoodapi.api.v1.openapi.model.UsuariosModelOpenApi;
+import com.algafood.algafoodapi.api.v2.model.CidadeModelV2;
+import com.algafood.algafoodapi.api.v2.model.CozinhaModelV2;
+import com.algafood.algafoodapi.api.v2.openapi.model.CidadesModelOpenApiV2;
+import com.algafood.algafoodapi.api.v2.openapi.model.CozinhasModelOpenApiV2;
+import com.algafood.algafoodapi.api.v2.openapi.model.LinksModelOpenApiV2;
+import com.algafood.algafoodapi.api.v2.openapi.model.PageableModelOpenApiV2;
 import com.fasterxml.classmate.TypeResolver;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RepresentationBuilder;
 import springfox.documentation.builders.RequestHandlerSelectors;
 // import springfox.documentation.builders.RequestParameterBuilder;
@@ -67,14 +74,16 @@ public class SpringFoxConfig {
 	}
 
 	@Bean
-	public Docket apiDocket() {
+	public Docket apiDocketV1() {
 		var typeResolver = new TypeResolver();
 
 		return new Docket(DocumentationType.OAS_30)
+				.groupName("V1")
 				.select()
 				.apis(RequestHandlerSelectors.basePackage("com.algafood.algafoodapi.api"))
+				.paths(PathSelectors.ant("/v1/**"))
 				.build()
-				.apiInfo(apiInfo())
+				.apiInfo(apiInfoV1())
 				.tags(
 						new Tag("Cidades", "Gerencia as cidades"),
 						new Tag("Grupos", "Gerencia os grupos de permissões"),
@@ -139,6 +148,37 @@ public class SpringFoxConfig {
 		// .required(true)
 		// .query(q -> q.model(m -> m.scalarModel(ScalarType.STRING)))
 		// .build())); CONFIGURANDO PARÂMETROS GLOBAIS
+	}
+
+	@Bean
+	public Docket apiDocketV2() {
+		var typeResolver = new TypeResolver();
+
+		return new Docket(DocumentationType.OAS_30)
+				.groupName("V2")
+				.select()
+				.apis(RequestHandlerSelectors.basePackage("com.algafood.algafoodapi.api"))
+				.paths(PathSelectors.ant("/v2/**"))
+				.build()
+				.apiInfo(apiInfoV2())
+				.tags(
+						new Tag("Cidades", "Gerencia as cidades"),
+						new Tag("Cozinhas", "Gerencia as cozinhas"))
+				.useDefaultResponseMessages(false)
+				.alternateTypeRules(AlternateTypeRules.newRule(
+						typeResolver.resolve(CollectionModel.class, CidadeModelV2.class),
+						CidadesModelOpenApiV2.class))
+				.alternateTypeRules(AlternateTypeRules.newRule(
+						typeResolver.resolve(PagedModel.class, CozinhaModelV2.class),
+						CozinhasModelOpenApiV2.class))
+				.globalResponses(HttpMethod.GET, globalGetResponseMessages())
+				.globalResponses(HttpMethod.POST, globalPostResponseMessages())
+				.globalResponses(HttpMethod.PUT, globalPutResponseMessages())
+				.globalResponses(HttpMethod.DELETE, globalDeleteResponseMessages())
+				.additionalModels(typeResolver.resolve(ErrorApi.class))
+				.directModelSubstitute(Pageable.class, PageableModelOpenApiV2.class)
+				.directModelSubstitute(Links.class, LinksModelOpenApiV2.class)
+				.ignoredParameterTypes(ServletWebRequest.class);
 	}
 
 	private List<Response> globalGetResponseMessages() {
@@ -230,11 +270,20 @@ public class SpringFoxConfig {
 						.build());
 	}
 
-	public ApiInfo apiInfo() {
+	public ApiInfo apiInfoV1() {
+		return new ApiInfoBuilder()
+				.title("Api Algafood (Depreciada)")
+				.description("Documentação de API desenvolvida para restaurantes.")
+				.version("1")
+				.contact(new Contact("Algafood", "www.algafood.com.br", "contato@algafood.com"))
+				.build();
+	}
+
+	public ApiInfo apiInfoV2() {
 		return new ApiInfoBuilder()
 				.title("Api Algafood")
 				.description("Documentação de API desenvolvida para restaurantes.")
-				.version("1")
+				.version("2")
 				.contact(new Contact("Algafood", "www.algafood.com.br", "contato@algafood.com"))
 				.build();
 	}
