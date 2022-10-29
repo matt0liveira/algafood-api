@@ -1,0 +1,28 @@
+OAuth2
+
+O tipo de autenticação para acesso de recursos de uma API REST OAuth2 carrega consigo quatro personagens principais:
+
+1) Resource Owner (Proprietário dos recursos, cliente final);
+
+2) Client (O meio de acesso usado pelo Resource Owner. Ex: Software, Aplicação Web, Aplicação Mobile etc...);
+
+3) Authorization Server (Responsável pela autenticação do Client e do Resource Owner e o que gera o Access Token);
+
+4) Resource Server (Servidor dos recursos, API REST).
+
+
+Password Grant Type 
+	- Tipo de concessão via credenciais do Resource Owner.
+	- Normalmente usado quando a API REST faz comunicação com interface gráfica (front-end) que possui interação com usuário
+	- Requer o papel dos quatro personagens (Resource Owner, Client, Authorization Server e Resource Server)
+
+
+
+Client Grant Type
+	- Tipo de concessão onde somente o Client é autenticado (sem a necessidade de o Resource Owner passar credenciais de acesso para o Client)
+	- Normalmente usado quando alguma aplicação back-end necessita fazer requisições à API REST (sem a necessidade da interação do usuário)
+	- O Resource Owner não exerce seu papel
+
+
+Authorization Code
+	- Tipo de cocessão onde as credenciais do Resource Owner são coletadas pelo Authorization Server e é retornado um código de autorização para o Client solicitar o Access Token
