@@ -26,3 +26,18 @@ Client Grant Type
 
 Authorization Code
 	- Tipo de cocessão onde as credenciais do Resource Owner são coletadas pelo Authorization Server e é retornado um código de autorização para o Client solicitar o Access Token
+
+
+Authorization Coce + PKCE
+	- PKCE veio para resolver uma vulnerabilidade no fluxo Authorization Code onde é necessário informar as credenciais do client, onde tais informações sensíveis podem ser facilmente acessadas por softwares maliciosos, e como consequência o código de autorização poderia se facilmnente interceptado.
+
+	- PKCE propõe um desafio para que seja gerado o Access Token:
+		- Ao ser solicitado acesso aos recursos do Resource Server o client vai gerar um code verifier e um code challenge (code verifier com hash SHA-256 e codificado com base64) e vai enviar para o AS esse code challenge;
+
+		- AS vai retornar o código de autorização para gerar o token;
+
+		- Client vai soliticar o Access Token com o código de autorização e com o code verifier;
+
+		- AS vai pegar o code verifier que recebeu do client, vai gerar o hash com o método que o client informou no parâmetro da primeira requisição, codificar para base64 e caso o código seja o mesmo que o code challenge significa que é o client legítimo que está fazendo a requisição e portanto é seguro para gerar o Access Token;
+
+		- Portanto, o PKCE propõe que sem a resolução desse desafio, mesmo que o client ou outra pessoa maliciosa tenha o código de autorização não vai gerar o Access Token.

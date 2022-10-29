@@ -1,5 +1,7 @@
 package com.algafood.algafoodauth;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,6 +12,8 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.CompositeTokenGranter;
+import org.springframework.security.oauth2.provider.TokenGranter;
 
 @Configuration
 @EnableAuthorizationServer
@@ -46,7 +50,13 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .secret(passwordEncoder.encode("food123"))
                 .authorizedGrantTypes("authorization_code")
                 .scopes("write", "read")
-                .redirectUris("http://127.0.0.1:5500/")
+                .redirectUris("http://127.0.0.1:5500/", "http://aplicacao-cliente")
+
+                .and()
+                .withClient("web")
+                .authorizedGrantTypes("implicit")
+                .scopes("write", "read")
+                .redirectUris("http://aplicacao-cliente")
 
                 .and()
                 .withClient("checktoken")
@@ -58,7 +68,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints
                 .authenticationManager(authenticationManager)
-                .userDetailsService(userDetailsService);
+                .userDetailsService(userDetailsService)
+                .tokenGranter(tokenGranter(endpoints));
         // .reuseRefreshTokens(false); MÉTODO BOOLEANO QUE DETERMINA A REUTILIZAÇÃO DE
         // UM REFRESH_TOKEN
     }
@@ -68,5 +79,16 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         security
                 // .checkTokenAccess("isAuthenticated()");
                 .checkTokenAccess("permitAll()");
+    }
+
+    private TokenGranter tokenGranter(AuthorizationServerEndpointsConfigurer endpoints) {
+        var pkceAuthorizationCodeTokenGranter = new PkceAuthorizationCodeTokenGranter(endpoints.getTokenServices(),
+                endpoints.getAuthorizationCodeServices(), endpoints.getClientDetailsService(),
+                endpoints.getOAuth2RequestFactory());
+
+        var granters = Arrays.asList(
+                pkceAuthorizationCodeTokenGranter, endpoints.getTokenGranter());
+
+        return new CompositeTokenGranter(granters);
     }
 }

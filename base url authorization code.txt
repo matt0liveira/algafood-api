@@ -1,1 +1,12 @@
+AUTHORIZATION CODE FLOW
 http://api.algafood.local:8081/oauth/authorize?response_type=code&client_id=foodanalytics&state=abc&redirect_uri=http://aplicacao-cliente
+
+
+IMPLICIT FLOW
+http://api.algafood.local:8081/oauth/authorize?response_type=token&client_id=web&state=abc&redirect_uri=http://aplicacao-cliente
+
+
+//AUTHORIZATION CODE FLOW WITH PKCE
+http://api.algafood.local:8081/oauth/authorize?response_type=code&client_id=foodanalytics&redirect_uri=http://aplicacao-cliente&code_challenge=teste123&code_challenge_method=plain
+
+http://api.algafood.local:8081/oauth/authorize?response_type=code&client_id=foodanalytics&redirect_uri=http://aplicacao-cliente&code_challenge=15ElYymyrK_9d3P6UQd-rJR-KaVhmJKRJ3Xw813J5xk&code_challenge_method=s256
