@@ -1,9 +1,12 @@
-package com.algafood.algafoodauth;
+package com.algafood.algafoodauth.core;
 
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,6 +17,12 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.CompositeTokenGranter;
 import org.springframework.security.oauth2.provider.TokenGranter;
+import org.springframework.security.oauth2.provider.approval.ApprovalStore;
+import org.springframework.security.oauth2.provider.approval.TokenApprovalStore;
+import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
+import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
 
 @Configuration
 @EnableAuthorizationServer
@@ -27,6 +36,18 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Autowired
     private UserDetailsService userDetailsService;
+
+    // @Autowired
+    // private RedisConnectionFactory redisConnectionFactory;
+
+    @Value("${algafood.jwt.keystore.path}")
+    private String jwtJksResource;
+
+    @Value("${algafood.jwt.keystore.password}")
+    private String jwtKeyStorePass;
+
+    @Value("${algafood.jwt.keystore.keypair-alias}")
+    private String jwtKeyPairAlias;
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
@@ -66,10 +87,17 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+        var enhancerChain = new TokenEnhancerChain();
+        enhancerChain.setTokenEnhancers(Arrays.asList(new JwtCustomClaimsTokenEnhancer(), jwtAccessTokenConverter()));
+
         endpoints
                 .authenticationManager(authenticationManager)
                 .userDetailsService(userDetailsService)
-                .tokenGranter(tokenGranter(endpoints));
+                .tokenGranter(tokenGranter(endpoints))
+                .accessTokenConverter(jwtAccessTokenConverter())
+                .tokenEnhancer(enhancerChain)
+                .approvalStore((approvalStore(endpoints.getTokenStore())));
+        // .tokenStore(redisTokenStore());
         // .reuseRefreshTokens(false); MÉTODO BOOLEANO QUE DETERMINA A REUTILIZAÇÃO DE
         // UM REFRESH_TOKEN
     }
@@ -78,11 +106,14 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
         security
                 // .checkTokenAccess("isAuthenticated()");
-                .checkTokenAccess("permitAll()");
+                .checkTokenAccess("permitAll()")
+                .tokenKeyAccess("permitAll()")
+                .allowFormAuthenticationForClients();
     }
 
     private TokenGranter tokenGranter(AuthorizationServerEndpointsConfigurer endpoints) {
-        var pkceAuthorizationCodeTokenGranter = new PkceAuthorizationCodeTokenGranter(endpoints.getTokenServices(),
+        var pkceAuthorizationCodeTokenGranter = new PkceAuthorizationCodeTokenGranter(
+                endpoints.getTokenServices(),
                 endpoints.getAuthorizationCodeServices(), endpoints.getClientDetailsService(),
                 endpoints.getOAuth2RequestFactory());
 
@@ -91,4 +122,35 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
         return new CompositeTokenGranter(granters);
     }
+
+    @Bean
+    public JwtAccessTokenConverter jwtAccessTokenConverter() {
+        var jwtAccessTokenConverter = new JwtAccessTokenConverter();
+        // CHAVE SIMÉTRICA
+        // jwtAccessTokenConverter.setSigningKey("63dcb114-4869-4e1d-bbc0-60028323f6e2");
+
+        // CHAVE ASSIMÉTRICA (PÚBLICA E PRIVADA)
+        var jksResource = new ClassPathResource(jwtJksResource);
+        var keyStorePass = jwtKeyStorePass;
+        var keyPairAlias = jwtKeyPairAlias;
+
+        var keyStoreKeyFactory = new KeyStoreKeyFactory(jksResource, keyStorePass.toCharArray());
+        var keyPair = keyStoreKeyFactory.getKeyPair(keyPairAlias);
+
+        jwtAccessTokenConverter.setKeyPair(keyPair);
+
+        return jwtAccessTokenConverter;
+    }
+
+    private ApprovalStore approvalStore(TokenStore tokenStore) {
+        var approvalStore = new TokenApprovalStore();
+        approvalStore.setTokenStore(tokenStore);
+
+        return approvalStore;
+    }
+
+    // STATEFUL -> ARMAZENANDO SESSÃO DO USUÁRIO EM BANCO NOSQL
+    // private TokenStore redisTokenStore() {
+    // return new RedisTokenStore(redisConnectionFactory);
+    // }
 }
