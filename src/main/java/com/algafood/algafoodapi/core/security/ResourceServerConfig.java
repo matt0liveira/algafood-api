@@ -18,6 +18,17 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .cors()
                 .and()
-                .oauth2ResourceServer().opaqueToken();
+                // .oauth2ResourceServer().opaqueToken();
+                .oauth2ResourceServer().jwt();
     }
+
+    // JWT COM CHAVE SIMÉTRICA
+    // @Bean
+    // public JwtDecoder jwtDecoder() {
+    // var secretKey = new
+    // SecretKeySpec("63dcb114-4869-4e1d-bbc0-60028323f6e2".getBytes(),
+    // "HmacSHA256");
+
+    // return NimbusJwtDecoder.withSecretKey(secretKey).build();
+    // }
 }

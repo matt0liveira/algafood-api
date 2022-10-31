@@ -22,7 +22,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Usuario {
-  
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
@@ -41,12 +41,12 @@ public class Usuario {
     private OffsetDateTime dataCadastro;
 
     @ManyToMany
-    @JoinTable(
-        name = "usuario_grupo",
-        joinColumns = @JoinColumn(name = "usuario_id"),
-        inverseJoinColumns = @JoinColumn(name = "grupo_id")
-    )
+    @JoinTable(name = "usuario_grupo", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "grupo_id"))
     private Set<Grupo> grupos = new HashSet<>();
+
+    public boolean isNew() {
+        return getId() == null;
+    }
 
     public boolean senhaCoincideCom(String senha) {
         return getSenha().equals(senha);
@@ -63,5 +63,5 @@ public class Usuario {
     public boolean desassociarGrupo(Grupo grupo) {
         return getGrupos().remove(grupo);
     }
-    
+
 }

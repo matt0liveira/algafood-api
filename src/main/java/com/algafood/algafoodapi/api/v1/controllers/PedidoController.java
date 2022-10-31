@@ -31,6 +31,7 @@ import com.algafood.algafoodapi.api.v1.model.input.PedidoInputModel;
 import com.algafood.algafoodapi.api.v1.openapi.controller.PedidoControllerOpenApi;
 import com.algafood.algafoodapi.core.data.PageWrapper;
 import com.algafood.algafoodapi.core.data.PageableTranslator;
+import com.algafood.algafoodapi.core.security.SecurityUtils;
 import com.algafood.algafoodapi.domain.exceptions.EntityNotfoundException;
 import com.algafood.algafoodapi.domain.exceptions.NegocioException;
 import com.algafood.algafoodapi.domain.filter.PedidoFilter;
@@ -63,6 +64,9 @@ public class PedidoController implements PedidoControllerOpenApi {
 
     @Autowired
     private PagedResourcesAssembler<Pedido> pagedResourcesAssembler;
+
+    @Autowired
+    private SecurityUtils securityUtils;
 
     // EXEMPLO DE FILTRO DE CAMPOS NA LISTAGEM SEM O USO DE BIBLIOTECAS
     // @GetMapping
@@ -111,9 +115,8 @@ public class PedidoController implements PedidoControllerOpenApi {
         try {
             Pedido newPedido = pedidoInputDisassembler.toDomainObject(pedidoInput);
 
-            // TO-DO pegar usuário autenticado
             newPedido.setCliente(new Usuario());
-            newPedido.getCliente().setId(2L);
+            newPedido.getCliente().setId(securityUtils.getUserIdAuthenticated());
 
             newPedido = cadastroPedido.salvar(newPedido);
 
