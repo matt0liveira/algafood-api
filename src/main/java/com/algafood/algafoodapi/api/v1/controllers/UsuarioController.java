@@ -26,6 +26,7 @@ import com.algafood.algafoodapi.api.v1.model.input.SenhaInput;
 import com.algafood.algafoodapi.api.v1.model.input.UsuarioComSenhaInput;
 import com.algafood.algafoodapi.api.v1.model.input.UsuarioInputModel;
 import com.algafood.algafoodapi.api.v1.openapi.controller.UsuarioControllerOpenApi;
+import com.algafood.algafoodapi.core.security.CheckSecurity;
 import com.algafood.algafoodapi.domain.models.Usuario;
 import com.algafood.algafoodapi.domain.repository.UsuarioRepository;
 import com.algafood.algafoodapi.domain.service.CadastroUsuarioService;
@@ -46,6 +47,8 @@ public class UsuarioController implements UsuarioControllerOpenApi {
     @Autowired
     private UsuarioInputDisassembler usuarioInputDisassembler;
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeConsutar
+    @Override
     @GetMapping
     public CollectionModel<UsuarioModel> listar() {
         List<Usuario> usuarios = usuarioRepository.findAll();
@@ -53,6 +56,8 @@ public class UsuarioController implements UsuarioControllerOpenApi {
         return usuarioModel.toCollectionModel(usuarios);
     }
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeConsultarUsuario
+    @Override
     @GetMapping("/{usuarioId}")
     public UsuarioModel buscar(@PathVariable Long usuarioId) {
         Usuario usuario = cadastroUsuario.findOrFail(usuarioId);
@@ -60,6 +65,7 @@ public class UsuarioController implements UsuarioControllerOpenApi {
         return usuarioModel.toModel(usuario);
     }
 
+    @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UsuarioModel> add(@RequestBody @Valid UsuarioComSenhaInput usuarioInputDTO) {
@@ -71,6 +77,8 @@ public class UsuarioController implements UsuarioControllerOpenApi {
                 .body(usuarioModel.toModel(usuario));
     }
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeAlterarUsuario
+    @Override
     @PutMapping("/{usuarioId}")
     public ResponseEntity<UsuarioModel> alterar(@RequestBody @Valid UsuarioInputModel usuarioInputDTO,
             @PathVariable Long usuarioId) {
@@ -81,6 +89,8 @@ public class UsuarioController implements UsuarioControllerOpenApi {
         return ResponseEntity.status(HttpStatus.OK).body(usuarioModel.toModel(usuarioCurrent));
     }
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeAlterarPropriaSenha
+    @Override
     @PutMapping("/{usuarioId}/alterar-senha")
     public void alterarSenha(@PathVariable Long usuarioId, @RequestBody @Valid SenhaInput senha) {
         cadastroUsuario.alterarSenha(usuarioId, senha.getSenhaAtual(), senha.getSenhaNova());

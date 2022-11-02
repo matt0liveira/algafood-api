@@ -21,6 +21,7 @@ import com.algafood.algafoodapi.api.v1.assembler.GrupoAssembler.GrupoModelAssemb
 import com.algafood.algafoodapi.api.v1.model.GrupoModel;
 import com.algafood.algafoodapi.api.v1.model.input.GrupoInputModel;
 import com.algafood.algafoodapi.api.v1.openapi.controller.GrupoControllerOpenApi;
+import com.algafood.algafoodapi.core.security.CheckSecurity;
 import com.algafood.algafoodapi.domain.models.Grupo;
 import com.algafood.algafoodapi.domain.repository.GrupoRepository;
 import com.algafood.algafoodapi.domain.service.CadastroGrupoService;
@@ -41,16 +42,22 @@ public class GrupoController implements GrupoControllerOpenApi {
     @Autowired
     private GrupoInputDisassembler grupoInputDisassembler;
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeConsutar
+    @Override
     @GetMapping
     public CollectionModel<GrupoModel> listar() {
         return grupoModel.toCollectionModel(grupoRepository.findAll());
     }
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeConsutar
+    @Override
     @GetMapping("/{grupoId}")
     public GrupoModel buscar(@PathVariable Long grupoId) {
         return grupoModel.toModel(cadastroGrupo.findOrFail(grupoId));
     }
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
+    @Override
     @PostMapping
     public ResponseEntity<GrupoModel> add(@RequestBody @Valid GrupoInputModel grupoInput) {
         Grupo grupo = grupoInputDisassembler.toDomainObject(grupoInput);
@@ -60,6 +67,8 @@ public class GrupoController implements GrupoControllerOpenApi {
         return ResponseEntity.status(HttpStatus.CREATED).body(grupoDTO);
     }
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
+    @Override
     @PutMapping("/{grupoId}")
     public ResponseEntity<GrupoModel> alterar(@PathVariable Long grupoId,
             @RequestBody @Valid GrupoInputModel grupoInput) {
@@ -72,6 +81,8 @@ public class GrupoController implements GrupoControllerOpenApi {
         return ResponseEntity.status(HttpStatus.OK).body(grupoModel.toModel(grupoCurrent));
     }
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
+    @Override
     @DeleteMapping("/{grupoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void remover(@PathVariable Long grupoId) {

@@ -10,6 +10,7 @@ import com.algafood.algafoodapi.api.v1.assembler.EstadoAssembler.EstadoModelAsse
 import com.algafood.algafoodapi.api.v1.model.EstadoModel;
 import com.algafood.algafoodapi.api.v1.model.input.EstadoInputModel;
 import com.algafood.algafoodapi.api.v1.openapi.controller.EstadoControllerOpenApi;
+import com.algafood.algafoodapi.core.security.CheckSecurity;
 import com.algafood.algafoodapi.domain.models.Estado;
 import com.algafood.algafoodapi.domain.repository.EstadoRepository;
 import com.algafood.algafoodapi.domain.service.CadastroEstadoService;
@@ -45,6 +46,8 @@ public class EstadoController implements EstadoControllerOpenApi {
     @Autowired
     private EstadoInputDisassembler estadoInputDisassembler;
 
+    @CheckSecurity.Estados.PodeConsutar
+    @Override
     @GetMapping
     public CollectionModel<EstadoModel> listar() {
         List<Estado> estados = estadoRepository.findAll();
@@ -52,11 +55,15 @@ public class EstadoController implements EstadoControllerOpenApi {
         return estadoModelAssembler.toCollectionModel(estados);
     }
 
+    @CheckSecurity.Estados.PodeConsutar
+    @Override
     @GetMapping("/{estadoId}")
     public ResponseEntity<EstadoModel> buscar(@PathVariable Long estadoId) {
         return ResponseEntity.ok(estadoModelAssembler.toModel(cadastroEstado.findOrFail(estadoId)));
     }
 
+    @CheckSecurity.Estados.PodeEditar
+    @Override
     @PostMapping
     public ResponseEntity<EstadoModel> add(@RequestBody @Valid EstadoInputModel estadoInputDTO) {
         Estado estado = estadoInputDisassembler.toDomainObject(estadoInputDTO);
@@ -68,6 +75,8 @@ public class EstadoController implements EstadoControllerOpenApi {
                 .body(estadoModelAssembler.toModel(estado));
     }
 
+    @CheckSecurity.Estados.PodeEditar
+    @Override
     @PutMapping("/{estadoId}")
     public ResponseEntity<EstadoModel> atualizar(@PathVariable Long estadoId,
             @RequestBody @Valid EstadoInputModel estadoInputDTO) {
@@ -81,6 +90,8 @@ public class EstadoController implements EstadoControllerOpenApi {
 
     }
 
+    @CheckSecurity.Estados.PodeEditar
+    @Override
     @DeleteMapping("/{estadoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void remover(@PathVariable Long estadoId) {

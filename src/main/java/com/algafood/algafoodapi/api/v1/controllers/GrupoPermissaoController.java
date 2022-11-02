@@ -15,6 +15,7 @@ import com.algafood.algafoodapi.api.v1.InstanceLink;
 import com.algafood.algafoodapi.api.v1.assembler.PermissaoAssembler.PermissaoModelAssembler;
 import com.algafood.algafoodapi.api.v1.model.PermissaoModel;
 import com.algafood.algafoodapi.api.v1.openapi.controller.GrupoPermissaoControllerOpenApi;
+import com.algafood.algafoodapi.core.security.CheckSecurity;
 import com.algafood.algafoodapi.domain.models.Grupo;
 import com.algafood.algafoodapi.domain.service.CadastroGrupoService;
 
@@ -31,6 +32,8 @@ public class GrupoPermissaoController implements GrupoPermissaoControllerOpenApi
     @Autowired
     private InstanceLink instanceLink;
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeConsutar
+    @Override
     @GetMapping
     public CollectionModel<PermissaoModel> listar(@PathVariable Long grupoId) {
         Grupo grupo = cadastroGrupo.findOrFail(grupoId);
@@ -47,6 +50,8 @@ public class GrupoPermissaoController implements GrupoPermissaoControllerOpenApi
         return permissoesModel;
     }
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
+    @Override
     @PutMapping("/{permissaoId}")
     public ResponseEntity<Void> associar(@PathVariable Long grupoId, @PathVariable Long permissaoId) {
         cadastroGrupo.associarPermissao(grupoId, permissaoId);
@@ -54,6 +59,8 @@ public class GrupoPermissaoController implements GrupoPermissaoControllerOpenApi
         return ResponseEntity.noContent().build();
     }
 
+    @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
+    @Override
     @DeleteMapping("/{permissaoId}")
     public ResponseEntity<Void> desassociar(@PathVariable Long grupoId, @PathVariable Long permissaoId) {
         cadastroGrupo.desassociarPermissao(grupoId, permissaoId);

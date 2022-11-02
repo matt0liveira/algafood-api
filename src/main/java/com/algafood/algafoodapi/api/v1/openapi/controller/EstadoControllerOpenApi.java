@@ -21,6 +21,9 @@ public interface EstadoControllerOpenApi {
         @ApiOperation("Lista todos os estados")
         CollectionModel<EstadoModel> listar();
 
+        @ApiOperation("Busca um estado pelo ID")
+        ResponseEntity<EstadoModel> buscar(@ApiParam(value = "ID do estado") Long estadoId);
+
         @ApiOperation("Cadastra um novo estado")
         ResponseEntity<EstadoModel> add(@ApiParam(value = "corpo") EstadoInputModel estadoInputDTO);
 
