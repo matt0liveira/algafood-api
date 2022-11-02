@@ -8,4 +8,6 @@ import com.algafood.algafoodapi.domain.models.Restaurante;
 
 public interface RestauranteRepository extends JpaRepository<Restaurante, Long>, RestauranteRepositoryQueries {
     public List<Restaurante> consultarTaxa();
+
+    public boolean existsResponsavel(Long restauranteId, Long usuarioId);
 }

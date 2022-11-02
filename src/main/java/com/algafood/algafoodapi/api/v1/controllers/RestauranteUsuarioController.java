@@ -17,6 +17,7 @@ import com.algafood.algafoodapi.api.v1.InstanceLink;
 import com.algafood.algafoodapi.api.v1.assembler.UsuarioAssembler.UsuarioModelAssembler;
 import com.algafood.algafoodapi.api.v1.model.UsuarioModel;
 import com.algafood.algafoodapi.api.v1.openapi.controller.RestauranteUsuarioControllerOpenApi;
+import com.algafood.algafoodapi.core.security.CheckSecurity;
 import com.algafood.algafoodapi.domain.models.Restaurante;
 import com.algafood.algafoodapi.domain.service.CadastroRestauranteService;
 
@@ -33,6 +34,8 @@ public class RestauranteUsuarioController implements RestauranteUsuarioControlle
 	@Autowired
 	private InstanceLink instanceLink;
 
+	@CheckSecurity.Restaurantes.PodeConsultar
+	@Override
 	@GetMapping
 	public CollectionModel<UsuarioModel> listar(@PathVariable Long restauranteId) {
 		Restaurante restaurante = cadastroRestaurante.findOrFail(restauranteId);
@@ -51,6 +54,8 @@ public class RestauranteUsuarioController implements RestauranteUsuarioControlle
 		return usuariosModel;
 	}
 
+	@CheckSecurity.Restaurantes.PodeGerenciarCadastro
+	@Override
 	@PutMapping("/{responsavelId}")
 	public ResponseEntity<Void> associar(@PathVariable Long restauranteId, @PathVariable Long responsavelId) {
 		cadastroRestaurante.associarResponsavel(restauranteId, responsavelId);
@@ -58,6 +63,8 @@ public class RestauranteUsuarioController implements RestauranteUsuarioControlle
 		return ResponseEntity.noContent().build();
 	}
 
+	@CheckSecurity.Restaurantes.PodeGerenciarCadastro
+	@Override
 	@DeleteMapping("/{responsavelId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public ResponseEntity<Void> desassociar(@PathVariable Long restauranteId, @PathVariable Long responsavelId) {

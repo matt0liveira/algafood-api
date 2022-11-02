@@ -27,6 +27,7 @@ import com.algafood.algafoodapi.api.v1.assembler.FotoProdutoAssembler.FotoProdut
 import com.algafood.algafoodapi.api.v1.model.FotoProdutoModel;
 import com.algafood.algafoodapi.api.v1.model.input.FotoProdutoInputModel;
 import com.algafood.algafoodapi.api.v1.openapi.controller.RestauranteProdutoFotoControllerOpenApi;
+import com.algafood.algafoodapi.core.security.CheckSecurity;
 import com.algafood.algafoodapi.domain.exceptions.EntityNotfoundException;
 import com.algafood.algafoodapi.domain.models.FotoProduto;
 import com.algafood.algafoodapi.domain.models.Produto;
@@ -51,6 +52,8 @@ public class RestauranteProdutoFotoController implements RestauranteProdutoFotoC
     @Autowired
     private FotoStorageService fotoStorage;
 
+    @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
+    @Override
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public FotoProdutoModel atualizarFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId,
             @Valid FotoProdutoInputModel fotoProdutoInput, @RequestPart(required = true) MultipartFile arquivo)
@@ -70,6 +73,7 @@ public class RestauranteProdutoFotoController implements RestauranteProdutoFotoC
         return fotoProdutoModel.toModel(fotoSalva);
     }
 
+    @Override
     @GetMapping(produces = { MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<?> buscar(@PathVariable Long restauranteId, @PathVariable Long produtoId,
             @RequestHeader(name = "accept") String acceptHeader) throws HttpMediaTypeNotAcceptableException {
@@ -108,6 +112,8 @@ public class RestauranteProdutoFotoController implements RestauranteProdutoFotoC
         return ResponseEntity.ok(fotoProdutoModel.toModel(catalogoFoto.findOrFail(restauranteId, produtoId)));
     }
 
+    @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
+    @Override
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void excluir(@PathVariable Long restauranteId, @PathVariable Long produtoId) {

@@ -15,6 +15,7 @@ import com.algafood.algafoodapi.api.v1.InstanceLink;
 import com.algafood.algafoodapi.api.v1.assembler.FormaPagamentoAssembler.FormaPagamentoModelAssembler;
 import com.algafood.algafoodapi.api.v1.model.FormaPagamentoModel;
 import com.algafood.algafoodapi.api.v1.openapi.controller.RestauranteFormaPagamentoControllerOpenApi;
+import com.algafood.algafoodapi.core.security.CheckSecurity;
 import com.algafood.algafoodapi.domain.models.Restaurante;
 import com.algafood.algafoodapi.domain.service.CadastroRestauranteService;
 
@@ -52,6 +53,8 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
         return formasPagamentosModel;
     }
 
+    @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
+    @Override
     @DeleteMapping("/{formaPagamentoId}")
     public ResponseEntity<Void> desassociar(@PathVariable Long restauranteId, @PathVariable Long formaPagamentoId) {
         cadastroRestaurante.desassociarFormaPagamento(restauranteId, formaPagamentoId);
@@ -59,6 +62,8 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
         return ResponseEntity.noContent().build();
     }
 
+    @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
+    @Override
     @PutMapping("/{formaPagamentoId}")
     public ResponseEntity<Void> associar(@PathVariable Long restauranteId, @PathVariable Long formaPagamentoId) {
         cadastroRestaurante.associarFormaPagamento(restauranteId, formaPagamentoId);

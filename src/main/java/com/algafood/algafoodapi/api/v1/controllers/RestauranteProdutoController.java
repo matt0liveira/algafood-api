@@ -23,6 +23,7 @@ import com.algafood.algafoodapi.api.v1.assembler.ProdutoAssembler.ProdutoModelAs
 import com.algafood.algafoodapi.api.v1.model.ProdutoModel;
 import com.algafood.algafoodapi.api.v1.model.input.ProdutoInputModel;
 import com.algafood.algafoodapi.api.v1.openapi.controller.RestauranteProdutoControllerOpenApi;
+import com.algafood.algafoodapi.core.security.CheckSecurity;
 import com.algafood.algafoodapi.domain.models.Produto;
 import com.algafood.algafoodapi.domain.models.Restaurante;
 import com.algafood.algafoodapi.domain.repository.ProdutoRepository;
@@ -51,6 +52,8 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
     @Autowired
     private InstanceLink instanceLink;
 
+    @CheckSecurity.Restaurantes.PodeConsultar
+    @Override
     @GetMapping
     public CollectionModel<ProdutoModel> listar(@PathVariable Long restauranteId,
             @RequestParam(required = false) Boolean includeInativos) {
@@ -67,6 +70,8 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
                 .add(instanceLink.linkToProdutos(restaurante.getId(), IanaLinkRelations.COLLECTION_VALUE));
     }
 
+    @CheckSecurity.Restaurantes.PodeConsultar
+    @Override
     @GetMapping("/{produtoId}")
     public ProdutoModel buscar(@PathVariable Long restauranteId, @PathVariable Long produtoId) {
         Produto produto = cadastroProduto.findOrFail(restauranteId, produtoId);
@@ -74,6 +79,8 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
         return produtoModel.toModel(produto);
     }
 
+    @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
+    @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ProdutoModel add(@PathVariable Long restauranteId, @RequestBody ProdutoInputModel produtoInput) {
@@ -87,6 +94,8 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
         return produtoModel.toModel(produto);
     }
 
+    @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
+    @Override
     @PutMapping("/{produtoId}")
     public ProdutoModel alterar(@PathVariable Long restauranteId, @PathVariable Long produtoId,
             @RequestBody ProdutoInputModel produtoInput) {
