@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import com.algafood.algafoodapi.api.v1.InstanceLink;
 import com.algafood.algafoodapi.api.v1.controllers.PedidoController;
 import com.algafood.algafoodapi.api.v1.model.PedidoModel;
+import com.algafood.algafoodapi.core.security.SecurityUtils;
 import com.algafood.algafoodapi.domain.models.Pedido;
 
 @Component
@@ -22,6 +23,9 @@ public class PedidoModelAssembler extends RepresentationModelAssemblerSupport<Pe
 	@Autowired
 	private InstanceLink instanceLink;
 
+	@Autowired
+	private SecurityUtils securityUtils;
+
 	public PedidoModelAssembler() {
 		super(PedidoController.class, PedidoModel.class);
 	}
@@ -30,24 +34,30 @@ public class PedidoModelAssembler extends RepresentationModelAssemblerSupport<Pe
 		PedidoModel pedidoModel = createModelWithId(pedido.getCodigo(), pedido);
 		modelMapper.map(pedido, pedidoModel);
 
-		pedidoModel.add(instanceLink.linkToPedidos("pedidos"));
-
-		// GERENCIAMENTO DE STATUS DO PEDIDO
-		if (pedido.canBeConfirmado()) {
-			pedidoModel.add(instanceLink.linkToConfirmacaoPedido(pedidoModel.getCodigo(), "confirmar"));
+		if (securityUtils.podePesquisarPedidos()) {
+			pedidoModel.add(instanceLink.linkToPedidos("pedidos"));
 		}
 
-		if (pedido.canBeEntregue()) {
-			pedidoModel.add(instanceLink.linkToEntregaPedido(pedidoModel.getCodigo(), "entregar"));
+		if (securityUtils.podeGerenciarPedidos(pedido.getCodigo())) {
+			// GERENCIAMENTO DE STATUS DO PEDIDO
+			if (pedido.canBeConfirmado()) {
+				pedidoModel.add(instanceLink.linkToConfirmacaoPedido(pedidoModel.getCodigo(), "confirmar"));
+			}
+
+			if (pedido.canBeEntregue()) {
+				pedidoModel.add(instanceLink.linkToEntregaPedido(pedidoModel.getCodigo(), "entregar"));
+			}
+
+			if (pedido.canBeCancelado()) {
+				pedidoModel.add(instanceLink.linkToCancelamentoPedido(pedidoModel.getCodigo(), "cancelar"));
+			}
 		}
 
-		if (pedido.canBeCancelado()) {
-			pedidoModel.add(instanceLink.linkToCancelamentoPedido(pedidoModel.getCodigo(), "cancelar"));
+		if (securityUtils.podeConsultarUsuariosGruposPermissoes()) {
+			// CLIENTES
+			pedidoModel.getCliente().add(instanceLink.linkToUsuarios(IanaLinkRelations.COLLECTION_VALUE));
 		}
-
-		// CLIENTE
 		pedidoModel.getCliente().add(instanceLink.linkToUsuario(pedidoModel.getCliente().getId()));
-		pedidoModel.getCliente().add(instanceLink.linkToUsuarios(IanaLinkRelations.COLLECTION_VALUE));
 
 		// RESTAURANTE
 		pedidoModel.getRestaurante().add(instanceLink.linkToRestaurante(pedidoModel.getRestaurante().getId()));

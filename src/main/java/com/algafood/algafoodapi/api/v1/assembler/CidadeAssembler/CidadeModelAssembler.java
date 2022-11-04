@@ -11,39 +11,53 @@ import org.springframework.stereotype.Component;
 import com.algafood.algafoodapi.api.v1.InstanceLink;
 import com.algafood.algafoodapi.api.v1.controllers.CidadeController;
 import com.algafood.algafoodapi.api.v1.model.CidadeModel;
+import com.algafood.algafoodapi.core.security.SecurityUtils;
 import com.algafood.algafoodapi.domain.models.Cidade;
 
 @Component
 public class CidadeModelAssembler extends RepresentationModelAssemblerSupport<Cidade, CidadeModel> {
 
-        public CidadeModelAssembler() {
-                super(CidadeController.class, CidadeModel.class);
-        }
+	public CidadeModelAssembler() {
+		super(CidadeController.class, CidadeModel.class);
+	}
 
-        @Autowired
-        private ModelMapper modelMapper;
+	@Autowired
+	private ModelMapper modelMapper;
 
-        @Autowired
-        private InstanceLink instanceLink;
+	@Autowired
+	private InstanceLink instanceLink;
 
-        @Override
-        public CidadeModel toModel(Cidade cidade) {
-                CidadeModel cidadeModel = createModelWithId(cidade.getId(), cidade);
+	@Autowired
+	private SecurityUtils securityUtils;
 
-                modelMapper.map(cidade, cidadeModel);
+	@Override
+	public CidadeModel toModel(Cidade cidade) {
+		CidadeModel cidadeModel = createModelWithId(cidade.getId(), cidade);
 
-                cidadeModel.add(instanceLink.linkToCidade(cidadeModel.getId()));
-                cidadeModel.add(instanceLink.linkToCidades(IanaLinkRelations.COLLECTION_VALUE));
+		modelMapper.map(cidade, cidadeModel);
 
-                // ESTADO
-                cidadeModel.getEstado().add(instanceLink.linkToEstado(cidadeModel.getEstado().getId()));
+		if (securityUtils.podeConsultarCidades()) {
+			cidadeModel.add(instanceLink.linkToCidades(IanaLinkRelations.COLLECTION_VALUE));
+		}
 
-                return cidadeModel;
-        }
+		// ESTADO
+		if (securityUtils.podeConsultarEstados()) {
+			cidadeModel.getEstado().add(instanceLink.linkToEstado(cidadeModel.getEstado().getId()));
 
-        @Override
-        public CollectionModel<CidadeModel> toCollectionModel(Iterable<? extends Cidade> entities) {
-                return super.toCollectionModel(entities)
-                                .add(WebMvcLinkBuilder.linkTo(CidadeController.class).withSelfRel());
-        }
+			cidadeModel.getEstado().add(instanceLink.linkToEstados(IanaLinkRelations.COLLECTION_VALUE));
+		}
+
+		return cidadeModel;
+	}
+
+	@Override
+	public CollectionModel<CidadeModel> toCollectionModel(Iterable<? extends Cidade> entities) {
+		CollectionModel<CidadeModel> collectionModel = super.toCollectionModel(entities);
+
+		if (securityUtils.podeConsultarCidades()) {
+			collectionModel.add(WebMvcLinkBuilder.linkTo(CidadeController.class).withSelfRel());
+		}
+
+		return collectionModel;
+	}
 }

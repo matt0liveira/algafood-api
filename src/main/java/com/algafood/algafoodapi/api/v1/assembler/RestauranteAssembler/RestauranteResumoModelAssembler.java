@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import com.algafood.algafoodapi.api.v1.InstanceLink;
 import com.algafood.algafoodapi.api.v1.controllers.RestauranteController;
 import com.algafood.algafoodapi.api.v1.model.RestauranteResumoModel;
+import com.algafood.algafoodapi.core.security.SecurityUtils;
 import com.algafood.algafoodapi.domain.models.Restaurante;
 
 @Relation(collectionRelation = "restaurantes")
@@ -24,6 +25,9 @@ public class RestauranteResumoModelAssembler
     @Autowired
     private InstanceLink instanceLink;
 
+    @Autowired
+    private SecurityUtils securityUtils;
+
     public RestauranteResumoModelAssembler() {
         super(RestauranteController.class, RestauranteResumoModel.class);
     }
@@ -33,16 +37,23 @@ public class RestauranteResumoModelAssembler
         RestauranteResumoModel restauranteResumoModel = createModelWithId(restaurante.getId(), restaurante);
         modelMapper.map(restaurante, restauranteResumoModel);
 
-        restauranteResumoModel.getCozinha()
-                .add(instanceLink.linkToCozinha(restauranteResumoModel.getCozinha().getId()));
+        if (securityUtils.podeConsultarCozinhas()) {
+            restauranteResumoModel.getCozinha()
+                    .add(instanceLink.linkToCozinha(restauranteResumoModel.getCozinha().getId()));
+        }
 
         return restauranteResumoModel;
     }
 
     @Override
     public CollectionModel<RestauranteResumoModel> toCollectionModel(Iterable<? extends Restaurante> entities) {
-        return super.toCollectionModel(entities)
-                .add(instanceLink.linkToRestaurantes(IanaLinkRelations.COLLECTION_VALUE));
+        CollectionModel<RestauranteResumoModel> collectionModel = super.toCollectionModel(entities);
+
+        if (securityUtils.podeConsultarRestaurantes()) {
+            collectionModel.add(instanceLink.linkToRestaurantes(IanaLinkRelations.COLLECTION_VALUE));
+        }
+
+        return collectionModel;
     }
 
 }

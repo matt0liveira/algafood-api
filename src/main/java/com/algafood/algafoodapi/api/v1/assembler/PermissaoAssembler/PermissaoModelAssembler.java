@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import com.algafood.algafoodapi.api.v1.InstanceLink;
 import com.algafood.algafoodapi.api.v1.controllers.PermissaoController;
 import com.algafood.algafoodapi.api.v1.model.PermissaoModel;
+import com.algafood.algafoodapi.core.security.SecurityUtils;
 import com.algafood.algafoodapi.domain.models.Permissao;
 
 @Component
@@ -21,6 +22,9 @@ public class PermissaoModelAssembler extends RepresentationModelAssemblerSupport
     @Autowired
     private InstanceLink instanceLink;
 
+    @Autowired
+    private SecurityUtils securityUtils;
+
     public PermissaoModelAssembler() {
         super(PermissaoController.class, PermissaoModel.class);
     }
@@ -29,7 +33,9 @@ public class PermissaoModelAssembler extends RepresentationModelAssemblerSupport
         PermissaoModel permissaoModel = createModelWithId(permissao.getId(), permissao);
         modelMapper.map(permissao, permissaoModel);
 
-        permissaoModel.add(instanceLink.linkToPermissoes(IanaLinkRelations.COLLECTION_VALUE));
+        if (securityUtils.podeConsultarUsuariosGruposPermissoes()) {
+            permissaoModel.add(instanceLink.linkToPermissoes(IanaLinkRelations.COLLECTION_VALUE));
+        }
 
         return permissaoModel;
     }

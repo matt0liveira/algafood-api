@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import com.algafood.algafoodapi.api.v1.InstanceLink;
 import com.algafood.algafoodapi.api.v1.controllers.RestauranteController;
 import com.algafood.algafoodapi.api.v1.model.RestauranteModel;
+import com.algafood.algafoodapi.core.security.SecurityUtils;
 import com.algafood.algafoodapi.domain.models.Restaurante;
 
 @Component
@@ -21,6 +22,9 @@ public class RestauranteModelAssembler extends RepresentationModelAssemblerSuppo
     @Autowired
     private InstanceLink instanceLink;
 
+    @Autowired
+    private SecurityUtils securityUtils;
+
     public RestauranteModelAssembler() {
         super(RestauranteController.class, RestauranteModel.class);
     }
@@ -30,47 +34,62 @@ public class RestauranteModelAssembler extends RepresentationModelAssemblerSuppo
         RestauranteModel restauranteModel = createModelWithId(restaurante.getId(), restaurante);
         modelMapper.map(restaurante, restauranteModel);
 
-        restauranteModel.add(instanceLink.linkToRestaurantes(IanaLinkRelations.COLLECTION_VALUE));
+        if (securityUtils.podeConsultarRestaurantes()) {
+
+            restauranteModel.add(instanceLink.linkToRestaurantes(IanaLinkRelations.COLLECTION_VALUE));
+        }
 
         // COZINHA
-        restauranteModel.getCozinha().add(instanceLink.linkToCozinha(restauranteModel.getCozinha().getId()));
-        restauranteModel.getCozinha().add(instanceLink.linkToCozinhas());
+        if (securityUtils.podeConsultarCozinhas()) {
+            restauranteModel.getCozinha().add(instanceLink.linkToCozinha(restauranteModel.getCozinha().getId()));
+            restauranteModel.getCozinha().add(instanceLink.linkToCozinhas());
+        }
 
         // CIDADE
-        if (restauranteModel.getEndereco() != null && restauranteModel.getEndereco().getCidade() != null) {
-            restauranteModel.getEndereco().getCidade()
-                    .add(instanceLink.linkToCidade(restauranteModel.getEndereco().getCidade().getId()));
+        if (securityUtils.podeConsultarCidades()) {
+            if (restauranteModel.getEndereco() != null && restauranteModel.getEndereco().getCidade() != null) {
+                restauranteModel.getEndereco().getCidade()
+                        .add(instanceLink.linkToCidade(restauranteModel.getEndereco().getCidade().getId()));
 
-            restauranteModel.getEndereco().getCidade()
-                    .add(instanceLink.linkToCidades(IanaLinkRelations.COLLECTION_VALUE));
+                restauranteModel.getEndereco().getCidade()
+                        .add(instanceLink.linkToCidades(IanaLinkRelations.COLLECTION_VALUE));
+            }
         }
 
         // RESPONSÁVEIS
         restauranteModel.add(instanceLink.linkToRestaurantesUsuarios(restauranteModel.getId(), "responsaveis"));
 
         // FORMAS DE PAGAMENTO
-        restauranteModel
-                .add(instanceLink.linkToRestaurantesFormasPagamento(restauranteModel.getId(), "formas-pagamento"));
-
-        // PRODUTOS
-        restauranteModel.add(instanceLink.linkToProdutos(restauranteModel.getId(), "produtos"));
-
-        // ATIVAÇÃO DE RESTAURANTE
-        if (restaurante.podeAtivar()) {
-            restauranteModel.add(instanceLink.linkToAtivacaoRestaurante(restauranteModel.getId(), "ativar"));
+        if (securityUtils.podeConsultarRestaurantes()) {
+            restauranteModel
+                    .add(instanceLink.linkToRestaurantesFormasPagamento(restauranteModel.getId(), "formas-pagamento"));
         }
 
-        if (restaurante.podeInativar()) {
-            restauranteModel.add(instanceLink.linkToInativacaoRestaurante(restauranteModel.getId(), "inativar"));
+        // PRODUTOS
+        if (securityUtils.podeConsultarRestaurantes()) {
+            restauranteModel.add(instanceLink.linkToProdutos(restauranteModel.getId(), "produtos"));
+        }
+
+        // ATIVAÇÃO DE RESTAURANTE
+        if (securityUtils.podeGerenciarCadastroRestaurantes()) {
+            if (restaurante.podeAtivar()) {
+                restauranteModel.add(instanceLink.linkToAtivacaoRestaurante(restauranteModel.getId(), "ativar"));
+            }
+
+            if (restaurante.podeInativar()) {
+                restauranteModel.add(instanceLink.linkToInativacaoRestaurante(restauranteModel.getId(), "inativar"));
+            }
         }
 
         // ABERTURA DE RESTAURANTE
-        if (restaurante.podeAbrir()) {
-            restauranteModel.add(instanceLink.linkToAberturaRestaurante(restauranteModel.getId(), "abrir"));
-        }
+        if (securityUtils.podeGerenciarFuncionamentoRestaurantes(restaurante.getId())) {
+            if (restaurante.podeAbrir()) {
+                restauranteModel.add(instanceLink.linkToAberturaRestaurante(restauranteModel.getId(), "abrir"));
+            }
 
-        if (restaurante.podeFechar()) {
-            restauranteModel.add(instanceLink.linkToFechamentoestaurante(restauranteModel.getId(), "fechar"));
+            if (restaurante.podeFechar()) {
+                restauranteModel.add(instanceLink.linkToFechamentoestaurante(restauranteModel.getId(), "fechar"));
+            }
         }
 
         return restauranteModel;

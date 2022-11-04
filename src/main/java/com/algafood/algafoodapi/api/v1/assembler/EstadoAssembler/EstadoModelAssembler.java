@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import com.algafood.algafoodapi.api.v1.InstanceLink;
 import com.algafood.algafoodapi.api.v1.controllers.EstadoController;
 import com.algafood.algafoodapi.api.v1.model.EstadoModel;
+import com.algafood.algafoodapi.core.security.SecurityUtils;
 import com.algafood.algafoodapi.domain.models.Estado;
 
 @Component
@@ -22,6 +23,9 @@ public class EstadoModelAssembler extends RepresentationModelAssemblerSupport<Es
     @Autowired
     private InstanceLink instanceLink;
 
+    @Autowired
+    private SecurityUtils securityUtils;
+
     public EstadoModelAssembler() {
         super(EstadoController.class, EstadoModel.class);
     }
@@ -32,13 +36,21 @@ public class EstadoModelAssembler extends RepresentationModelAssemblerSupport<Es
 
         modelMapper.map(estado, estadoModel);
 
-        estadoModel.add(instanceLink.linkToEstados(IanaLinkRelations.COLLECTION_VALUE));
+        if (securityUtils.podeConsultarEstados()) {
+            estadoModel.add(instanceLink.linkToEstados(IanaLinkRelations.COLLECTION_VALUE));
+        }
 
         return estadoModel;
     }
 
     @Override
     public CollectionModel<EstadoModel> toCollectionModel(Iterable<? extends Estado> entities) {
-        return super.toCollectionModel(entities).add(WebMvcLinkBuilder.linkTo(EstadoController.class).withSelfRel());
+        CollectionModel<EstadoModel> collectionModel = super.toCollectionModel(entities);
+
+        if (securityUtils.podeConsultarEstados()) {
+            collectionModel.add(WebMvcLinkBuilder.linkTo(EstadoController.class).withSelfRel());
+        }
+
+        return collectionModel;
     }
 }

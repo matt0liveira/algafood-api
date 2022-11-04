@@ -12,7 +12,7 @@ public @interface CheckSecurity {
 
     public @interface Cozinhas {
 
-        @PreAuthorize("hasAuthority('SCOPE_READ') and isAuthenticated()")
+        @PreAuthorize("@securityUtils.podeConsultarCozinhas()")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         public @interface PodeConsultar {
@@ -27,19 +27,19 @@ public @interface CheckSecurity {
 
     public @interface Restaurantes {
 
-        @PreAuthorize("hasAuthority('SCOPE_READ') and isAuthenticated()")
+        @PreAuthorize("@securityUtils.podeConsultarRestaurantes()")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         public @interface PodeConsultar {
         }
 
-        @PreAuthorize("hasAuthority('SCOPE_WRITE') and hasAuthority('EDITAR_RESTAURANTES')")
+        @PreAuthorize("@securityUtils.podeGerenciarCadastroRestaurantes()")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         public @interface PodeGerenciarCadastro {
         }
 
-        @PreAuthorize("hasAuthority('SCOPE_WRITE') and (hasAuthority('EDITAR_RESTAURANTES')) or @securityUtils.gerenciaRestaurante(#restauranteId)")
+        @PreAuthorize("@securityUtils.podeGerenciarFuncionamentoRestaurantes(#restauranteId)")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         public @interface PodeGerenciarFuncionamento {
@@ -49,13 +49,13 @@ public @interface CheckSecurity {
     public @interface Pedidos {
 
         @PreAuthorize("hasAuthority('SCOPE_READ') and isAuthenticated()")
-        @PostAuthorize("hasAuthority('CONSULTAR_PEDIDOS') or @securityUtils.getUserIdAuthenticated() == returnObject.cliente.id or @securityUtils.gerenciaRestaurante(returnObject.restaurante.id)")
+        @PostAuthorize("hasAuthority('CONSULTAR_PEDIDOS') or @securityUtils.userAuthenticatedEquals(returnObject.cliente.id) or @securityUtils.gerenciaRestaurante(returnObject.restaurante.id)")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         public @interface PodeBuscar {
         }
 
-        @PreAuthorize("hasAuthority('SCOPE_READ') and (hasAuthority('CONSULTAR_PEDIDOS')) or @securityUtils.getUserIdAuthenticated() == #filter.clienteId or @securityUtils.gerenciaRestaurante(#filter.restauranteId)")
+        @PreAuthorize("@securityUtils.podePesquisarPedidos(#filter.clienteId, #filter.restauranteId)")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         public @interface PodePesquisar {
@@ -67,7 +67,7 @@ public @interface CheckSecurity {
         public @interface PodeCriar {
         }
 
-        @PreAuthorize("hasAuthority('SCOPE_WRITE') and (hasAuthority('GERENCIAR_PEDIDOS') or @securityUtils.gerenciaPedidos(#codigo))")
+        @PreAuthorize("@securityUtils.podeGerenciarPedidos(#codigo)")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         public @interface PodeGerenciarPedidos {
@@ -76,7 +76,7 @@ public @interface CheckSecurity {
 
     public @interface FormasPagamentos {
 
-        @PreAuthorize("hasAuthority('SCOPE_READ') and isAuthenticated()")
+        @PreAuthorize("@securityUtils.podeConsultarFormasPagamento()")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         public @interface PodeConsutar {
@@ -91,7 +91,7 @@ public @interface CheckSecurity {
 
     public @interface Cidades {
 
-        @PreAuthorize("hasAuthority('SCOPE_READ') and isAuthenticated()")
+        @PreAuthorize("@securityUtils.podeConsultarCidades()")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         public @interface PodeConsutar {
@@ -106,7 +106,7 @@ public @interface CheckSecurity {
 
     public @interface Estados {
 
-        @PreAuthorize("hasAuthority('SCOPE_READ') and isAuthenticated()")
+        @PreAuthorize("@securityUtils.podeConsultarEstados()")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         public @interface PodeConsutar {
@@ -121,7 +121,7 @@ public @interface CheckSecurity {
 
     public @interface UsuariosGruposPermissoes {
 
-        @PreAuthorize("hasAuthority('SCOPE_READ') and hasAuthority('CONSULTAR_USUARIOS_GRUPOS_PERMISSOES')")
+        @PreAuthorize("@securityUtils.podeConsultarUsuariosGruposPermissoes()")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         public @interface PodeConsutar {
@@ -133,19 +133,19 @@ public @interface CheckSecurity {
         public @interface PodeConsultarUsuario {
         }
 
-        @PreAuthorize("hasAuthority('SCOPE_WRITE') and @securityUtils.getUserIdAuthenticated == #usuarioId")
+        @PreAuthorize("hasAuthority('SCOPE_WRITE') and @securityUtils.userAuthenticatedEquals(#usuarioId)")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         public @interface PodeAlterarPropriaSenha {
         }
 
-        @PreAuthorize("hasAuthority('SCOPE_WRITE') and (hasAuthority('EDITAR_USUARIOS_GRUPOS_PERMISSOES')) or @securityUtils.getUserIdAuthenticated == #usuarioId")
+        @PreAuthorize("hasAuthority('SCOPE_WRITE') and (hasAuthority('EDITAR_USUARIOS_GRUPOS_PERMISSOES')) or @securityUtils.userAuthenticatedEquals(#usuarioId)")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         public @interface PodeAlterarUsuario {
         }
 
-        @PreAuthorize("hasAuthority('SCOPE_WRITE') and hasAuthority('EDITAR_USUARIOS_GRUPOS_PERMISSOES')")
+        @PreAuthorize("@securityUtils.podeEditarUsuariosGruposPermissoes()")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         public @interface PodeEditar {
@@ -154,7 +154,7 @@ public @interface CheckSecurity {
 
     public @interface Estatisticas {
 
-        @PreAuthorize("hasAuthority('SCOPE_READ') and hasAuthority('GERAR_RELATORIOS')")
+        @PreAuthorize("@securityUtils.podeConsultarEstatisticas()")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         public @interface PodeConsultar {

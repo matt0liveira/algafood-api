@@ -11,6 +11,7 @@ import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import com.algafood.algafoodapi.api.v1.InstanceLink;
 import com.algafood.algafoodapi.api.v1.controllers.RestauranteProdutoController;
 import com.algafood.algafoodapi.api.v1.model.ProdutoModel;
+import com.algafood.algafoodapi.core.security.SecurityUtils;
 import com.algafood.algafoodapi.domain.models.Produto;
 
 @Component
@@ -22,6 +23,9 @@ public class ProdutoModelAssembler extends RepresentationModelAssemblerSupport<P
     @Autowired
     private InstanceLink instanceLink;
 
+    @Autowired
+    private SecurityUtils securityUtils;
+
     public ProdutoModelAssembler() {
         super(RestauranteProdutoController.class, ProdutoModel.class);
     }
@@ -30,13 +34,15 @@ public class ProdutoModelAssembler extends RepresentationModelAssemblerSupport<P
         ProdutoModel produtoModel = createModelWithId(produto.getId(), produto, produto.getRestaurante().getId());
         modelMapper.map(produto, produtoModel);
 
-        produtoModel.add(instanceLink.linkToProdutos(produto.getRestaurante().getId(),
-                IanaLinkRelations.COLLECTION_VALUE));
-
         try {
-            produtoModel.add(
-                    instanceLink.linkToFotoProduto(produto.getRestaurante().getId(), produtoModel.getId(),
-                            "foto"));
+            if (securityUtils.podeConsultarRestaurantes()) {
+                produtoModel.add(instanceLink.linkToProdutos(produto.getRestaurante().getId(),
+                        IanaLinkRelations.COLLECTION_VALUE));
+
+                produtoModel.add(
+                        instanceLink.linkToFotoProduto(produto.getRestaurante().getId(), produtoModel.getId(),
+                                "foto"));
+            }
         } catch (HttpMediaTypeNotAcceptableException e) {
             e.printStackTrace();
         }
