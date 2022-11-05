@@ -1,11 +1,7 @@
 package com.algafood.algafoodapi.core.security.authorizationserver;
 
-import java.nio.file.AccessDeniedException;
-import java.security.Principal;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
@@ -17,7 +13,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import lombok.RequiredArgsConstructor;
+import java.security.Principal;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @Controller
 @RequiredArgsConstructor
@@ -29,34 +28,33 @@ public class AuthorizationConsentController {
     public String consent(
             Principal principal,
             Model model,
-            @RequestParam(name = OAuth2ParameterNames.CLIENT_ID) String clientId,
-            @RequestParam(name = OAuth2ParameterNames.SCOPE) String scope,
-            @RequestParam(name = OAuth2ParameterNames.STATE) String state) throws AccessDeniedException {
-
+            @RequestParam(OAuth2ParameterNames.CLIENT_ID) String clientId,
+            @RequestParam(OAuth2ParameterNames.SCOPE) String scope,
+            @RequestParam(OAuth2ParameterNames.STATE) String state) {
         RegisteredClient client = this.registeredClientRepository.findByClientId(clientId);
 
         if (client == null) {
-            throw new AccessDeniedException(String.format("Cliente de código %s não encontrado", clientId));
+            throw new AccessDeniedException(String.format("Cliente de %s não foi encontrado", clientId));
         }
 
-        OAuth2AuthorizationConsent consent = this.consentService.findById(client.getClientId(), principal.getName());
+        OAuth2AuthorizationConsent consent = this.consentService.findById(client.getId(), principal.getName());
 
         String[] scopeArray = StringUtils.delimitedListToStringArray(scope, " ");
         Set<String> scopesParaAprovar = new HashSet<>(Set.of(scopeArray));
 
-        Set<String> scopeAprovadosAnteriormente;
+        Set<String> scopesAprovadosAnteriormente;
         if (consent != null) {
-            scopeAprovadosAnteriormente = consent.getScopes();
-            scopesParaAprovar.removeAll(scopeAprovadosAnteriormente);
+            scopesAprovadosAnteriormente = consent.getScopes();
+            scopesParaAprovar.removeAll(scopesAprovadosAnteriormente);
         } else {
-            scopeAprovadosAnteriormente = Collections.emptySet();
+            scopesAprovadosAnteriormente = Collections.emptySet();
         }
 
         model.addAttribute("clientId", clientId);
         model.addAttribute("state", state);
         model.addAttribute("principalName", principal.getName());
         model.addAttribute("scopesParaAprovar", scopesParaAprovar);
-        model.addAttribute("scopesAprovadosAnteriormente", scopeAprovadosAnteriormente);
+        model.addAttribute("scopesAprovadosAnteriormente", scopesAprovadosAnteriormente);
 
         return "pages/approval";
     }
