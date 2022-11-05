@@ -148,7 +148,8 @@
 			<version>0.1.5</version>
 		</dependency>
 
-		<dependency>
+		<!-- DEPENDENCIAS DO SPRING SECURITY OAUTH2 QUE ESTÁ DEPRECIADO-->
+		<!-- <dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-jwt</artifactId>
 			<version>1.0.11.RELEASE</version>
@@ -158,8 +159,20 @@
 			<groupId>org.springframework.security.oauth</groupId>
 			<artifactId>spring-security-oauth2</artifactId>
 			<version>2.3.7.RELEASE</version>
+		</dependency> -->
+
+		<!--DEPENDENCIA SPRING AUTHORIZATION SERVER-->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-oauth2-authorization-server</artifactId>
+			<version>0.3.1</version>
 		</dependency>
 
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

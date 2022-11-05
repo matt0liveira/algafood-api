@@ -20,11 +20,11 @@ public class NotificacaoClientePedidoCanceladoEvent {
         Pedido pedido = event.getPedido();
 
         var mensagem = Mensagem.builder()
-            .assunto(pedido.getRestaurante().getNome() + " - Pedido cancelado")
-            .corpo("pedido-cancelado.html")
-            .var("pedido", pedido)
-            .destinatario(pedido.getCliente().getEmail())
-            .build();
+                .assunto(pedido.getRestaurante().getNome() + " - Pedido cancelado")
+                .corpo("emails/pedido-cancelado.html")
+                .var("pedido", pedido)
+                .destinatario(pedido.getCliente().getEmail())
+                .build();
 
         envioEmail.enviar(mensagem);
     }

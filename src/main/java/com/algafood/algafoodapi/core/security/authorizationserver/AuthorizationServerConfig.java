@@ -1,139 +1,132 @@
 package com.algafood.algafoodapi.core.security.authorizationserver;
 
-import java.util.Arrays;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
-import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
-import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
-import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.CompositeTokenGranter;
-import org.springframework.security.oauth2.provider.TokenGranter;
-import org.springframework.security.oauth2.provider.approval.ApprovalStore;
-import org.springframework.security.oauth2.provider.approval.TokenApprovalStore;
-import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
-import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
-import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.core.io.Resource;
+import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationConsentService;
+import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
+import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+
+import com.algafood.algafoodapi.domain.models.Usuario;
+import com.algafood.algafoodapi.domain.repository.UsuarioRepository;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.proc.SecurityContext;
 
 @Configuration
-@EnableAuthorizationServer
-public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
+public class AuthorizationServerConfig {
 
-    // @Autowired
-    // private PasswordEncoder passwordEncoder;
+	@Value("${algafood.jwt.keystore.location}")
+	private Resource jwtJksResource;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+	@Value("${algafood.jwt.keystore.password}")
+	private String jwtKeyStorePass;
 
-    @Autowired
-    private UserDetailsService userDetailsService;
+	@Value("${algafood.jwt.keystore.keypair-alias}")
+	private String jwtKeyPairAlias;
 
-    // @Autowired
-    // private RedisConnectionFactory redisConnectionFactory;
+	@Bean
+	@Order(Ordered.HIGHEST_PRECEDENCE)
+	public SecurityFilterChain authFilterChain(HttpSecurity http, JdbcOperations jdbcOperations) throws Exception {
+		OAuth2AuthorizationServerConfigurer<HttpSecurity> authorizationServerConfigurer = new OAuth2AuthorizationServerConfigurer<>();
 
-    @Value("${algafood.jwt.keystore.path}")
-    private String jwtJksResource;
+		authorizationServerConfigurer.authorizationEndpoint(customizer -> customizer.consentPage("/oauth2/consent"));
 
-    @Value("${algafood.jwt.keystore.password}")
-    private String jwtKeyStorePass;
+		RequestMatcher endpointsMatcher = authorizationServerConfigurer
+				.getEndpointsMatcher();
 
-    @Value("${algafood.jwt.keystore.keypair-alias}")
-    private String jwtKeyPairAlias;
+		http
+				.requestMatcher(endpointsMatcher)
+				.authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest().authenticated())
+				.csrf(csrf -> csrf.ignoringRequestMatchers(endpointsMatcher))
+				.apply(authorizationServerConfigurer);
 
-    @Autowired
-    private DataSource dataSource;
+		return http
+				.formLogin(customizer -> customizer.loginPage("/login"))
+				.build();
+	}
 
-    @Override
-    public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.jdbc(dataSource);
+	@Bean
+	public ProviderSettings providerSettings(AlgaFoodSecurityProperties properties) {
+		return ProviderSettings
+				.builder()
+				.issuer(properties.getProviderUrl())
+				.build();
+	}
 
-        // CONFIGURANDO CLIENT EM MEMORY
-        // clients.inMemory()
-        // .withClient("algafood-web")
-        // .secret(passwordEncoder.encode("web123"))
-        // .authorizedGrantTypes("password", "refresh_token")
-        // .scopes("WRITE", "READ")
-        // .accessTokenValiditySeconds(60 * 60 * 6) // PADRÃO DE 12H
-        // .refreshTokenValiditySeconds(60 * 60 * 24 * 60); // PADRÃO DE 30 DIAS
+	@Bean
+	public RegisteredClientRepository registeredClientRepository(PasswordEncoder passwordEncoder,
+			JdbcOperations jdbcOperations) {
 
-    }
+		return new JdbcRegisteredClientRepository(jdbcOperations);
+	}
 
-    @Override
-    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        var enhancerChain = new TokenEnhancerChain();
-        enhancerChain.setTokenEnhancers(Arrays.asList(new JwtCustomClaimsTokenEnhancer(), jwtAccessTokenConverter()));
+	@Bean
+	public OAuth2AuthorizationService oAuth2AuthorizationService(JdbcOperations jdbcOperations,
+			RegisteredClientRepository registeredClientRepository) {
+		return new JdbcOAuth2AuthorizationService(jdbcOperations, registeredClientRepository);
+	}
 
-        endpoints
-                .authenticationManager(authenticationManager)
-                .userDetailsService(userDetailsService)
-                .tokenGranter(tokenGranter(endpoints))
-                .accessTokenConverter(jwtAccessTokenConverter())
-                .tokenEnhancer(enhancerChain)
-                .approvalStore((approvalStore(endpoints.getTokenStore())));
-        // .tokenStore(redisTokenStore());
-        // .reuseRefreshTokens(false); MÉTODO BOOLEANO QUE DETERMINA A REUTILIZAÇÃO DE
-        // UM REFRESH_TOKEN
-    }
+	@Bean
+	public JWKSource<SecurityContext> jwkSource() throws Exception {
+		InputStream inputStream = jwtJksResource.getInputStream();
+		KeyStore keyStore = KeyStore.getInstance("JKS");
+		keyStore.load(inputStream, jwtKeyStorePass.toCharArray());
 
-    @Override
-    public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
-        security
-                // .checkTokenAccess("isAuthenticated()");
-                .checkTokenAccess("permitAll()")
-                .tokenKeyAccess("permitAll()")
-                .allowFormAuthenticationForClients();
-    }
+		RSAKey rsaKey = RSAKey.load(keyStore, jwtKeyPairAlias, jwtKeyStorePass.toCharArray());
 
-    private TokenGranter tokenGranter(AuthorizationServerEndpointsConfigurer endpoints) {
-        var pkceAuthorizationCodeTokenGranter = new PkceAuthorizationCodeTokenGranter(
-                endpoints.getTokenServices(),
-                endpoints.getAuthorizationCodeServices(), endpoints.getClientDetailsService(),
-                endpoints.getOAuth2RequestFactory());
+		return new ImmutableJWKSet<>(new JWKSet(rsaKey));
+	}
 
-        var granters = Arrays.asList(
-                pkceAuthorizationCodeTokenGranter, endpoints.getTokenGranter());
+	@Bean
+	public OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer(UsuarioRepository usuarioRepository) {
+		return context -> {
+			Authentication auth = context.getPrincipal();
+			if (auth.getPrincipal() instanceof User) {
+				User user = (User) auth.getPrincipal();
 
-        return new CompositeTokenGranter(granters);
-    }
+				Usuario usuario = usuarioRepository.findByEmail(user.getUsername()).orElseThrow();
 
-    @Bean
-    public JwtAccessTokenConverter jwtAccessTokenConverter() {
-        var jwtAccessTokenConverter = new JwtAccessTokenConverter();
-        // CHAVE SIMÉTRICA
-        // jwtAccessTokenConverter.setSigningKey("63dcb114-4869-4e1d-bbc0-60028323f6e2");
+				Set<String> authorities = new HashSet<>();
+				for (GrantedAuthority authority : user.getAuthorities()) {
+					authorities.add(authority.getAuthority());
+				}
 
-        // CHAVE ASSIMÉTRICA (PÚBLICA E PRIVADA)
-        var jksResource = new ClassPathResource(jwtJksResource);
-        var keyStorePass = jwtKeyStorePass;
-        var keyPairAlias = jwtKeyPairAlias;
+				context.getClaims().claim("user_id", usuario.getId().toString());
+				context.getClaims().claim("user_full_name", usuario.getNome());
+				context.getClaims().claim("authorities", authorities);
+			}
+		};
+	}
 
-        var keyStoreKeyFactory = new KeyStoreKeyFactory(jksResource, keyStorePass.toCharArray());
-        var keyPair = keyStoreKeyFactory.getKeyPair(keyPairAlias);
+	@Bean
+	public OAuth2AuthorizationConsentService consentService() {
+		return new InMemoryOAuth2AuthorizationConsentService();
+	}
 
-        jwtAccessTokenConverter.setKeyPair(keyPair);
-
-        return jwtAccessTokenConverter;
-    }
-
-    private ApprovalStore approvalStore(TokenStore tokenStore) {
-        var approvalStore = new TokenApprovalStore();
-        approvalStore.setTokenStore(tokenStore);
-
-        return approvalStore;
-    }
-
-    // STATEFUL -> ARMAZENANDO SESSÃO DO USUÁRIO EM BANCO NOSQL
-    // private TokenStore redisTokenStore() {
-    // return new RedisTokenStore(redisConnectionFactory);
-    // }
 }
