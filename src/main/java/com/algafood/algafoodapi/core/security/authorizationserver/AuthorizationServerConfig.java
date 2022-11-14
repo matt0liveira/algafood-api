@@ -5,12 +5,11 @@ import java.security.KeyStore;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer;
@@ -41,14 +40,8 @@ import com.nimbusds.jose.proc.SecurityContext;
 @Configuration
 public class AuthorizationServerConfig {
 
-	@Value("${algafood.jwt.keystore.location}")
-	private Resource jwtJksResource;
-
-	@Value("${algafood.jwt.keystore.password}")
-	private String jwtKeyStorePass;
-
-	@Value("${algafood.jwt.keystore.keypair-alias}")
-	private String jwtKeyPairAlias;
+	@Autowired
+	private JwtKeyStoreProperties jwtKeyStoreProperties;
 
 	@Bean
 	@Order(Ordered.HIGHEST_PRECEDENCE)
@@ -94,11 +87,14 @@ public class AuthorizationServerConfig {
 
 	@Bean
 	public JWKSource<SecurityContext> jwkSource() throws Exception {
-		InputStream inputStream = jwtJksResource.getInputStream();
 		KeyStore keyStore = KeyStore.getInstance("JKS");
-		keyStore.load(inputStream, jwtKeyStorePass.toCharArray());
+		var keyStorePass = jwtKeyStoreProperties.getPassword().toCharArray();
+		InputStream inputStream = jwtKeyStoreProperties.getJksLocation().getInputStream();
 
-		RSAKey rsaKey = RSAKey.load(keyStore, jwtKeyPairAlias, jwtKeyStorePass.toCharArray());
+		keyStore.load(inputStream, keyStorePass);
+
+		RSAKey rsaKey = RSAKey.load(keyStore, jwtKeyStoreProperties.getKeypairAlias(),
+				keyStorePass);
 
 		return new ImmutableJWKSet<>(new JWKSet(rsaKey));
 	}
@@ -117,7 +113,7 @@ public class AuthorizationServerConfig {
 					authorities.add(authority.getAuthority());
 				}
 
-				context.getClaims().claim("user_id", usuario.getId().toString());
+				context.getClaims().claim("user_id", usuario.getId());
 				context.getClaims().claim("user_full_name", usuario.getNome());
 				context.getClaims().claim("authorities", authorities);
 			}
