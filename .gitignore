@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+/variables_enviroinment_prod.txt
+/src/main/resources/keys/**
