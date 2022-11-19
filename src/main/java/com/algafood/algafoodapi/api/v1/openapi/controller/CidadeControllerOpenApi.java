@@ -7,41 +7,42 @@ import com.algafood.algafoodapi.api.exceptionhandler.ErrorApi;
 import com.algafood.algafoodapi.api.v1.model.CidadeModel;
 import com.algafood.algafoodapi.api.v1.model.input.CidadeInputModel;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
-@Api(tags = "Cidades")
+@Tag(name = "Cidades")
 public interface CidadeControllerOpenApi {
 
-        @ApiOperation("Lista todas as cidades")
+        @Operation(summary = "Lista todas as cidades")
         CollectionModel<CidadeModel> listar();
 
-        @ApiOperation("Busca uma cidade pelo ID")
-        ResponseEntity<CidadeModel> buscar(Long cidadeId);
+        @Operation(summary = "Busca uma cidade por ID")
+        ResponseEntity<CidadeModel> buscar(@Parameter(description = "ID da cidade", required = true) Long cidadeId);
 
-        @ApiOperation("Cadastra uma cidade")
+        @Operation(summary = "Cadastra uma cidade")
         @ApiResponses({ @ApiResponse(responseCode = "201", description = "Created")
 
         })
         ResponseEntity<?> add(
-                        @ApiParam(name = "Corpo", value = "Representação de uma nova cidade") CidadeInputModel cidadeInputDTO);
+                        @RequestBody(description = "Representação de uma nova cidade") CidadeInputModel cidadeInputDTO);
 
-        @ApiOperation("Altera os dados do cadastro de uma cidade por id")
+        @Operation(summary = "Altera os dados de uma cidade por ID")
         @ApiResponses({
                         @ApiResponse(responseCode = "404", description = "Cidade não encontrada", content = @Content(schema = @Schema(implementation = ErrorApi.class)))
         })
-        ResponseEntity<?> atualizar(@ApiParam(value = "ID de uma cidade", example = "1") Long cidadeId,
-                        @ApiParam(name = "Corpo", value = "Representação de uma cidade com os dados atualizados") CidadeInputModel cidadeInputDTO);
+        ResponseEntity<?> atualizar(@Parameter(description = "ID da cidade", required = true) Long cidadeId,
+                        @RequestBody(description = "Representação de uma cidade com dados atualizados") CidadeInputModel cidadeInputDTO);
 
-        @ApiOperation("Remove uma cidade por id")
+        @Operation(summary = "Exclui uma cidade por ID")
         @ApiResponses({
                         @ApiResponse(responseCode = "204", description = "Cidade excluída"),
                         @ApiResponse(responseCode = "404", description = "Cidade não encontrada", content = @Content(schema = @Schema(implementation = ErrorApi.class)))
         })
-        void remover(@ApiParam("ID de uma cidade") Long cidadeId);
+        void remover(@Parameter(description = "ID da cidade", required = true) Long cidadeId);
 }

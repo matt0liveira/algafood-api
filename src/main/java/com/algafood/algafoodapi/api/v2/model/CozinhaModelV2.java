@@ -6,11 +6,9 @@ import org.springframework.hateoas.server.core.Relation;
 import com.algafood.algafoodapi.api.v1.model.view.RestauranteView;
 import com.fasterxml.jackson.annotation.JsonView;
 
-import io.swagger.annotations.ApiModel;
 import lombok.Getter;
 import lombok.Setter;
 
-@ApiModel("CozinhaModel")
 @Relation(collectionRelation = "cozinhas")
 @Setter
 @Getter

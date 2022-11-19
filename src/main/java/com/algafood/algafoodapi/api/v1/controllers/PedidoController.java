@@ -44,6 +44,9 @@ import com.algafood.algafoodapi.domain.service.CadastroPedidoService;
 // import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.algafood.algafoodapi.infrastructure.repository.spec.PedidoSpecs;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
+@SecurityRequirement(name = "security_auth")
 @RestController
 @RequestMapping(path = "v1/pedidos", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PedidoController implements PedidoControllerOpenApi {
@@ -93,7 +96,6 @@ public class PedidoController implements PedidoControllerOpenApi {
     // }
 
     @CheckSecurity.Pedidos.PodePesquisar
-    @Override
     @GetMapping
     public PagedModel<PedidoResumoModel> pesquisar(PedidoFilter filter, Pageable pageable) {
         Pageable pageableTranslated = translatePageable(pageable);
@@ -114,7 +116,6 @@ public class PedidoController implements PedidoControllerOpenApi {
     }
 
     @CheckSecurity.Pedidos.PodeCriar
-    @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public PedidoModel emitir(@Valid @RequestBody PedidoInputModel pedidoInput) {

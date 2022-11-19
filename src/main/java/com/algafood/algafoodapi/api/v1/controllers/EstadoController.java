@@ -4,17 +4,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import com.algafood.algafoodapi.api.ResourceUriHelper;
-import com.algafood.algafoodapi.api.v1.assembler.EstadoAssembler.EstadoInputDisassembler;
-import com.algafood.algafoodapi.api.v1.assembler.EstadoAssembler.EstadoModelAssembler;
-import com.algafood.algafoodapi.api.v1.model.EstadoModel;
-import com.algafood.algafoodapi.api.v1.model.input.EstadoInputModel;
-import com.algafood.algafoodapi.api.v1.openapi.controller.EstadoControllerOpenApi;
-import com.algafood.algafoodapi.core.security.CheckSecurity;
-import com.algafood.algafoodapi.domain.models.Estado;
-import com.algafood.algafoodapi.domain.repository.EstadoRepository;
-import com.algafood.algafoodapi.domain.service.CadastroEstadoService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
@@ -30,6 +19,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.algafood.algafoodapi.api.ResourceUriHelper;
+import com.algafood.algafoodapi.api.v1.assembler.EstadoAssembler.EstadoInputDisassembler;
+import com.algafood.algafoodapi.api.v1.assembler.EstadoAssembler.EstadoModelAssembler;
+import com.algafood.algafoodapi.api.v1.model.EstadoModel;
+import com.algafood.algafoodapi.api.v1.model.input.EstadoInputModel;
+import com.algafood.algafoodapi.api.v1.openapi.controller.EstadoControllerOpenApi;
+import com.algafood.algafoodapi.core.security.CheckSecurity;
+import com.algafood.algafoodapi.domain.models.Estado;
+import com.algafood.algafoodapi.domain.repository.EstadoRepository;
+import com.algafood.algafoodapi.domain.service.CadastroEstadoService;
+
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
+@SecurityRequirement(name = "security_auth")
 @RestController
 @RequestMapping(path = "v1/estados", produces = MediaType.APPLICATION_JSON_VALUE)
 public class EstadoController implements EstadoControllerOpenApi {
@@ -47,7 +50,6 @@ public class EstadoController implements EstadoControllerOpenApi {
     private EstadoInputDisassembler estadoInputDisassembler;
 
     @CheckSecurity.Estados.PodeConsutar
-    @Override
     @GetMapping
     public CollectionModel<EstadoModel> listar() {
         List<Estado> estados = estadoRepository.findAll();
@@ -56,14 +58,12 @@ public class EstadoController implements EstadoControllerOpenApi {
     }
 
     @CheckSecurity.Estados.PodeConsutar
-    @Override
     @GetMapping("/{estadoId}")
     public ResponseEntity<EstadoModel> buscar(@PathVariable Long estadoId) {
         return ResponseEntity.ok(estadoModelAssembler.toModel(cadastroEstado.findOrFail(estadoId)));
     }
 
     @CheckSecurity.Estados.PodeEditar
-    @Override
     @PostMapping
     public ResponseEntity<EstadoModel> add(@RequestBody @Valid EstadoInputModel estadoInputDTO) {
         Estado estado = estadoInputDisassembler.toDomainObject(estadoInputDTO);
@@ -76,7 +76,6 @@ public class EstadoController implements EstadoControllerOpenApi {
     }
 
     @CheckSecurity.Estados.PodeEditar
-    @Override
     @PutMapping("/{estadoId}")
     public ResponseEntity<EstadoModel> atualizar(@PathVariable Long estadoId,
             @RequestBody @Valid EstadoInputModel estadoInputDTO) {
@@ -91,7 +90,6 @@ public class EstadoController implements EstadoControllerOpenApi {
     }
 
     @CheckSecurity.Estados.PodeEditar
-    @Override
     @DeleteMapping("/{estadoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void remover(@PathVariable Long estadoId) {

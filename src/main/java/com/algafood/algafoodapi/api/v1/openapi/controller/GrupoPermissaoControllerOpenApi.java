@@ -6,40 +6,40 @@ import org.springframework.http.ResponseEntity;
 import com.algafood.algafoodapi.api.exceptionhandler.ErrorApi;
 import com.algafood.algafoodapi.api.v1.model.PermissaoModel;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Api(tags = "Grupos")
+@Tag(name = "Grupos")
 public interface GrupoPermissaoControllerOpenApi {
 
+        @Operation(summary = "Lista todas as permissões de um grupo por ID")
         @ApiResponses({
                         @ApiResponse(responseCode = "400", description = "Requisição inválida (erro do cliente)", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
 
                         @ApiResponse(responseCode = "404", description = "Grupo não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class)))
         })
-        @ApiOperation("Lista as permissões de um grupo")
-        public CollectionModel<PermissaoModel> listar(@ApiParam(value = "ID do grupo") Long grupoId);
+        public CollectionModel<PermissaoModel> listar(@Parameter(description = "ID do grupo") Long grupoId);
 
+        @Operation(summary = "Associa uma permissão a um grupo por ID")
         @ApiResponses({
                         @ApiResponse(responseCode = "404", description = "Grupo e/ou permissão não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
 
                         @ApiResponse(responseCode = "204", description = "Associação feita com sucesso")
         })
-        @ApiOperation("Associa uma permissão a um grupo")
-        public ResponseEntity<Void> associar(@ApiParam(value = "ID do grupo") Long grupoId,
-                        @ApiParam(value = "ID da permissão") Long permissaoId);
+        public ResponseEntity<Void> associar(@Parameter(description = "ID do grupo") Long grupoId,
+                        @Parameter(description = "ID da permissão") Long permissaoId);
 
+        @Operation(summary = "Desassocia uma permissão a um grupo por ID")
         @ApiResponses({
                         @ApiResponse(responseCode = "404", description = "Grupo e/ou permissão não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
 
                         @ApiResponse(responseCode = "204", description = "Desassociação feita com sucesso")
         })
-        @ApiOperation("Desassocia uma permissão a um grupo")
-        public ResponseEntity<Void> desassociar(@ApiParam(value = "ID do grupo") Long grupoId,
-                        @ApiParam(value = "ID da permissão") Long permissaoId);
+        public ResponseEntity<Void> desassociar(@Parameter(description = "ID do grupo") Long grupoId,
+                        @Parameter(description = "ID da permissão") Long permissaoId);
 }

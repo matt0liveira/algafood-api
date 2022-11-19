@@ -15,6 +15,9 @@ import com.algafood.algafoodapi.core.security.CheckSecurity;
 import com.algafood.algafoodapi.domain.models.Permissao;
 import com.algafood.algafoodapi.domain.repository.PermissaoRepository;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
+@SecurityRequirement(name = "security_auth")
 @RestController
 @RequestMapping("v1/permissoes")
 public class PermissaoController implements PermissaoControllerOpenApi {
@@ -26,7 +29,6 @@ public class PermissaoController implements PermissaoControllerOpenApi {
     private PermissaoModelAssembler permissaoModel;
 
     @CheckSecurity.UsuariosGruposPermissoes.PodeConsutar
-    @Override
     @GetMapping
     public CollectionModel<PermissaoModel> listar() {
         List<Permissao> permissoes = permissaoRepository.findAll();

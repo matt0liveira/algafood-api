@@ -6,18 +6,18 @@ import org.springframework.hateoas.Links;
 
 import com.algafood.algafoodapi.api.v1.model.EstadoModel;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@ApiModel("EstadosModel")
+@Schema(name = "EstadosModel")
 @Data
 public class EstadosModelOpenApi {
     private EstadoEmbeddedModelOpenApi _embedded;
     private Links _links;
 
-    @ApiModel("EstadoModel")
+    @Schema(name = "EstadoModel")
     @Setter
     @Getter
     public class EstadoEmbeddedModelOpenApi {

@@ -26,6 +26,9 @@ import com.algafood.algafoodapi.domain.models.Grupo;
 import com.algafood.algafoodapi.domain.repository.GrupoRepository;
 import com.algafood.algafoodapi.domain.service.CadastroGrupoService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
+@SecurityRequirement(name = "security_auth")
 @RestController
 @RequestMapping("v1/grupos")
 public class GrupoController implements GrupoControllerOpenApi {
@@ -43,21 +46,18 @@ public class GrupoController implements GrupoControllerOpenApi {
     private GrupoInputDisassembler grupoInputDisassembler;
 
     @CheckSecurity.UsuariosGruposPermissoes.PodeConsutar
-    @Override
     @GetMapping
     public CollectionModel<GrupoModel> listar() {
         return grupoModel.toCollectionModel(grupoRepository.findAll());
     }
 
     @CheckSecurity.UsuariosGruposPermissoes.PodeConsutar
-    @Override
     @GetMapping("/{grupoId}")
     public GrupoModel buscar(@PathVariable Long grupoId) {
         return grupoModel.toModel(cadastroGrupo.findOrFail(grupoId));
     }
 
     @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
-    @Override
     @PostMapping
     public ResponseEntity<GrupoModel> add(@RequestBody @Valid GrupoInputModel grupoInput) {
         Grupo grupo = grupoInputDisassembler.toDomainObject(grupoInput);
@@ -68,7 +68,6 @@ public class GrupoController implements GrupoControllerOpenApi {
     }
 
     @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
-    @Override
     @PutMapping("/{grupoId}")
     public ResponseEntity<GrupoModel> alterar(@PathVariable Long grupoId,
             @RequestBody @Valid GrupoInputModel grupoInput) {
@@ -82,7 +81,6 @@ public class GrupoController implements GrupoControllerOpenApi {
     }
 
     @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
-    @Override
     @DeleteMapping("/{grupoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void remover(@PathVariable Long grupoId) {

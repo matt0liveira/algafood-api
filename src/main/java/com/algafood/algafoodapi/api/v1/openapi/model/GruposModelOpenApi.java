@@ -6,13 +6,13 @@ import org.springframework.hateoas.Links;
 
 import com.algafood.algafoodapi.api.v1.model.GrupoModel;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 @Data
-@ApiModel("GruposModel")
+@Schema(name = "GruposModel")
 public class GruposModelOpenApi {
 
     private GrupoEmbeddedModelOpenApi _embedded;
@@ -20,7 +20,7 @@ public class GruposModelOpenApi {
 
     @Setter
     @Getter
-    @ApiModel("GrupoModel")
+    @Schema(name = "GrupoModel")
     public class GrupoEmbeddedModelOpenApi {
         private List<GrupoModel> grupos;
     }

@@ -33,6 +33,9 @@ import com.algafood.algafoodapi.domain.models.Cidade;
 import com.algafood.algafoodapi.domain.repository.CidadeRepository;
 import com.algafood.algafoodapi.domain.service.CadastroCidadeService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
+@SecurityRequirement(name = "security_auth")
 @RestController
 @RequestMapping(path = "v1/cidades")
 public class CidadeController implements CidadeControllerOpenApi {
@@ -50,7 +53,6 @@ public class CidadeController implements CidadeControllerOpenApi {
     private CidadeInputDisassembler cidadeInputDisassembler;
 
     @CheckSecurity.Cidades.PodeConsutar
-    @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public CollectionModel<CidadeModel> listar() {
         List<Cidade> cidades = cidadeRepository.findAll();
@@ -59,7 +61,6 @@ public class CidadeController implements CidadeControllerOpenApi {
     }
 
     @CheckSecurity.Cidades.PodeConsutar
-    @Override
     @GetMapping(path = "/{cidadeId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CidadeModel> buscar(@PathVariable Long cidadeId) {
         CidadeModel cidadeModel = cidadeModelAssembler.toModel(cadastroCidade.findOrFail(cidadeId));
@@ -68,7 +69,6 @@ public class CidadeController implements CidadeControllerOpenApi {
     }
 
     @CheckSecurity.Cidades.PodeEditar
-    @Override
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> add(
             @RequestBody @Valid CidadeInputModel cidadeInputDTO) {
@@ -85,7 +85,6 @@ public class CidadeController implements CidadeControllerOpenApi {
     }
 
     @CheckSecurity.Cidades.PodeEditar
-    @Override
     @PutMapping(path = "/{cidadeId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> atualizar(@PathVariable Long cidadeId,
             @RequestBody @Valid CidadeInputModel cidadeInputDTO) {
@@ -105,7 +104,6 @@ public class CidadeController implements CidadeControllerOpenApi {
     }
 
     @CheckSecurity.Cidades.PodeEditar
-    @Override
     @DeleteMapping("/{cidadeId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void remover(@PathVariable Long cidadeId) {

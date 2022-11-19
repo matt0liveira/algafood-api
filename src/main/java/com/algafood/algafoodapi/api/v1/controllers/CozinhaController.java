@@ -35,6 +35,9 @@ import com.algafood.algafoodapi.domain.models.Cozinha;
 import com.algafood.algafoodapi.domain.repository.CozinhaRepository;
 import com.algafood.algafoodapi.domain.service.CadastroCozinhaService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
+@SecurityRequirement(name = "security_auth")
 @RestController
 @RequestMapping("v1/cozinhas")
 public class CozinhaController implements CozinhaControllerOpenApi {
@@ -55,7 +58,6 @@ public class CozinhaController implements CozinhaControllerOpenApi {
     private PagedResourcesAssembler<Cozinha> pagedResourcesAssembler;
 
     @CheckSecurity.Cozinhas.PodeConsultar
-    @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public PagedModel<CozinhaModel> listar(@PageableDefault(size = 10) Pageable pageable) {
         Page<Cozinha> cozinhasPage = cozinhaRepository.findAll(pageable);
@@ -67,14 +69,12 @@ public class CozinhaController implements CozinhaControllerOpenApi {
     }
 
     @CheckSecurity.Cozinhas.PodeConsultar
-    @Override
     @GetMapping(path = "/{cozinhaId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public CozinhaModel buscar(@PathVariable Long cozinhaId) {
         return cozinhaModelAssembler.toModel(cadastroCozinha.findOrFail(cozinhaId));
     }
 
     @CheckSecurity.Cozinhas.PodeEditar
-    @Override
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> add(@RequestBody CozinhaInputModel cozinhaInputDTO) {
         Cozinha cozinha = cozinhaInputDisassembler.toDomainObject(cozinhaInputDTO);
@@ -86,7 +86,6 @@ public class CozinhaController implements CozinhaControllerOpenApi {
     }
 
     @CheckSecurity.Cozinhas.PodeEditar
-    @Override
     @PutMapping(path = "/{cozinhaId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CozinhaModel> alterar(@PathVariable Long cozinhaId,
             @RequestBody CozinhaInputModel cozinhaInputDTO) {
@@ -98,7 +97,6 @@ public class CozinhaController implements CozinhaControllerOpenApi {
     }
 
     @CheckSecurity.Cozinhas.PodeEditar
-    @Override
     @DeleteMapping("/{cozinhaId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void remover(@PathVariable Long cozinhaId) {
@@ -106,7 +104,6 @@ public class CozinhaController implements CozinhaControllerOpenApi {
     }
 
     @CheckSecurity.Cozinhas.PodeConsultar
-    @Override
     @GetMapping("/buscar-por-nome")
     public CollectionModel<CozinhaModel> buscarPorNome(@RequestParam("nome") String nome) {
         List<Cozinha> cozinhas = cozinhaRepository.findByNomeContaining(nome);

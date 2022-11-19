@@ -36,6 +36,9 @@ import com.algafood.algafoodapi.domain.service.CatalogoFotoProdutoService;
 import com.algafood.algafoodapi.domain.service.FotoStorageService;
 import com.algafood.algafoodapi.domain.service.FotoStorageService.FotoRecuperada;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
+@SecurityRequirement(name = "security_auth")
 @RestController
 @RequestMapping(path = "v1/restaurantes/{restauranteId}/produtos/{produtoId}/foto", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RestauranteProdutoFotoController implements RestauranteProdutoFotoControllerOpenApi {
@@ -53,7 +56,6 @@ public class RestauranteProdutoFotoController implements RestauranteProdutoFotoC
     private FotoStorageService fotoStorage;
 
     @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
-    @Override
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public FotoProdutoModel atualizarFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId,
             @Valid FotoProdutoInputModel fotoProdutoInput, @RequestPart(required = true) MultipartFile arquivo)
@@ -73,7 +75,6 @@ public class RestauranteProdutoFotoController implements RestauranteProdutoFotoC
         return fotoProdutoModel.toModel(fotoSalva);
     }
 
-    @Override
     @GetMapping(produces = { MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<?> buscar(@PathVariable Long restauranteId, @PathVariable Long produtoId,
             @RequestHeader(name = "accept") String acceptHeader) throws HttpMediaTypeNotAcceptableException {
@@ -113,7 +114,6 @@ public class RestauranteProdutoFotoController implements RestauranteProdutoFotoC
     }
 
     @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
-    @Override
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void excluir(@PathVariable Long restauranteId, @PathVariable Long produtoId) {

@@ -1,19 +1,19 @@
 package com.algafood.algafoodapi.api.v1.openapi.model;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
-@ApiModel("Links")
+@Schema(name = "Links")
 public class LinksModelOpenApi {
 
     private LinkModel rel;
 
     @Setter
     @Getter
-    @ApiModel("Link")
+    @Schema(name = "Link")
     private class LinkModel {
         private String href;
         private boolean templated;

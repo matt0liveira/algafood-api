@@ -20,6 +20,9 @@ import com.algafood.algafoodapi.domain.models.dto.VendaDiaria;
 import com.algafood.algafoodapi.domain.service.VendaReportService;
 import com.algafood.algafoodapi.infrastructure.service.query.VendaQueryServiceImpl;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
+@SecurityRequirement(name = "security_auth")
 @RestController
 @RequestMapping(path = "v1/estatisticas", produces = MediaType.APPLICATION_JSON_VALUE)
 public class EstatisticasController implements EstatisticasControllerOpenApi {
@@ -34,7 +37,6 @@ public class EstatisticasController implements EstatisticasControllerOpenApi {
     private InstanceLink instanceLink;
 
     @CheckSecurity.Estatisticas.PodeConsultar
-    @Override
     @GetMapping
     public EstatisticasModel root() {
         var estatisticasModel = new EstatisticasModel();
@@ -45,7 +47,6 @@ public class EstatisticasController implements EstatisticasControllerOpenApi {
     }
 
     @CheckSecurity.Estatisticas.PodeConsultar
-    @Override
     @GetMapping(path = "/vendas-diarias")
     public List<VendaDiaria> consultVendasDiarias(VendaDiariaFilter filter,
             @RequestParam(required = false, defaultValue = "+00:00") String timeOffset) {
@@ -53,7 +54,6 @@ public class EstatisticasController implements EstatisticasControllerOpenApi {
     }
 
     @CheckSecurity.Estatisticas.PodeConsultar
-    @Override
     @GetMapping(path = "/vendas-diarias", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> consultVendasDiariasPdf(VendaDiariaFilter filter,
             @RequestParam(required = false, defaultValue = "+00:00") String timeOffset) {

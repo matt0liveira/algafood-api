@@ -20,6 +20,9 @@ import com.algafood.algafoodapi.core.security.SecurityUtils;
 import com.algafood.algafoodapi.domain.models.Restaurante;
 import com.algafood.algafoodapi.domain.service.CadastroRestauranteService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
+@SecurityRequirement(name = "security_auth")
 @RestController
 @RequestMapping(path = "v1/restaurantes/{restauranteId}/formas-pagamento", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RestauranteFormaPagamentoController implements RestauranteFormaPagamentoControllerOpenApi {
@@ -60,7 +63,6 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
     }
 
     @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
-    @Override
     @DeleteMapping("/{formaPagamentoId}")
     public ResponseEntity<Void> desassociar(@PathVariable Long restauranteId, @PathVariable Long formaPagamentoId) {
         cadastroRestaurante.desassociarFormaPagamento(restauranteId, formaPagamentoId);
@@ -69,7 +71,6 @@ public class RestauranteFormaPagamentoController implements RestauranteFormaPaga
     }
 
     @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
-    @Override
     @PutMapping("/{formaPagamentoId}")
     public ResponseEntity<Void> associar(@PathVariable Long restauranteId, @PathVariable Long formaPagamentoId) {
         cadastroRestaurante.associarFormaPagamento(restauranteId, formaPagamentoId);

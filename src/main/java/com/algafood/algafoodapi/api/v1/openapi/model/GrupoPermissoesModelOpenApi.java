@@ -6,19 +6,19 @@ import org.springframework.hateoas.Links;
 
 import com.algafood.algafoodapi.api.v1.model.PermissaoModel;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 @Data
-@ApiModel("GruposPermissoesModel")
+@Schema(name = "GruposPermissoesModel")
 public class GrupoPermissoesModelOpenApi {
 
     private GrupoPermissoesEmbeddedModelOpenApi _embedded;
     private Links _links;
 
-    @ApiModel("GrupoPermissoesModel")
+    @Schema(name = "GrupoPermissoesModel")
     @Setter
     @Getter
     public class GrupoPermissoesEmbeddedModelOpenApi {

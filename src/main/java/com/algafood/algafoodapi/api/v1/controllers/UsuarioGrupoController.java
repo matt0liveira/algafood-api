@@ -20,6 +20,9 @@ import com.algafood.algafoodapi.core.security.SecurityUtils;
 import com.algafood.algafoodapi.domain.models.Usuario;
 import com.algafood.algafoodapi.domain.service.CadastroUsuarioService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
+@SecurityRequirement(name = "security_auth")
 @RestController
 @RequestMapping(path = "v1/usuarios/{usuarioId}/grupos", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UsuarioGrupoController implements UsuarioGrupoControllerOpenApi {
@@ -37,7 +40,6 @@ public class UsuarioGrupoController implements UsuarioGrupoControllerOpenApi {
     private SecurityUtils securityUtils;
 
     @CheckSecurity.UsuariosGruposPermissoes.PodeConsutar
-    @Override
     @GetMapping
     public CollectionModel<GrupoModel> listar(@PathVariable Long usuarioId) {
         Usuario usuario = cadastroUsuario.findOrFail(usuarioId);
@@ -58,7 +60,6 @@ public class UsuarioGrupoController implements UsuarioGrupoControllerOpenApi {
     }
 
     @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
-    @Override
     @PutMapping("/{grupoId}")
     public ResponseEntity<Void> associar(@PathVariable Long usuarioId, @PathVariable Long grupoId) {
         cadastroUsuario.associarGrupo(usuarioId, grupoId);
@@ -67,7 +68,6 @@ public class UsuarioGrupoController implements UsuarioGrupoControllerOpenApi {
     }
 
     @CheckSecurity.UsuariosGruposPermissoes.PodeEditar
-    @Override
     @DeleteMapping("/{grupoId}")
     public ResponseEntity<Void> desassociar(@PathVariable Long usuarioId, @PathVariable Long grupoId) {
         cadastroUsuario.desassociarGrupo(usuarioId, grupoId);

@@ -1,12 +1,12 @@
 package com.algafood.algafoodapi.api.v1.openapi.model;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
-@ApiModel("PageModel")
+@Schema(name = "PageModel")
 public class PageModelOpenApi {
 
     private Long size;

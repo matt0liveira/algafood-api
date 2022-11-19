@@ -31,6 +31,9 @@ import com.algafood.algafoodapi.domain.models.Usuario;
 import com.algafood.algafoodapi.domain.repository.UsuarioRepository;
 import com.algafood.algafoodapi.domain.service.CadastroUsuarioService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
+@SecurityRequirement(name = "security_auth")
 @RestController
 @RequestMapping(path = "v1/usuarios", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UsuarioController implements UsuarioControllerOpenApi {
@@ -48,7 +51,6 @@ public class UsuarioController implements UsuarioControllerOpenApi {
     private UsuarioInputDisassembler usuarioInputDisassembler;
 
     @CheckSecurity.UsuariosGruposPermissoes.PodeConsutar
-    @Override
     @GetMapping
     public CollectionModel<UsuarioModel> listar() {
         List<Usuario> usuarios = usuarioRepository.findAll();
@@ -57,7 +59,6 @@ public class UsuarioController implements UsuarioControllerOpenApi {
     }
 
     @CheckSecurity.UsuariosGruposPermissoes.PodeConsultarUsuario
-    @Override
     @GetMapping("/{usuarioId}")
     public UsuarioModel buscar(@PathVariable Long usuarioId) {
         Usuario usuario = cadastroUsuario.findOrFail(usuarioId);
@@ -65,7 +66,6 @@ public class UsuarioController implements UsuarioControllerOpenApi {
         return usuarioModel.toModel(usuario);
     }
 
-    @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UsuarioModel> add(@RequestBody @Valid UsuarioComSenhaInput usuarioInputDTO) {
@@ -78,7 +78,6 @@ public class UsuarioController implements UsuarioControllerOpenApi {
     }
 
     @CheckSecurity.UsuariosGruposPermissoes.PodeAlterarUsuario
-    @Override
     @PutMapping("/{usuarioId}")
     public ResponseEntity<UsuarioModel> alterar(@RequestBody @Valid UsuarioInputModel usuarioInputDTO,
             @PathVariable Long usuarioId) {
@@ -90,7 +89,6 @@ public class UsuarioController implements UsuarioControllerOpenApi {
     }
 
     @CheckSecurity.UsuariosGruposPermissoes.PodeAlterarPropriaSenha
-    @Override
     @PutMapping("/{usuarioId}/alterar-senha")
     public void alterarSenha(@PathVariable Long usuarioId, @RequestBody @Valid SenhaInput senha) {
         cadastroUsuario.alterarSenha(usuarioId, senha.getSenhaAtual(), senha.getSenhaNova());

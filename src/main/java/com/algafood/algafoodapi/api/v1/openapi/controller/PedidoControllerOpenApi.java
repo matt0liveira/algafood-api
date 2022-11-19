@@ -9,30 +9,30 @@ import com.algafood.algafoodapi.api.v1.model.PedidoResumoModel;
 import com.algafood.algafoodapi.api.v1.model.input.PedidoInputModel;
 import com.algafood.algafoodapi.domain.filter.PedidoFilter;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Api(tags = "Pedidos")
+@Tag(name = "Pedidos")
 public interface PedidoControllerOpenApi {
 
-    @ApiImplicitParams(@ApiImplicitParam(name = "fields", value = "Nome das propriedades para filtrar na resposta, separadas por vírgula", paramType = "query", type = "string"))
-    @ApiOperation("Pesquisa de pedidos")
+    @Operation(summary = "Pesquisa de pedidos")
+    @Parameters(@Parameter(name = "fields", description = "Nome das propriedades para filtrar na resposta, separadas por vírgula"))
     PagedModel<PedidoResumoModel> pesquisar(PedidoFilter filter, Pageable pageable);
 
-    @ApiImplicitParams(@ApiImplicitParam(name = "fields", value = "Nome das propriedades para filtrar na resposta, separadas por vírgula", paramType = "query", type = "string"))
+    @Operation(summary = "Busca um pedido por CODIGO")
+    @Parameters(@Parameter(name = "fields", description = "Nome das propriedades para filtrar na resposta, separadas por vírgula"))
     @ApiResponses({
             @ApiResponse(responseCode = "404", description = "Pedido não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class)))
     })
-    @ApiOperation("Busca de pedidos pelo CÓDIGO")
-    PedidoModel buscar(@ApiParam(value = "Código do pedido") String codigo);
+    PedidoModel buscar(@Parameter(description = "Código do pedido") String codigo);
 
-    @ApiOperation("Emissão de pedidos")
-    PedidoModel emitir(PedidoInputModel pedidoInput);
+    @Operation(summary = "Emite um novo pedido")
+    PedidoModel emitir(@RequestBody(description = "Representação de um novo pedido") PedidoInputModel pedidoInput);
 }

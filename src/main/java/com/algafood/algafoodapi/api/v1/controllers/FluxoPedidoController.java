@@ -13,6 +13,9 @@ import com.algafood.algafoodapi.api.v1.openapi.controller.FluxoPedidoControllerO
 import com.algafood.algafoodapi.core.security.CheckSecurity;
 import com.algafood.algafoodapi.domain.service.FluxoPedidoService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
+@SecurityRequirement(name = "security_auth")
 @RestController
 @RequestMapping("v1/pedidos/{codigo}")
 public class FluxoPedidoController implements FluxoPedidoControllerOpenApi {
@@ -21,7 +24,6 @@ public class FluxoPedidoController implements FluxoPedidoControllerOpenApi {
     private FluxoPedidoService fluxoPedido;
 
     @CheckSecurity.Pedidos.PodeGerenciarPedidos
-    @Override
     @PutMapping("/confirmacao")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> confirmar(@PathVariable String codigo) {
@@ -31,7 +33,6 @@ public class FluxoPedidoController implements FluxoPedidoControllerOpenApi {
     }
 
     @CheckSecurity.Pedidos.PodeGerenciarPedidos
-    @Override
     @PutMapping("/entregue")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> entregar(@PathVariable String codigo) {
@@ -41,7 +42,6 @@ public class FluxoPedidoController implements FluxoPedidoControllerOpenApi {
     }
 
     @CheckSecurity.Pedidos.PodeGerenciarPedidos
-    @Override
     @PutMapping("/cancelamento")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> cancelar(@PathVariable String codigo) {

@@ -6,11 +6,11 @@ import org.springframework.hateoas.Links;
 
 import com.algafood.algafoodapi.api.v1.model.CidadeModel;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@ApiModel("CidadesModel")
+@Schema(name = "CidadesModel")
 public class CidadesModelOpenApi {
 
     private CidadeEmbeddedModelOpenApi _embedded;
@@ -18,7 +18,7 @@ public class CidadesModelOpenApi {
     private PageModelOpenApi page;
 
     @Data
-    @ApiModel("CidadesEmbeddedModel")
+    @Schema(name = "CidadesEmbeddedModel")
     public class CidadeEmbeddedModelOpenApi {
         private List<CidadeModel> cidades;
     }

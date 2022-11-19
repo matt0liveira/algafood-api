@@ -13,23 +13,22 @@ import com.algafood.algafoodapi.api.v1.model.RestauranteResumoModel;
 import com.algafood.algafoodapi.api.v1.model.input.RestauranteInputDTO;
 import com.algafood.algafoodapi.domain.models.Restaurante;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import springfox.documentation.annotations.ApiIgnore;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Api(tags = "Restaurantes")
+@Tag(name = "Restaurantes")
 public interface RestauranteControllerOpenApi {
 
-	@ApiIgnore
-	@ApiOperation(value = "Lista todos os restaurantes", hidden = true)
+	@Operation(summary = "Lista todos os restaurantes", hidden = true)
 	CollectionModel<RestauranteApenasNomeModel> listar(String projecao);
 
-	@ApiOperation("Lista todos os restaurantes")
+	@Operation(summary = "Lista todos os restaurantes")
 	CollectionModel<RestauranteResumoModel> listar();
 
 	@ApiResponses({
@@ -37,29 +36,30 @@ public interface RestauranteControllerOpenApi {
 
 			@ApiResponse(responseCode = "400", description = "Requisição inválida (erro do cliente)", content = @Content(schema = @Schema(implementation = ErrorApi.class)))
 	})
-	@ApiOperation("Busca um restaurante pelo ID")
-	ResponseEntity<RestauranteModel> buscar(@ApiParam(value = "ID de um restaurante") Long restauranteId);
+	@Operation(summary = "Busca um restaurante pelo ID")
+	ResponseEntity<RestauranteModel> buscar(@Parameter(description = "ID de um restaurante") Long restauranteId);
 
 	@ApiResponses({
 			@ApiResponse(responseCode = "201", description = "Restaurante criado com sucesso")
 	})
-	@ApiOperation("Cadastra um restaurante")
-	ResponseEntity<RestauranteModel> add(RestauranteInputDTO restauranteInputDTO);
+	@Operation(summary = "Cadastra um restaurante")
+	ResponseEntity<RestauranteModel> add(
+			@RequestBody(description = "Representação de um novo restaurante") RestauranteInputDTO restauranteInputDTO);
 
 	@ApiResponses(@ApiResponse(responseCode = "404", description = "Restaurante não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class))))
-	@ApiOperation("Altera os dados de um restaurante pelo ID")
-	ResponseEntity<RestauranteModel> atualizar(@ApiParam(value = "ID de um restaurante") Long restauranteId,
-			RestauranteInputDTO restauranteInputDTO);
+	@Operation(summary = "Altera os dados de um restaurante pelo ID")
+	ResponseEntity<RestauranteModel> atualizar(@Parameter(description = "ID de um restaurante") Long restauranteId,
+			@RequestBody(description = "Representação de um restaurante com dados atualizados") RestauranteInputDTO restauranteInputDTO);
 
 	@ApiResponses({
 			@ApiResponse(responseCode = "404", description = "Restaurante não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
 
 			@ApiResponse(responseCode = "204", description = "Restaurante excluído com sucesso")
 	})
-	@ApiOperation("Exclui um restaurante pelo ID")
-	void excluir(@ApiParam(value = "ID de um restaurante") Long restauranteId);
+	@Operation(summary = "Exclui um restaurante pelo ID")
+	void excluir(@Parameter(description = "ID de um restaurante") Long restauranteId);
 
-	@ApiOperation("Busca restaurantes filtrando por nome, valor de frete inicial e valor de frete final")
+	@Operation(summary = "Busca restaurantes filtrando por nome, valor de frete inicial e valor de frete final")
 	List<Restaurante> restaurantesPorNomeFrete(String nome, BigDecimal freteInicial, BigDecimal freteFinal);
 
 	@ApiResponses({
@@ -67,46 +67,46 @@ public interface RestauranteControllerOpenApi {
 
 			@ApiResponse(responseCode = "204", description = "Restaurante ativado com sucesso")
 	})
-	@ApiOperation("Ativa um restaurante")
-	ResponseEntity<Void> ativar(@ApiParam(value = "ID de um restaurante") Long restauranteId);
+	@Operation(summary = "Ativa um restaurante")
+	ResponseEntity<Void> ativar(@Parameter(description = "ID de um restaurante") Long restauranteId);
 
 	@ApiResponses({
 			@ApiResponse(responseCode = "404", description = "Restaurante não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
 
 			@ApiResponse(responseCode = "204", description = "Restaurante inativado com sucesso")
 	})
-	@ApiOperation("Inativa um restaurante")
-	ResponseEntity<Void> inativar(@ApiParam(value = "ID de um restaurante") Long restauranteId);
+	@Operation(summary = "Inativa um restaurante")
+	ResponseEntity<Void> inativar(@Parameter(description = "ID de um restaurante") Long restauranteId);
 
 	@ApiResponses({
 			@ApiResponse(responseCode = "404", description = "Restaurante não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
 
 			@ApiResponse(responseCode = "204", description = "Restaurante aberto com sucesso")
 	})
-	@ApiOperation("Abre um restaurante")
-	ResponseEntity<Void> abrir(@ApiParam(value = "ID de um restaurante") Long restauranteId);
+	@Operation(summary = "Abre um restaurante")
+	ResponseEntity<Void> abrir(@Parameter(description = "ID de um restaurante") Long restauranteId);
 
 	@ApiResponses({
 			@ApiResponse(responseCode = "404", description = "Restaurante não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
 
 			@ApiResponse(responseCode = "204", description = "Restaurante fechado com sucesso")
 	})
-	@ApiOperation("Fecha um restaurante")
-	ResponseEntity<Void> fechar(@ApiParam(value = "ID de um restaurante") Long restauranteId);
+	@Operation(summary = "Fecha um restaurante")
+	ResponseEntity<Void> fechar(@Parameter(description = "ID de um restaurante") Long restauranteId);
 
 	@ApiResponses({
 			@ApiResponse(responseCode = "404", description = "Restaurante não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
 
 			@ApiResponse(responseCode = "204", description = "Restaurantes ativados com sucesso")
 	})
-	@ApiOperation("Ativa restaurantes em massa")
-	ResponseEntity<Void> ativarEmMassa(@ApiParam(value = "IDs dos restaurantes") List<Long> restauranteIds);
+	@Operation(summary = "Ativa restaurantes em massa")
+	ResponseEntity<Void> ativarEmMassa(@Parameter(description = "IDs dos restaurantes") List<Long> restauranteIds);
 
 	@ApiResponses({
 			@ApiResponse(responseCode = "404", description = "Restaurante não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
 
 			@ApiResponse(responseCode = "204", description = "Restaurantes inativados com sucesso")
 	})
-	@ApiOperation("Inativa restaurantes em massa")
-	ResponseEntity<Void> inativarEmMassa(@ApiParam(value = "IDs dos restaurantes") List<Long> restauranteIds);
+	@Operation(summary = "Inativa restaurantes em massa")
+	ResponseEntity<Void> inativarEmMassa(@Parameter(description = "IDs dos restaurantes") List<Long> restauranteIds);
 }

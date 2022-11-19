@@ -22,6 +22,9 @@ import com.algafood.algafoodapi.core.security.SecurityUtils;
 import com.algafood.algafoodapi.domain.models.Restaurante;
 import com.algafood.algafoodapi.domain.service.CadastroRestauranteService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
+@SecurityRequirement(name = "security_auth")
 @RestController
 @RequestMapping(path = "v1/restaurantes/{restauranteId}/responsaveis", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RestauranteUsuarioController implements RestauranteUsuarioControllerOpenApi {
@@ -39,7 +42,6 @@ public class RestauranteUsuarioController implements RestauranteUsuarioControlle
 	private SecurityUtils securityUtils;
 
 	@CheckSecurity.Restaurantes.PodeConsultar
-	@Override
 	@GetMapping
 	public CollectionModel<UsuarioModel> listar(@PathVariable Long restauranteId) {
 		Restaurante restaurante = cadastroRestaurante.findOrFail(restauranteId);
@@ -62,7 +64,6 @@ public class RestauranteUsuarioController implements RestauranteUsuarioControlle
 	}
 
 	@CheckSecurity.Restaurantes.PodeGerenciarCadastro
-	@Override
 	@PutMapping("/{responsavelId}")
 	public ResponseEntity<Void> associar(@PathVariable Long restauranteId, @PathVariable Long responsavelId) {
 		cadastroRestaurante.associarResponsavel(restauranteId, responsavelId);
@@ -71,7 +72,6 @@ public class RestauranteUsuarioController implements RestauranteUsuarioControlle
 	}
 
 	@CheckSecurity.Restaurantes.PodeGerenciarCadastro
-	@Override
 	@DeleteMapping("/{responsavelId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public ResponseEntity<Void> desassociar(@PathVariable Long restauranteId, @PathVariable Long responsavelId) {

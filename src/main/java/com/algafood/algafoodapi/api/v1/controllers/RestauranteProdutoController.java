@@ -30,6 +30,9 @@ import com.algafood.algafoodapi.domain.repository.ProdutoRepository;
 import com.algafood.algafoodapi.domain.service.CadastroProdutoService;
 import com.algafood.algafoodapi.domain.service.CadastroRestauranteService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
+@SecurityRequirement(name = "security_auth")
 @RestController
 @RequestMapping(path = "v1/restaurantes/{restauranteId}/produtos", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RestauranteProdutoController implements RestauranteProdutoControllerOpenApi {
@@ -53,7 +56,6 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
     private InstanceLink instanceLink;
 
     @CheckSecurity.Restaurantes.PodeConsultar
-    @Override
     @GetMapping
     public CollectionModel<ProdutoModel> listar(@PathVariable Long restauranteId,
             @RequestParam(required = false) Boolean includeInativos) {
@@ -71,7 +73,6 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
     }
 
     @CheckSecurity.Restaurantes.PodeConsultar
-    @Override
     @GetMapping("/{produtoId}")
     public ProdutoModel buscar(@PathVariable Long restauranteId, @PathVariable Long produtoId) {
         Produto produto = cadastroProduto.findOrFail(restauranteId, produtoId);
@@ -80,7 +81,6 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
     }
 
     @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
-    @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ProdutoModel add(@PathVariable Long restauranteId, @RequestBody ProdutoInputModel produtoInput) {
@@ -95,7 +95,6 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
     }
 
     @CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
-    @Override
     @PutMapping("/{produtoId}")
     public ProdutoModel alterar(@PathVariable Long restauranteId, @PathVariable Long produtoId,
             @RequestBody ProdutoInputModel produtoInput) {

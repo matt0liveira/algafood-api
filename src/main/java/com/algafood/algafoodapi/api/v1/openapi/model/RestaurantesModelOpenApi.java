@@ -6,19 +6,19 @@ import org.springframework.hateoas.Links;
 
 import com.algafood.algafoodapi.api.v1.model.RestauranteModel;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@ApiModel("RestaurantesModel")
+@Schema(name = "RestaurantesModel")
 @Data
 public class RestaurantesModelOpenApi {
 
     private RestauranteEmbeddedModelOpenApi _embedded;
     private Links _links;
 
-    @ApiModel("RestauranteModel")
+    @Schema(name = "RestauranteModel")
     @Setter
     @Getter
     public class RestauranteEmbeddedModelOpenApi {

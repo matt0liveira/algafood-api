@@ -6,13 +6,13 @@ import org.springframework.hateoas.Links;
 
 import com.algafood.algafoodapi.api.v2.model.CozinhaModelV2;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 @Data
-@ApiModel("CozinhasModel")
+@Schema(name = "CozinhasModel")
 public class CozinhasModelOpenApiV2 {
 
     private CozinhaEmbeddedModelOpenApiV2 _embedded;
@@ -21,7 +21,7 @@ public class CozinhasModelOpenApiV2 {
 
     @Setter
     @Getter
-    @ApiModel("CozinhaModel")
+    @Schema(name = "CozinhaModel")
     public class CozinhaEmbeddedModelOpenApiV2 {
         private List<CozinhaModelV2> cozinhas;
     }

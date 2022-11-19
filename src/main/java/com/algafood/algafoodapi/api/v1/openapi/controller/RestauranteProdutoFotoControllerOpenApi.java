@@ -10,25 +10,25 @@ import com.algafood.algafoodapi.api.exceptionhandler.ErrorApi;
 import com.algafood.algafoodapi.api.v1.model.FotoProdutoModel;
 import com.algafood.algafoodapi.api.v1.model.input.FotoProdutoInputModel;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Api(tags = "Produtos")
+@Tag(name = "Produtos")
 public interface RestauranteProdutoFotoControllerOpenApi {
 
         @ApiResponses({
                         @ApiResponse(responseCode = "404", description = "Restaurante e/ou produto não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class)))
         })
-        @ApiOperation("Insere uma nova foto no produto")
-        public FotoProdutoModel atualizarFoto(@ApiParam(value = "ID do restaurante") Long restauranteId,
-                        @ApiParam(value = "ID do produto") Long produtoId,
+        @Operation(summary = "Insere uma nova foto no produto")
+        public FotoProdutoModel atualizarFoto(@Parameter(name = "ID do restaurante") Long restauranteId,
+                        @Parameter(name = "ID do produto") Long produtoId,
                         FotoProdutoInputModel fotoProdutoInput,
-                        @ApiParam(value = "Arquivo da foto do produto (máximo 500KB, apenas JPG e PNG)", required = true) MultipartFile arquivo)
+                        @Parameter(name = "Arquivo da foto do produto (máximo 500KB, apenas JPG e PNG)", required = true) MultipartFile arquivo)
                         throws IOException;
 
         @ApiResponses({
@@ -38,10 +38,11 @@ public interface RestauranteProdutoFotoControllerOpenApi {
                         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "image/png")),
                         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "image/jpeg"))
         })
-        @ApiOperation(value = "Busca a foto do produto de um restaurante", produces = "image/jpeg, image/png, application/json")
-        public ResponseEntity<?> buscar(@ApiParam(value = "ID do restaurante") Long restauranteId,
-                        @ApiParam(value = "ID do produto") Long produtoId,
-                        @ApiParam(hidden = true, required = false) String acceptHeader)
+        // @Operation(summary = "Busca a foto do produto de um restaurante", produces =
+        // "image/jpeg, image/png, application/json")
+        public ResponseEntity<?> buscar(@Parameter(name = "ID do restaurante") Long restauranteId,
+                        @Parameter(name = "ID do produto") Long produtoId,
+                        @Parameter(hidden = true, required = false) String acceptHeader)
                         throws HttpMediaTypeNotAcceptableException;
 
         @ApiResponses({
@@ -49,7 +50,7 @@ public interface RestauranteProdutoFotoControllerOpenApi {
                         @ApiResponse(responseCode = "400", description = "Requisição inválida (erro do cliente)", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
                         @ApiResponse(responseCode = "204", description = "Foto excluída com sucesso")
         })
-        @ApiOperation("Exclui a foto do produto de um restaurante")
-        public void excluir(@ApiParam(value = "ID do restaurante") Long restauranteId,
-                        @ApiParam(value = "ID do produto") Long produtoId);
+        @Operation(summary = "Exclui a foto do produto de um restaurante")
+        public void excluir(@Parameter(name = "ID do restaurante") Long restauranteId,
+                        @Parameter(name = "ID do produto") Long produtoId);
 }
