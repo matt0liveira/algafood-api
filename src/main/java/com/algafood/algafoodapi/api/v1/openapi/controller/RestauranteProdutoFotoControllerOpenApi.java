@@ -40,6 +40,7 @@ public interface RestauranteProdutoFotoControllerOpenApi {
         })
         // @Operation(summary = "Busca a foto do produto de um restaurante", produces =
         // "image/jpeg, image/png, application/json")
+        @Operation(summary = "Busca a foto do produto de um restaurante")
         public ResponseEntity<?> buscar(@Parameter(name = "ID do restaurante") Long restauranteId,
                         @Parameter(name = "ID do produto") Long produtoId,
                         @Parameter(hidden = true, required = false) String acceptHeader)

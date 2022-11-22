@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "Formas de pagamento")
+@Tag(name = "Formas de pagamento", description = "Gerencia as formas de pagamento")
 public interface FormaPagamentoControllerOpenApi {
 
         @Operation(summary = "Lista todas as formas de pagamento")

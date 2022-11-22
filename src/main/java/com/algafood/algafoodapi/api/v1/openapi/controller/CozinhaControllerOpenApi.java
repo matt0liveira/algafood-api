@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import com.algafood.algafoodapi.api.exceptionhandler.ErrorApi;
 import com.algafood.algafoodapi.api.v1.model.CozinhaModel;
 import com.algafood.algafoodapi.api.v1.model.input.CozinhaInputModel;
+import com.algafood.algafoodapi.core.springdoc.PageableParameter;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,11 +20,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "Cozinhas")
+@Tag(name = "Cozinhas", description = "Gerencia as cozinhas")
 public interface CozinhaControllerOpenApi {
 
+	@PageableParameter
 	@Operation(summary = "Lista todas as cozinhas")
-	PagedModel<CozinhaModel> listar(@PageableDefault(size = 10) Pageable pageable);
+	PagedModel<CozinhaModel> listar(@Parameter(hidden = true) @PageableDefault(size = 10) Pageable pageable);
 
 	@Operation(summary = "Busca uma cozinha por ID")
 	@ApiResponses({
@@ -37,7 +39,7 @@ public interface CozinhaControllerOpenApi {
 	@ApiResponses({
 			@ApiResponse(responseCode = "201", description = "Cozinha cadastrada com sucesso")
 	})
-	ResponseEntity<?> add(CozinhaInputModel cozinhaInputDTO);
+	ResponseEntity<CozinhaModel> add(CozinhaInputModel cozinhaInputDTO);
 
 	@Operation(summary = "Altera os dados de uma cozinha por ID")
 	@ApiResponses({

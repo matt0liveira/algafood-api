@@ -18,7 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "Estatísticas")
+@Tag(name = "Estatísticas", description = "Gerencia as estatísticas")
 public interface EstatisticasControllerOpenApi {
 
 	@Operation(summary = "Estatísticas")

@@ -16,7 +16,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
-@Tag(name = "Cidades")
+@Tag(name = "Cidades", description = "Gerencia as cidades")
 public interface CidadeControllerOpenApi {
 
         @Operation(summary = "Lista todas as cidades")

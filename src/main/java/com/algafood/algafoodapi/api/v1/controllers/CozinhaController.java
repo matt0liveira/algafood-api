@@ -76,7 +76,7 @@ public class CozinhaController implements CozinhaControllerOpenApi {
 
     @CheckSecurity.Cozinhas.PodeEditar
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> add(@RequestBody CozinhaInputModel cozinhaInputDTO) {
+    public ResponseEntity<CozinhaModel> add(@RequestBody CozinhaInputModel cozinhaInputDTO) {
         Cozinha cozinha = cozinhaInputDisassembler.toDomainObject(cozinhaInputDTO);
         cozinha = cadastroCozinha.salvar(cozinha);
 

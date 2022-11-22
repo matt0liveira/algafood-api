@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "Grupos")
+@Tag(name = "Grupos", description = "Gerencia os grupos de permissões")
 public interface GrupoControllerOpenApi {
 
         @Operation(summary = "Lista todos os grupos de permissões")

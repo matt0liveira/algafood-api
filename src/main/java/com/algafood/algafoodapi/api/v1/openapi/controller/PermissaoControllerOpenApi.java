@@ -7,7 +7,7 @@ import com.algafood.algafoodapi.api.v1.model.PermissaoModel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "Permissões")
+@Tag(name = "Permissões", description = "Gerencia as permissões")
 public interface PermissaoControllerOpenApi {
 
     @Operation(summary = "Lista todas as permissões")

@@ -14,7 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "Produtos")
+@Tag(name = "Produtos", description = "Gerencia os produtos")
 public interface RestauranteProdutoControllerOpenApi {
 
         @ApiResponses({

@@ -22,7 +22,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "Restaurantes")
+@Tag(name = "Restaurantes", description = "Gerencia os restaurantes")
 public interface RestauranteControllerOpenApi {
 
 	@Operation(summary = "Lista todos os restaurantes", hidden = true)

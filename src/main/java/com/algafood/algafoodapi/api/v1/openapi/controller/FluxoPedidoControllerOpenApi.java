@@ -12,7 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "Pedidos")
+@Tag(name = "Pedidos", description = "Gerencia os pedidos")
 public interface FluxoPedidoControllerOpenApi {
 
 	@Operation(summary = "Muda o status do pedido para CONFIRMADO")
