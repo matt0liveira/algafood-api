@@ -21,37 +21,36 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Produtos")
 public interface RestauranteProdutoFotoControllerOpenApi {
 
-        @ApiResponses({
-                        @ApiResponse(responseCode = "404", description = "Restaurante e/ou produto não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class)))
-        })
-        @Operation(summary = "Insere uma nova foto no produto")
-        public FotoProdutoModel atualizarFoto(@Parameter(name = "ID do restaurante") Long restauranteId,
-                        @Parameter(name = "ID do produto") Long produtoId,
-                        FotoProdutoInputModel fotoProdutoInput,
-                        @Parameter(name = "Arquivo da foto do produto (máximo 500KB, apenas JPG e PNG)", required = true) MultipartFile arquivo)
-                        throws IOException;
+	@ApiResponses({
+			@ApiResponse(responseCode = "404", description = "Restaurante e/ou produto não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class)))
+	})
+	@Operation(summary = "Atualiza foto de um produto")
+	public FotoProdutoModel atualizarFoto(@Parameter(name = "ID do restaurante") Long restauranteId,
+			@Parameter(name = "ID do produto") Long produtoId,
+			FotoProdutoInputModel fotoProdutoInput,
+			@Parameter(name = "Arquivo da foto do produto (máximo 500KB, apenas JPG e PNG)", required = true) MultipartFile arquivo)
+			throws IOException;
 
-        @ApiResponses({
-                        @ApiResponse(responseCode = "404", description = "Restaurante e/ou produto não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
-                        @ApiResponse(responseCode = "400", description = "Requisição inválida (erro do cliente)", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
-                        @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = FotoProdutoModel.class), mediaType = "application/json")),
-                        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "image/png")),
-                        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "image/jpeg"))
-        })
-        // @Operation(summary = "Busca a foto do produto de um restaurante", produces =
-        // "image/jpeg, image/png, application/json")
-        @Operation(summary = "Busca a foto do produto de um restaurante")
-        public ResponseEntity<?> buscar(@Parameter(name = "ID do restaurante") Long restauranteId,
-                        @Parameter(name = "ID do produto") Long produtoId,
-                        @Parameter(hidden = true, required = false) String acceptHeader)
-                        throws HttpMediaTypeNotAcceptableException;
+	@Operation(summary = "Busca a foto de um produto", responses = {
+			@ApiResponse(responseCode = "404", description = "Restaurante e/ou produto não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
+			@ApiResponse(responseCode = "400", description = "Requisição inválida (erro do cliente)", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
+			@ApiResponse(responseCode = "200", description = "OK", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = FotoProdutoModel.class)),
+					@Content(mediaType = "image/png", schema = @Schema(type = "string", format = "binary")),
+					@Content(mediaType = "image/jpeg", schema = @Schema(type = "string", format = "binary"))
+			})
+	})
+	public ResponseEntity<?> buscar(@Parameter(name = "ID do restaurante") Long restauranteId,
+			@Parameter(name = "ID do produto") Long produtoId,
+			@Parameter(hidden = true, required = false) String acceptHeader)
+			throws HttpMediaTypeNotAcceptableException;
 
-        @ApiResponses({
-                        @ApiResponse(responseCode = "404", description = "Restaurante e/ou produto não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
-                        @ApiResponse(responseCode = "400", description = "Requisição inválida (erro do cliente)", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
-                        @ApiResponse(responseCode = "204", description = "Foto excluída com sucesso")
-        })
-        @Operation(summary = "Exclui a foto do produto de um restaurante")
-        public void excluir(@Parameter(name = "ID do restaurante") Long restauranteId,
-                        @Parameter(name = "ID do produto") Long produtoId);
+	@ApiResponses({
+			@ApiResponse(responseCode = "404", description = "Restaurante e/ou produto não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
+			@ApiResponse(responseCode = "400", description = "Requisição inválida (erro do cliente)", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
+			@ApiResponse(responseCode = "204", description = "Foto excluída com sucesso")
+	})
+	@Operation(summary = "Exclui a foto do produto de um restaurante")
+	public void excluir(@Parameter(name = "ID do restaurante") Long restauranteId,
+			@Parameter(name = "ID do produto") Long produtoId);
 }

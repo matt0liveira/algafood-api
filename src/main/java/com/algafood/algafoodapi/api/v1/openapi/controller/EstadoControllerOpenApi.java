@@ -19,27 +19,30 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Estados", description = "Gerencia os estados")
 public interface EstadoControllerOpenApi {
 
-        @Operation(summary = "Lista todos os estados")
-        CollectionModel<EstadoModel> listar();
+	@Operation(summary = "Lista todos os estados")
+	CollectionModel<EstadoModel> listar();
 
-        @Operation(summary = "Busca um estado por ID")
-        ResponseEntity<EstadoModel> buscar(@Parameter(description = "ID do estado", required = true) Long estadoId);
+	@Operation(summary = "Busca um estado por ID")
+	ResponseEntity<EstadoModel> buscar(@Parameter(description = "ID do estado", required = true) Long estadoId);
 
-        @Operation(summary = "Cadastra um estado")
-        ResponseEntity<EstadoModel> add(
-                        @RequestBody(description = "Representação de um novo estado") EstadoInputModel estadoInputDTO);
+	@Operation(summary = "Cadastra um estado")
+	ResponseEntity<EstadoModel> add(
+			@RequestBody(description = "Representação de um novo estado") EstadoInputModel estadoInputDTO);
 
-        @Operation(summary = "Altera os dados de um estado por ID")
-        @ApiResponses(@ApiResponse(responseCode = "404", description = "Estado não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class))))
-        ResponseEntity<EstadoModel> atualizar(@Parameter(description = "ID do estado", required = true) Long estadoId,
-                        @RequestBody(description = "Representação de um estado com dados atualizados") EstadoInputModel estadoInputDTO);
+	@Operation(summary = "Altera os dados de um estado por ID")
+	@ApiResponses({
+			@ApiResponse(responseCode = "404", description = "Estado não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
+			@ApiResponse(responseCode = "200", description = "Estado atualizado com sucesso", content = @Content(schema = @Schema(implementation = EstadoModel.class)))
+	})
+	ResponseEntity<EstadoModel> atualizar(@Parameter(description = "ID do estado", required = true) Long estadoId,
+			@RequestBody(description = "Representação de um estado com dados atualizados") EstadoInputModel estadoInputDTO);
 
-        @Operation(summary = "Exclui um estado por ID")
-        @ApiResponses({
-                        @ApiResponse(responseCode = "404", description = "Estado não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
+	@Operation(summary = "Exclui um estado por ID")
+	@ApiResponses({
+			@ApiResponse(responseCode = "404", description = "Estado não encontrado", content = @Content(schema = @Schema(implementation = ErrorApi.class))),
 
-                        @ApiResponse(responseCode = "204", description = "Estado excluído com sucesso")
+			@ApiResponse(responseCode = "204", description = "Estado excluído com sucesso")
 
-        })
-        void remover(@Parameter(description = "ID do estado", required = true) Long estadoId);
+	})
+	void remover(@Parameter(description = "ID do estado", required = true) Long estadoId);
 }

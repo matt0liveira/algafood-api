@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.algafood.algafoodapi.api.v1.InstanceLink;
 import com.algafood.algafoodapi.core.security.SecurityUtils;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 @RestController
 @RequestMapping(path = "v1", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RootEntryPointController {
@@ -20,6 +22,7 @@ public class RootEntryPointController {
     @Autowired
     private SecurityUtils securityUtils;
 
+    @Operation(hidden = true)
     @GetMapping
     public RootEntryPointModel root() {
         var rootEntryPointModel = new RootEntryPointModel();
