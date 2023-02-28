@@ -3,7 +3,7 @@ package com.algafood.algafoodapi.core.springdoc;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springdoc.core.customizers.OpenApiCustomiser;
+import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -50,7 +50,7 @@ public class SpringDocConfig {
 	}
 
 	@Bean
-	public OpenApiCustomiser openApiCustomiser() {
+	public OpenApiCustomizer openApiCustomizer() {
 		return openapi -> {
 			openapi.getPaths()
 					.values()

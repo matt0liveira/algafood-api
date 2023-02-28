@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.ConstraintViolationException;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +26,7 @@ import com.algafood.algafoodapi.util.ResourceUtils;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
 import io.restassured.http.ContentType;
+import jakarta.validation.ConstraintViolationException;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource("classpath:application-test.properties")

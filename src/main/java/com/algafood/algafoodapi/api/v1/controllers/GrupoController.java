@@ -1,6 +1,6 @@
 package com.algafood.algafoodapi.api.v1.controllers;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
